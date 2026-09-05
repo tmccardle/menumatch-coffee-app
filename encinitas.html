@@ -1,0 +1,590 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>MenuMatch · Encinitas Coffee Guide</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,700&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --sand: #f4efe6;
+      --foam: #fffaf3;
+      --ink: #1c1914;
+      --mute: #6b6358;
+      --line: #e4d9c8;
+      --sea: #1e5a62;
+      --sea-2: #2f7a84;
+      --roast: #8b4518;
+      --ok: #2d6a4f;
+      --warn: #9a3412;
+    }
+    * { box-sizing: border-box; }
+    html, body { margin: 0; background: var(--sand); color: var(--ink); font-family: "IBM Plex Sans", system-ui, sans-serif; }
+    header {
+      background: linear-gradient(160deg, #163a3e 0%, #1e5a62 55%, #c9783a 140%);
+      color: #fffaf3;
+      padding: 2.2rem 1.25rem 2.4rem;
+    }
+    .wrap { max-width: 1080px; margin: 0 auto; }
+    header h1 {
+      font-family: Fraunces, Georgia, serif;
+      font-size: clamp(1.8rem, 4vw, 2.6rem);
+      margin: 0 0 .35rem;
+      letter-spacing: -0.02em;
+    }
+    header p { margin: 0; opacity: .88; max-width: 42rem; line-height: 1.5; }
+    .toolbar {
+      display: flex; flex-wrap: wrap; gap: .6rem; align-items: center;
+      margin-top: 1.25rem;
+    }
+    .toolbar label { font-size: .78rem; opacity: .85; }
+    .toolbar input, .toolbar select, .toolbar button {
+      font: inherit; border-radius: 8px; border: 0;
+    }
+    .toolbar input {
+      padding: .45rem .65rem; min-width: 16rem; background: #fffaf3; color: #1c1914;
+    }
+    .toolbar button {
+      padding: .45rem .85rem; background: #fffaf3; color: #163a3e; font-weight: 600; cursor: pointer;
+    }
+    .toolbar button.ghost { background: transparent; color: #fffaf3; border: 1px solid rgba(255,250,243,.35); }
+    .status {
+      font-size: .8rem; margin-top: .85rem; opacity: .9;
+    }
+    .status.ok { color: #c6f0d6; }
+    .status.err { color: #ffd2b8; }
+    main { padding: 1.25rem; }
+    .filters {
+      display: flex; gap: .5rem; flex-wrap: wrap; margin-bottom: 1rem;
+    }
+    .filters input[type="search"] {
+      flex: 1; min-width: 12rem; font: inherit; padding: .55rem .75rem;
+      border: 1px solid var(--line); border-radius: 10px; background: var(--foam);
+    }
+    .chip {
+      border: 1px solid var(--line); background: var(--foam); border-radius: 999px;
+      padding: .4rem .7rem; font-size: .82rem; cursor: pointer; color: var(--mute);
+    }
+    .chip.on { background: var(--sea); color: #fff; border-color: var(--sea); }
+    .grid {
+      display: grid; gap: 1rem;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    }
+    article {
+      background: var(--foam); border: 1px solid var(--line); border-radius: 16px;
+      padding: 1rem 1.05rem 1.1rem; display: flex; flex-direction: column; gap: .45rem;
+    }
+    article h2 {
+      font-family: Fraunces, Georgia, serif; font-size: 1.2rem; margin: 0;
+    }
+    .meta { color: var(--mute); font-size: .82rem; }
+    .badge {
+      display: inline-block; font-size: .7rem; letter-spacing: .04em; text-transform: uppercase;
+      background: #efe4d4; color: var(--roast); padding: .15rem .45rem; border-radius: 6px; font-weight: 600;
+    }
+    .menu { margin-top: .4rem; border-top: 1px dashed var(--line); padding-top: .55rem; }
+    .menu h3 { margin: 0 0 .35rem; font-size: .78rem; text-transform: uppercase; letter-spacing: .08em; color: var(--mute); }
+    .item { display: flex; justify-content: space-between; gap: .75rem; font-size: .9rem; padding: .18rem 0; }
+    .item span.price { color: var(--sea); font-weight: 600; white-space: nowrap; }
+    .item .desc { display: block; color: var(--mute); font-size: .78rem; }
+    .summary {
+      background: var(--foam); border: 1px solid var(--line); border-radius: 16px;
+      padding: 1rem 1.1rem 1.2rem; margin-bottom: 1.1rem;
+    }
+    .summary h2 { font-family: Fraunces, Georgia, serif; font-size: 1.2rem; margin: 0 0 .3rem; }
+    .summary > p { margin: 0 0 .85rem; color: var(--mute); font-size: .88rem; }
+    .groups { display: grid; gap: .85rem; grid-template-columns: repeat(auto-fill, minmax(230px, 1fr)); }
+    .group { background: #faf6ef; border: 1px solid var(--line); border-radius: 12px; padding: .7rem .8rem; }
+    .group h3 { margin: 0 0 .4rem; font-size: .72rem; letter-spacing: .08em; text-transform: uppercase; color: var(--mute); }
+    .group ul { list-style: none; margin: 0; padding: 0; }
+    .group li { margin: 0 0 .35rem; font-size: .9rem; line-height: 1.35; }
+    .group a { color: var(--sea); text-decoration: none; font-weight: 600; }
+    .group a:hover { text-decoration: underline; }
+    .group .trait { color: var(--roast); font-weight: 600; }
+    .summary.collapsed .groups,
+    .summary.collapsed .summary-help { display: none; }
+    .summary-bar { display: flex; align-items: center; justify-content: space-between; gap: .75rem; cursor: pointer; }
+    .summary-bar h2 { margin: 0; }
+    .summary-bar button { font: inherit; border: 1px solid var(--line); background: #fff; border-radius: 8px; padding: .3rem .6rem; cursor: pointer; }
+    button.cat-pick {
+      font: inherit; border: 0; background: none; color: var(--roast); font-weight: 600; cursor: pointer; padding: 0;
+    }
+    button.cat-pick.on { text-decoration: underline; }
+    article { scroll-margin-top: 1rem; }
+    article:target { outline: 2px solid var(--sea); }
+    .empty { color: var(--mute); padding: 2rem 0; text-align: center; }
+    footer { padding: 1.5rem 1.25rem 2.5rem; color: var(--mute); font-size: .8rem; text-align: center; }
+    code { background: #efe4d4; padding: .05rem .3rem; border-radius: 4px; font-size: .85em; }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="wrap">
+      <div class="badge">MenuMatch · North County</div>
+      <h1>Encinitas coffee guide</h1>
+      <p>Live list from the MenuMatch API — shops, current menus, and versions stored in Supabase. Static page only; no Next.js.</p>
+      <div class="toolbar">
+        <label>
+          API base
+          <input id="apiBase" value="http://localhost:8000" spellcheck="false" />
+        </label>
+        <button type="button" id="reload">Load from API</button>
+        <button type="button" class="ghost" id="demo">Use sample data</button>
+      </div>
+      <div class="status" id="status">Waiting to load…</div>
+    </div>
+  </header>
+  <main class="wrap">
+    <section class="summary collapsed" id="summary">
+      <div class="summary-bar" id="summaryToggle">
+        <h2>Browse by category</h2>
+        <button type="button" id="summaryBtn">Show</button>
+      </div>
+      <p class="summary-help">Click a category to filter shops. Shop names still jump to that card.</p>
+      <div class="groups" id="groups"></div>
+    </section>
+    <div class="filters">
+      <input type="search" id="q" placeholder="Search shop or drink…" />
+      <button type="button" class="chip on" data-hood="all">All</button>
+      <button type="button" class="chip" data-hood="food">Food</button>
+      <button type="button" class="chip" data-hood="Leucadia">Leucadia</button>
+      <button type="button" class="chip" data-hood="Downtown">Downtown</button>
+      <button type="button" class="chip" data-hood="Cardiff">Cardiff</button>
+    </div>
+    <div class="grid" id="grid"></div>
+    <p class="empty" id="empty" hidden>No shops match that filter.</p>
+  </main>
+  <footer>
+    MenuMatch Encinitas guide · reads <code>GET /restaurants</code> and <code>GET /restaurants/{id}/menus</code>
+    (falls back to <code>/menus?restaurant_id=</code>). Serve this file next to the FastAPI app or open it locally with CORS enabled.
+  </footer>
+
+  <script>
+    const SAMPLE = [
+      {
+        id: "ironsmith",
+        name: "Ironsmith Coffee Roasters",
+        neighborhood: "Downtown",
+        address: "458 S Coast Hwy 101, Encinitas",
+        note: "In-house Diedrich roaster on 101. Single origins + espresso.",
+        menus: [
+          { name: "Drinks", items: [
+            { name: "Espresso", price: 3.5 },
+            { name: "Flat white", price: 5.25 },
+            { name: "Pour over", price: 5.5, description: "Rotating single origin" }
+          ]}
+        ]
+      },
+      {
+        id: "necessity",
+        name: "Necessity Coffee",
+        neighborhood: "Leucadia",
+        address: "687 2nd St, Encinitas",
+        note: "Roaster cafe tucked with an art studio.",
+        menus: [
+          { name: "Drinks", items: [
+            { name: "House drip", price: 3.75 },
+            { name: "Cortado", price: 4.5 },
+            { name: "Batch brew", price: 4 }
+          ]}
+        ]
+      },
+      {
+        id: "bump",
+        name: "Bump Coffee",
+        neighborhood: "Cardiff",
+        address: "1302 N Coast Hwy 101, Encinitas",
+        note: "Cardiff patio stop near the VG donut corridor.",
+        menus: [
+          { name: "Drinks", items: [
+            { name: "Latte", price: 5.5 },
+            { name: "Cold brew", price: 5 },
+            { name: "Matcha", price: 5.75 }
+          ]}
+        ]
+      },
+      {
+        id: "coffee-coffee",
+        name: "Coffee Coffee",
+        neighborhood: "Leucadia",
+        address: "970 N Coast Hwy 101, Encinitas",
+        note: "Leucadia patio + Welcome to Leucadia mural.",
+        menus: [
+          { name: "Drinks", items: [
+            { name: "Americano", price: 4 },
+            { name: "Oat latte", price: 5.75 }
+          ]}
+        ]
+      },
+      {
+        id: "lofty",
+        name: "Lofty Coffee — Encinitas",
+        neighborhood: "Downtown",
+        address: "Encinitas Roasting Works",
+        note: "Local roaster cafe downtown.",
+        menus: [
+          { name: "Drinks", items: [
+            { name: "Drip", price: 3.5 },
+            { name: "Cappuccino", price: 5 }
+          ]}
+        ]
+      },
+      {
+        id: "birdrock",
+        name: "Bird Rock Coffee Roasters",
+        neighborhood: "Downtown",
+        address: "Encinitas",
+        note: "San Diego roaster outpost.",
+        menus: [
+          { name: "Drinks", items: [
+            { name: "Espresso", price: 3.75 },
+            { name: "Filter", price: 5 }
+          ]}
+        ]
+      }
+    ];
+
+    const state = { shops: [], hood: "all", q: "", source: "idle", cat: null };
+
+    const $ = (id) => document.getElementById(id);
+
+    function money(n) {
+      if (n == null || n === "") return "";
+      const num = Number(n);
+      if (Number.isNaN(num)) return String(n);
+      return "$" + num.toFixed(2).replace(/\.00$/, "");
+    }
+
+    function normShop(raw) {
+      if (!raw || typeof raw !== "object") return null;
+      const id = raw.id || raw.restaurant_id || raw.slug || raw.name;
+      const menus = raw.menus || raw.menu || raw.current_menu || [];
+      return {
+        id,
+        name: raw.name || raw.title || "Untitled shop",
+        neighborhood: raw.neighborhood || raw.area || raw.city || raw.hood || "",
+        address: raw.address || raw.street || raw.location || "",
+        note: raw.note || raw.description || raw.about || raw.tagline || "",
+        url: raw.url || raw.website || "",
+        characterization: raw.characterization || raw.characteristics || {},
+        menus: normalizeMenus(menus)
+      };
+    }
+
+    function normalizeMenus(menus) {
+      if (!menus) return [];
+      if (Array.isArray(menus)) {
+        return menus.map(normalizeMenu).filter((m) => m && m.items && m.items.length);
+      }
+      if (typeof menus === "object") {
+        if (Array.isArray(menus.items)) return [normalizeMenu(menus)].filter(Boolean);
+        return Object.entries(menus).map(([name, items]) =>
+          normalizeMenu({ name, items })
+        ).filter(Boolean);
+      }
+      return [];
+    }
+
+    function normalizeMenu(menu) {
+      if (!menu) return null;
+      if (Array.isArray(menu)) {
+        return { name: "Menu", items: menu.map(normalizeItem).filter(Boolean) };
+      }
+      const items = menu.items || menu.menu_items || menu.entries || [];
+      return {
+        name: menu.name || menu.title || menu.version_label || "Menu",
+        items: (Array.isArray(items) ? items : []).map(normalizeItem).filter(Boolean),
+        characterization: menu.characterization || {}
+      };
+    }
+
+    function normalizeItem(item) {
+      if (!item) return null;
+      if (typeof item === "string") return { name: item, price: null, description: "" };
+      return {
+        name: item.name || item.title || item.item || "Item",
+        price: item.price ?? item.cost ?? item.amount ?? null,
+        description: item.description || item.notes || item.detail || "",
+        kind: item.kind || item.category || ""
+      };
+    }
+
+    function isFoodItem(item) {
+      if (!item) return false;
+      if (String(item.kind || "").toLowerCase() === "food") return true;
+      const n = (item.name || "").toLowerCase();
+      return /toast|muffin|pastry|bagel|donut|doughnut|bowl|salad|soup|quiche|croissant|burrito|sandwich|bread|scone|cookie|cake|tart|granola/.test(n);
+    }
+
+    function drinkCategory(name) {
+      const n = (name || "").toLowerCase();
+      if (/drip|batch|filter|pour/.test(n)) return "Drip / filter";
+      if (/espresso|cortado|macchiato/.test(n)) return "Espresso";
+      if (/latte|cappuccino|flat white|mocha|au lait/.test(n)) return "Milk drinks";
+      if (/cold brew|iced/.test(n)) return "Iced / cold brew";
+      if (/matcha|tea/.test(n)) return "Tea / matcha";
+      return "Other drinks";
+    }
+
+    function foodCategory(name) {
+      const n = (name || "").toLowerCase();
+      if (/toast|bagel|burrito|sandwich/.test(n)) return "Savory";
+      if (/pastry|croissant|muffin|scone|bread|bun|cookie|cake|tart|donut/.test(n)) return "Pastry";
+      if (/bowl|granola|salad/.test(n)) return "Bowls";
+      return "Food";
+    }
+
+    function shopHasFood(s) {
+      return (s.menus || []).some((m) => (m.items || []).some(isFoodItem));
+    }
+
+    function shopInCategory(s, group, trait) {
+      if (group === "Area") return (s.neighborhood || "") === trait;
+      if (group === "Food") {
+        return (s.menus || []).some((m) => (m.items || []).some((i) => isFoodItem(i) && foodCategory(i.name) === trait));
+      }
+      if (group === "Drink type") {
+        return (s.menus || []).some((m) => (m.items || []).some((i) => !isFoodItem(i) && drinkCategory(i.name) === trait));
+      }
+      const chars = Object.assign({}, s.characterization);
+      (s.menus || []).forEach((m) => Object.assign(chars, m.characterization || {}));
+      if (group === "Roast") return chars.roast === trait;
+      if (group === "Style") return chars.style === trait;
+      if (group === "Setting") return chars.setting === trait;
+      return chars[group.toLowerCase()] === trait;
+    }
+
+    function renderSummary(shops) {
+      const buckets = { Area: {}, Food: {}, "Drink type": {}, Roast: {}, Style: {}, Setting: {} };
+      const push = (group, key, shop) => {
+        if (!key) return;
+        buckets[group] = buckets[group] || {};
+        buckets[group][key] = buckets[group][key] || [];
+        if (!buckets[group][key].some((s) => s.id === shop.id)) buckets[group][key].push(shop);
+      };
+      for (const s of shops) {
+        push("Area", s.neighborhood, s);
+        const chars = Object.assign({}, s.characterization);
+        (s.menus || []).forEach((m) => Object.assign(chars, m.characterization || {}));
+        push("Roast", chars.roast, s);
+        push("Style", chars.style, s);
+        push("Setting", chars.setting, s);
+        (s.menus || []).forEach((m) => {
+          (m.items || []).forEach((i) => {
+            if (isFoodItem(i)) push("Food", foodCategory(i.name), s);
+            else push("Drink type", drinkCategory(i.name), s);
+          });
+        });
+      }
+      const root = $("groups");
+      if (!root) return;
+      root.innerHTML = "";
+      const order = ["Food", "Drink type", "Area", "Roast", "Style", "Setting"];
+      for (const groupName of order) {
+        const entries = Object.entries(buckets[groupName] || {});
+        if (!entries.length) continue;
+        const div = document.createElement("div");
+        div.className = "group";
+        div.innerHTML = "<h3>" + escapeHtml(groupName) + "</h3><ul>" +
+          entries.map(([trait, list]) => {
+            const on = state.cat && state.cat.group === groupName && state.cat.trait === trait ? " on" : "";
+            return "<li><button type=\"button\" class=\"cat-pick" + on + "\" data-group=\"" +
+              escapeHtml(groupName) + "\" data-trait=\"" + escapeHtml(trait) + "\">" +
+              escapeHtml(trait) + "</button> — " +
+              list.map((s) => "<a href=\"#shop-" + encodeURIComponent(s.id) + "\">" + escapeHtml(s.name) + "</a>").join(", ") +
+              "</li>";
+          }).join("") + "</ul>";
+        root.appendChild(div);
+      }
+      if (!root.children.length) {
+        root.innerHTML = "<p class='meta'>No categories yet.</p>";
+      }
+      root.querySelectorAll(".cat-pick").forEach((btn) => {
+        btn.addEventListener("click", () => {
+          const next = { group: btn.dataset.group, trait: btn.dataset.trait };
+          if (state.cat && state.cat.group === next.group && state.cat.trait === next.trait) state.cat = null;
+          else state.cat = next;
+          render();
+        });
+      });
+    }
+
+    function render() {
+      const q = state.q.trim().toLowerCase();
+      const filtered = state.shops.filter((s) => {
+        if (state.hood === "food") {
+          if (!shopHasFood(s)) return false;
+        } else if (state.hood !== "all") {
+          const h = (s.neighborhood || "").toLowerCase();
+          if (!h.includes(state.hood.toLowerCase())) return false;
+        }
+        if (state.cat) {
+          if (!shopInCategory(s, state.cat.group, state.cat.trait)) return false;
+        }
+        if (!q) return true;
+        const blob = [s.name, s.address, s.note, s.neighborhood]
+          .concat(s.menus.flatMap((m) => m.items.map((i) => i.name + " " + (i.description || ""))))
+          .join(" ")
+          .toLowerCase();
+        return blob.includes(q);
+      });
+
+      const grid = $("grid");
+      grid.innerHTML = "";
+      $("empty").hidden = filtered.length > 0;
+      renderSummary(state.shops);
+
+      for (const s of filtered) {
+        const el = document.createElement("article");
+        el.id = "shop-" + s.id;
+        const hood = s.neighborhood
+          ? `<span class="badge">${escapeHtml(s.neighborhood)}</span>`
+          : "";
+        const menusHtml = (s.menus || []).map((m) => {
+          const drinks = (m.items || []).filter((i) => !isFoodItem(i));
+          const foods = (m.items || []).filter(isFoodItem);
+          const row = (i) => `
+            <div class="item">
+              <div>
+                ${escapeHtml(i.name)}
+                ${i.description ? `<span class="desc">${escapeHtml(i.description)}</span>` : ""}
+              </div>
+              <span class="price">${escapeHtml(money(i.price))}</span>
+            </div>`;
+          let html = "";
+          if (drinks.length) html += `<div class="menu"><h3>Drinks</h3>${drinks.map(row).join("")}</div>`;
+          if (foods.length) html += `<div class="menu"><h3>Food</h3>${foods.map(row).join("")}</div>`;
+          return html || `<div class="menu"><h3>${escapeHtml(m.name)}</h3><div class="meta">No items yet</div></div>`;
+        }).join("");
+
+        el.innerHTML = `
+          ${hood}
+          <h2>${escapeHtml(s.name)}</h2>
+          <div class="meta">${escapeHtml(s.address || "")}</div>
+          ${s.note ? `<div class="meta">${escapeHtml(s.note)}</div>` : ""}
+          ${menusHtml || "<div class='menu'><h3>Menu</h3><div class='meta'>No menu loaded</div></div>"}
+        `;
+        grid.appendChild(el);
+      }
+    }
+
+    function escapeHtml(str) {
+      return String(str ?? "")
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;");
+    }
+
+    function setStatus(msg, kind) {
+      const el = $("status");
+      el.textContent = msg;
+      el.className = "status" + (kind ? " " + kind : "");
+    }
+
+    async function fetchJson(url) {
+      const res = await fetch(url, { headers: { Accept: "application/json" } });
+      if (!res.ok) throw new Error(res.status + " " + res.statusText + " for " + url);
+      return res.json();
+    }
+
+    function unwrapList(payload) {
+      if (Array.isArray(payload)) return payload;
+      if (!payload || typeof payload !== "object") return [];
+      for (const key of ["restaurants", "data", "items", "results", "shops"]) {
+        if (Array.isArray(payload[key])) return payload[key];
+      }
+      return [];
+    }
+
+    async function loadMenusFor(base, shop) {
+      const id = shop.id;
+      const paths = [
+        `/restaurants/${encodeURIComponent(id)}/menus`,
+        `/restaurants/${encodeURIComponent(id)}/menu`,
+        `/menus?restaurant_id=${encodeURIComponent(id)}`,
+        `/menu?restaurant_id=${encodeURIComponent(id)}`
+      ];
+      for (const path of paths) {
+        try {
+          const data = await fetchJson(base + path);
+          const list = Array.isArray(data) ? data : unwrapList(data);
+          const menus = normalizeMenus(list.length ? list : data);
+          if (menus.length) return menus;
+        } catch (_) { /* try next shape */ }
+      }
+      return shop.menus || [];
+    }
+
+    async function loadFromApi() {
+      const base = $("apiBase").value.replace(/\/$/, "");
+      setStatus("Calling " + base + " …");
+      try {
+        let rawList = [];
+        const restaurantPaths = ["/menus/restaurants"];
+        let lastErr = null;
+        for (const path of restaurantPaths) {
+          try {
+            const data = await fetchJson(base + path);
+            rawList = unwrapList(data);
+            if (rawList.length || Array.isArray(data)) break;
+          } catch (e) {
+            lastErr = e;
+          }
+        }
+        if (!rawList.length && lastErr) throw lastErr;
+
+        const shops = rawList.map(normShop).filter(Boolean);
+        const withMenus = await Promise.all(
+          shops.map(async (s) => {
+            if (s.menus && s.menus.length) return s;
+            return { ...s, menus: await loadMenusFor(base, s) };
+          })
+        );
+        state.shops = withMenus;
+        state.source = "api";
+        setStatus(
+          "Loaded " + withMenus.length + " restaurant" + (withMenus.length === 1 ? "" : "s") + " from " + base,
+          "ok"
+        );
+        render();
+      } catch (err) {
+        setStatus(
+          "API error: " + err.message,
+          "err"
+        );
+      }
+    }
+
+    function loadDemo() {
+      state.shops = SAMPLE.map(normShop);
+      state.source = "demo";
+      setStatus("Showing bundled Encinitas sample (API not used).", "ok");
+      render();
+    }
+
+    $("summaryToggle").addEventListener("click", () => {
+      const box = $("summary");
+      box.classList.toggle("collapsed");
+      $("summaryBtn").textContent = box.classList.contains("collapsed") ? "Show" : "Hide";
+    });
+    $("reload").addEventListener("click", loadFromApi);
+    $("demo").addEventListener("click", loadDemo);
+    $("q").addEventListener("input", (e) => { state.q = e.target.value; render(); });
+    document.querySelectorAll(".chip").forEach((btn) => {
+      btn.addEventListener("click", () => {
+        document.querySelectorAll(".chip").forEach((b) => b.classList.remove("on"));
+        btn.classList.add("on");
+        state.hood = btn.dataset.hood;
+        render();
+      });
+    });
+
+    loadFromApi().then(() => {
+      if (!state.shops.length) loadDemo();
+    });
+  </script>
+</body>
+</html>
