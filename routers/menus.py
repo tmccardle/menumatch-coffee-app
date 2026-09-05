@@ -1,9 +1,23 @@
-from fastapi import APIRouter, HTTPException
+import os
+
+from fastapi import APIRouter, Depends, Header, HTTPException
 from pydantic import BaseModel
 from typing import Optional, Any
 from database import supabase
 
 router = APIRouter(prefix="/menus", tags=["menus"])
+
+
+def require_write_key(x_menu_key: Optional[str] = Header(default=None)):
+    expected = os.environ.get("MENU_WRITE_KEY") or ""
+    if not expected:
+        raise HTTPException(
+            status_code=503,
+            detail="Writes are disabled until MENU_WRITE_KEY is set on the server",
+        )
+    if not x_menu_key or x_menu_key != expected:
+        raise HTTPException(status_code=401, detail="Missing or invalid X-Menu-Key")
+    return True
 
 
 class RestaurantIn(BaseModel):
@@ -51,7 +65,7 @@ def current_version_for_menu(menu_id: str):
 
 
 @router.post("/restaurants")
-def create_restaurant(payload: RestaurantIn):
+def create_restaurant(payload: RestaurantIn, _: bool = Depends(require_write_key)):
     result = supabase.table("restaurants").insert(payload.dict()).execute()
     if not result.data:
         raise HTTPException(status_code=500, detail="Could not create restaurant")
@@ -112,7 +126,7 @@ def list_menus(restaurant_id: Optional[str] = None):
 
 
 @router.post("/")
-def create_menu(payload: MenuIn):
+def create_menu(payload: MenuIn, _: bool = Depends(require_write_key)):
     result = supabase.table("menus").insert(payload.dict()).execute()
     if not result.data:
         raise HTTPException(status_code=500, detail="Could not create menu")
@@ -120,7 +134,7 @@ def create_menu(payload: MenuIn):
 
 
 @router.post("/versions")
-def create_version(payload: VersionIn):
+def create_version(payload: VersionIn, _: bool = Depends(require_write_key)):
     existing = (
         supabase.table("menu_versions")
         .select("version_number")
