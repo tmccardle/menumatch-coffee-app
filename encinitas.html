@@ -128,7 +128,7 @@
       <div class="toolbar">
         <label>
           API base
-          <input id="apiBase" value="http://localhost:8000" spellcheck="false" />
+          <input id="apiBase" value="" spellcheck="false" placeholder="http://localhost:8000" />
         </label>
         <button type="button" id="reload">Load from API</button>
         <button type="button" class="ghost" id="demo">Use sample data</button>
@@ -518,7 +518,18 @@
       return shop.menus || [];
     }
 
+    function defaultApiBase() {
+      if (location.protocol === "http:" || location.protocol === "https:") {
+        if (location.hostname === "localhost" || location.hostname === "127.0.0.1") {
+          return location.protocol + "//" + location.hostname + ":8000";
+        }
+        return location.origin;
+      }
+      return "http://localhost:8000";
+    }
+
     async function loadFromApi() {
+      if (!$("apiBase").value) $("apiBase").value = defaultApiBase();
       const base = $("apiBase").value.replace(/\/$/, "");
       setStatus("Calling " + base + " …");
       try {
