@@ -1,0 +1,23 @@
+from fastapi import APIRouter
+from supabase import create_client
+from dotenv import load_dotenv
+import os
+import uuid
+
+router = APIRouter(prefix="/menus", tags=["menus"])
+
+@router.post("/{menu_id}/versions")
+async def create_menu_version(menu_id: uuid.UUID):
+    supabase = create_client(
+        os.getenv("SUPABASE_URL"),
+        os.getenv("SUPABASE_KEY")
+    )
+    version = supabase.table("menu_versions").insert({
+        "menu_id": menu_id,
+        "raw_menu": {"sample": "menu data"},
+        "parsed_menu": {"sample": "menu data"},
+        "characterization": {"roast": "medium"},
+        "version_number": 1,
+        "is_current": True,
+    }).execute()
+    return {"status": "success", "version": version.data}
