@@ -95,23 +95,41 @@
     }
     .summary h2 { font-family: Fraunces, Georgia, serif; font-size: 1.2rem; margin: 0 0 .3rem; }
     .summary > p { margin: 0 0 .85rem; color: var(--mute); font-size: .88rem; }
-    .groups { display: grid; gap: .85rem; grid-template-columns: repeat(auto-fill, minmax(230px, 1fr)); }
-    .group { background: #faf6ef; border: 1px solid var(--line); border-radius: 12px; padding: .7rem .8rem; }
-    .group h3 { margin: 0 0 .4rem; font-size: .72rem; letter-spacing: .08em; text-transform: uppercase; color: var(--mute); }
-    .group ul { list-style: none; margin: 0; padding: 0; }
-    .group li { margin: 0 0 .35rem; font-size: .9rem; line-height: 1.35; }
-    .group a { color: var(--sea); text-decoration: none; font-weight: 600; }
-    .group a:hover { text-decoration: underline; }
+    .groups { display: flex; flex-direction: column; gap: .4rem; }
+    .group { background: #faf6ef; border: 1px solid var(--line); border-radius: 10px; padding: 0; overflow: hidden; }
+    .group-toggle {
+      width: 100%; display: flex; align-items: center; justify-content: space-between; gap: .5rem;
+      font: inherit; background: transparent; border: 0; cursor: pointer; text-align: left;
+      padding: .5rem .65rem; color: var(--ink);
+    }
+    .group-toggle strong { font-size: .78rem; letter-spacing: .06em; text-transform: uppercase; font-weight: 600; }
+    .group-toggle span { color: var(--mute); font-size: .75rem; }
+    .group ul { list-style: none; margin: 0; padding: 0 .55rem .5rem; display: flex; flex-wrap: wrap; gap: .35rem; }
+    .group.shut ul { display: none; }
+    .group li { margin: 0; font-size: .8rem; line-height: 1.2; }
+    .group a { display: none; }
     .group .trait { color: var(--roast); font-weight: 600; }
     .summary.collapsed .groups,
     .summary.collapsed .summary-help { display: none; }
     .summary-bar { display: flex; align-items: center; justify-content: space-between; gap: .75rem; cursor: pointer; }
-    .summary-bar h2 { margin: 0; }
-    .summary-bar button { font: inherit; border: 1px solid var(--line); background: #fff; border-radius: 8px; padding: .3rem .6rem; cursor: pointer; }
+    .summary-bar h2 { margin: 0; font-size: 1.05rem; }
+    .summary-bar button { font: inherit; border: 1px solid var(--line); background: #fff; border-radius: 8px; padding: .25rem .55rem; cursor: pointer; font-size: .8rem; }
     button.cat-pick {
-      font: inherit; border: 0; background: none; color: var(--roast); font-weight: 600; cursor: pointer; padding: 0;
+      font: inherit; border: 1px solid var(--line); background: #fff; color: var(--ink);
+      font-weight: 500; cursor: pointer; padding: .28rem .55rem; border-radius: 999px; font-size: .78rem;
     }
-    button.cat-pick.on { text-decoration: underline; }
+    button.cat-pick.on { background: var(--sea); color: #fff; border-color: var(--sea); }
+    @media (max-width: 640px) {
+      header { padding: 1.15rem 1rem 1.25rem; }
+      header h1 { font-size: 1.45rem; }
+      header p { font-size: .82rem; }
+      .toolbar input { min-width: 0; width: 100%; }
+      main { padding: 0.85rem 0.9rem; }
+      .summary { padding: .7rem .75rem; border-radius: 12px; margin-bottom: .75rem; }
+      .filters { gap: .35rem; margin-bottom: .75rem; }
+      .chip { padding: .28rem .55rem; font-size: .75rem; }
+      .groups { gap: .4rem; }
+    }
     article { scroll-margin-top: 1rem; }
     article:target { outline: 2px solid var(--sea); }
     .empty { color: var(--mute); padding: 2rem 0; text-align: center; }
@@ -247,7 +265,7 @@
       }
     ];
 
-    const state = { shops: [], hood: "all", q: "", source: "idle", cat: null };
+    const state = { shops: [], hood: "all", q: "", source: "idle", cat: null, openGroups: {} };
 
     const $ = (id) => document.getElementById(id);
 
@@ -367,7 +385,7 @@
       if (/patio/.test(setting)) hooks.push("Patio");
       if (/walk-up|walk up/.test(setting + " " + style)) hooks.push("Walk-up");
       if (/cyclist/.test(style)) hooks.push("Cyclist cafe");
-      if (/beach/.test(style + " " + setting)) hooks.push("Near the beach");
+      if (/beach|surf/.test(style + " " + setting)) hooks.push("Near the beach");
       const names = (s.menus || []).flatMap((m) => (m.items || []).map((i) => i.name || "")).join(" ").toLowerCase();
       if (/cardamom|hazelnut|gold brew|açaí|acai|matcha/.test(names)) hooks.push("Unusual drinks");
       if ((s.menus || []).some((m) => (m.items || []).some((i) => isFoodItem(i) && /bowl|burrito|sandwich|toast/.test((i.name || "").toLowerCase())))) {
@@ -410,27 +428,42 @@
       for (const groupName of order) {
         const entries = Object.entries(buckets[groupName] || {});
         if (!entries.length) continue;
+        const selectedHere = state.cat && state.cat.group === groupName;
+        const open = selectedHere || !!state.openGroups[groupName];
         const div = document.createElement("div");
-        div.className = "group";
-        div.innerHTML = "<h3>" + escapeHtml(groupName) + "</h3><ul>" +
+        div.className = "group" + (open ? "" : " shut");
+        div.dataset.group = groupName;
+        div.innerHTML =
+          "<button type=\"button\" class=\"group-toggle\" data-group=\"" + escapeHtml(groupName) + "\">" +
+          "<strong>" + escapeHtml(groupName) + "</strong>" +
+          "<span>" + entries.length + (open ? " · hide" : " · show") + "</span></button><ul>" +
           entries.map(([trait, list]) => {
             const on = state.cat && state.cat.group === groupName && state.cat.trait === trait ? " on" : "";
             return "<li><button type=\"button\" class=\"cat-pick" + on + "\" data-group=\"" +
               escapeHtml(groupName) + "\" data-trait=\"" + escapeHtml(trait) + "\">" +
-              escapeHtml(trait) + "</button> — " +
-              list.map((s) => "<a href=\"#shop-" + encodeURIComponent(s.id) + "\">" + escapeHtml(s.name) + "</a>").join(", ") +
-              "</li>";
+              escapeHtml(trait) + " · " + list.length + "</button></li>";
           }).join("") + "</ul>";
         root.appendChild(div);
       }
       if (!root.children.length) {
         root.innerHTML = "<p class='meta'>No categories yet.</p>";
       }
+      root.querySelectorAll(".group-toggle").forEach((btn) => {
+        btn.addEventListener("click", (ev) => {
+          ev.stopPropagation();
+          const name = btn.dataset.group;
+          state.openGroups[name] = !state.openGroups[name];
+          renderSummary(state.shops);
+        });
+      });
       root.querySelectorAll(".cat-pick").forEach((btn) => {
         btn.addEventListener("click", () => {
           const next = { group: btn.dataset.group, trait: btn.dataset.trait };
           if (state.cat && state.cat.group === next.group && state.cat.trait === next.trait) state.cat = null;
-          else state.cat = next;
+          else {
+            state.cat = next;
+            state.openGroups[next.group] = true;
+          }
           render();
         });
       });
