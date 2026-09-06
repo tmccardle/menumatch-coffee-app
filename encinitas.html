@@ -142,13 +142,14 @@
         <h2>Browse by category</h2>
         <button type="button" id="summaryBtn">Show</button>
       </div>
-      <p class="summary-help">Click a category to filter shops. Shop names still jump to that card.</p>
+      <p class="summary-help">A few hooks only: place, food, and what stands out. Click one to filter.</p>
       <div class="groups" id="groups"></div>
     </section>
     <div class="filters">
       <input type="search" id="q" placeholder="Search shop or drink…" />
       <button type="button" class="chip on" data-hood="all">All</button>
       <button type="button" class="chip" data-hood="food">Food</button>
+      <button type="button" class="chip" data-hood="drinks">Drinks only</button>
       <button type="button" class="chip" data-hood="Leucadia">Leucadia</button>
       <button type="button" class="chip" data-hood="Downtown">Downtown</button>
       <button type="button" class="chip" data-hood="Cardiff">Cardiff</button>
@@ -269,7 +270,8 @@
         note: raw.note || raw.description || raw.about || raw.tagline || "",
         url: raw.url || raw.website || "",
         characterization: raw.characterization || raw.characteristics || {},
-        menus: normalizeMenus(menus)
+        menus: normalizeMenus(menus),
+        menu_updated_at: raw.menu_updated_at || raw.updated_at || raw.created_at || ""
       };
     }
 
@@ -296,8 +298,16 @@
       return {
         name: menu.name || menu.title || menu.version_label || "Menu",
         items: (Array.isArray(items) ? items : []).map(normalizeItem).filter(Boolean),
-        characterization: menu.characterization || {}
+        characterization: menu.characterization || {},
+        updated_at: menu.updated_at || menu.created_at || ""
       };
+    }
+
+    function formatWhen(iso) {
+      if (!iso) return "";
+      const d = new Date(iso);
+      if (isNaN(d.getTime())) return String(iso);
+      return d.toLocaleString(undefined, { dateStyle: "medium", timeStyle: "short" });
     }
 
     function normalizeItem(item) {
@@ -340,24 +350,43 @@
       return (s.menus || []).some((m) => (m.items || []).some(isFoodItem));
     }
 
+    function shopChars(s) {
+      const chars = Object.assign({}, s.characterization);
+      (s.menus || []).forEach((m) => Object.assign(chars, m.characterization || {}));
+      return chars;
+    }
+
+    function unusualHooks(s) {
+      const hooks = [];
+      const chars = shopChars(s);
+      const style = (chars.style || "").toLowerCase();
+      const setting = (chars.setting || "").toLowerCase();
+      if (/roaster/.test(style + " " + setting)) hooks.push("Roasts in house");
+      if (/hidden|studio/.test(setting)) hooks.push("Hidden / studio");
+      if (/railroad|station/.test(setting)) hooks.push("Railroad station");
+      if (/patio/.test(setting)) hooks.push("Patio");
+      if (/walk-up|walk up/.test(setting + " " + style)) hooks.push("Walk-up");
+      if (/cyclist/.test(style)) hooks.push("Cyclist cafe");
+      if (/beach/.test(style + " " + setting)) hooks.push("Near the beach");
+      const names = (s.menus || []).flatMap((m) => (m.items || []).map((i) => i.name || "")).join(" ").toLowerCase();
+      if (/cardamom|hazelnut|gold brew|açaí|acai|matcha/.test(names)) hooks.push("Unusual drinks");
+      if ((s.menus || []).some((m) => (m.items || []).some((i) => isFoodItem(i) && /bowl|burrito|sandwich|toast/.test((i.name || "").toLowerCase())))) {
+        hooks.push("Real food");
+      }
+      return hooks;
+    }
+
     function shopInCategory(s, group, trait) {
-      if (group === "Area") return (s.neighborhood || "") === trait;
+      if (group === "Place" || group === "Area") return (s.neighborhood || "") === trait;
       if (group === "Food") {
         return (s.menus || []).some((m) => (m.items || []).some((i) => isFoodItem(i) && foodCategory(i.name) === trait));
       }
-      if (group === "Drink type") {
-        return (s.menus || []).some((m) => (m.items || []).some((i) => !isFoodItem(i) && drinkCategory(i.name) === trait));
-      }
-      const chars = Object.assign({}, s.characterization);
-      (s.menus || []).forEach((m) => Object.assign(chars, m.characterization || {}));
-      if (group === "Roast") return chars.roast === trait;
-      if (group === "Style") return chars.style === trait;
-      if (group === "Setting") return chars.setting === trait;
-      return chars[group.toLowerCase()] === trait;
+      if (group === "What's unusual") return unusualHooks(s).indexOf(trait) !== -1;
+      return false;
     }
 
     function renderSummary(shops) {
-      const buckets = { Area: {}, Food: {}, "Drink type": {}, Roast: {}, Style: {}, Setting: {} };
+      const buckets = { Place: {}, Food: {}, "What's unusual": {} };
       const push = (group, key, shop) => {
         if (!key) return;
         buckets[group] = buckets[group] || {};
@@ -365,23 +394,19 @@
         if (!buckets[group][key].some((s) => s.id === shop.id)) buckets[group][key].push(shop);
       };
       for (const s of shops) {
-        push("Area", s.neighborhood, s);
-        const chars = Object.assign({}, s.characterization);
-        (s.menus || []).forEach((m) => Object.assign(chars, m.characterization || {}));
-        push("Roast", chars.roast, s);
-        push("Style", chars.style, s);
-        push("Setting", chars.setting, s);
+        push("Place", s.neighborhood, s);
+        unusualHooks(s).forEach((h) => push("What's unusual", h, s));
+        if (shopHasFood(s)) push("Food", "Serves food", s);
         (s.menus || []).forEach((m) => {
           (m.items || []).forEach((i) => {
             if (isFoodItem(i)) push("Food", foodCategory(i.name), s);
-            else push("Drink type", drinkCategory(i.name), s);
           });
         });
       }
       const root = $("groups");
       if (!root) return;
       root.innerHTML = "";
-      const order = ["Food", "Drink type", "Area", "Roast", "Style", "Setting"];
+      const order = ["What's unusual", "Place", "Food"];
       for (const groupName of order) {
         const entries = Object.entries(buckets[groupName] || {});
         if (!entries.length) continue;
@@ -416,6 +441,8 @@
       const filtered = state.shops.filter((s) => {
         if (state.hood === "food") {
           if (!shopHasFood(s)) return false;
+        } else if (state.hood === "drinks") {
+          /* keep every shop; food lines are hidden on the card */
         } else if (state.hood !== "all") {
           const h = (s.neighborhood || "").toLowerCase();
           if (!h.includes(state.hood.toLowerCase())) return false;
@@ -429,6 +456,10 @@
           .join(" ")
           .toLowerCase();
         return blob.includes(q);
+      }).sort((a, b) => {
+        const ta = Date.parse(a.menu_updated_at || (a.menus[0] && a.menus[0].updated_at) || 0) || 0;
+        const tb = Date.parse(b.menu_updated_at || (b.menus[0] && b.menus[0].updated_at) || 0) || 0;
+        return tb - ta;
       });
 
       const grid = $("grid");
@@ -454,16 +485,21 @@
               <span class="price">${escapeHtml(money(i.price))}</span>
             </div>`;
           let html = "";
+          const when = formatWhen(m.updated_at);
+          const stamp = when ? `<div class="meta">Menu updated ${escapeHtml(when)}</div>` : "";
           if (drinks.length) html += `<div class="menu"><h3>Drinks</h3>${drinks.map(row).join("")}</div>`;
-          if (foods.length) html += `<div class="menu"><h3>Food</h3>${foods.map(row).join("")}</div>`;
-          return html || `<div class="menu"><h3>${escapeHtml(m.name)}</h3><div class="meta">No items yet</div></div>`;
+          if (foods.length && state.hood !== "drinks") html += `<div class="menu"><h3>Food</h3>${foods.map(row).join("")}</div>`;
+          return (html || `<div class="menu"><h3>${escapeHtml(m.name)}</h3><div class="meta">No items yet</div></div>`) + stamp;
         }).join("");
+        const shopWhen = formatWhen(s.menu_updated_at || (s.menus[0] && s.menus[0].updated_at));
 
+        const hookBadges = unusualHooks(s).map((h) => `<span class="badge">${escapeHtml(h)}</span>`).join("");
         el.innerHTML = `
-          ${hood}
+          ${hood}${hookBadges}
           <h2>${escapeHtml(s.name)}</h2>
           <div class="meta">${escapeHtml(s.address || "")}</div>
           ${s.note ? `<div class="meta">${escapeHtml(s.note)}</div>` : ""}
+          ${shopWhen ? `<div class="meta">Last menu version ${escapeHtml(shopWhen)}</div>` : ""}
           ${menusHtml || "<div class='menu'><h3>Menu</h3><div class='meta'>No menu loaded</div></div>"}
         `;
         grid.appendChild(el);

@@ -7,13 +7,21 @@ Run while python app.py is up:
 from __future__ import print_function
 
 import json
+import os
 try:
     from urllib.request import Request, urlopen
     from urllib.error import HTTPError, URLError
 except ImportError:
     from urllib2 import Request, urlopen, HTTPError, URLError
 
-BASE = "http://localhost:8000"
+try:
+    from dotenv import load_dotenv
+    load_dotenv()
+except Exception:
+    pass
+
+BASE = os.environ.get("MENU_API_BASE", "http://localhost:8000")
+WRITE_KEY = os.environ.get("MENU_WRITE_KEY", "")
 
 SHOPS = [
     {
@@ -135,6 +143,95 @@ SHOPS = [
         ]},
         "characterization": {"roast": "medium", "style": "neighborhood cafe", "setting": "walk-up"},
     },
+    {
+        "name": "E.S.B. Cafe",
+        "city": "Encinitas",
+        "area": "Downtown",
+        "address": "325 Encinitas Blvd, Encinitas",
+        "website": "",
+        "title": "Cafe menu",
+        "raw_menu": {"items": [
+            {"name": "Fresh brew", "price": 3.50},
+            {"name": "Oat latte", "price": 5.50},
+            {"name": "Iced mocha latte", "price": 5.75},
+            {"name": "Ham Swiss sandwich", "price": 9.00, "kind": "food"},
+        ]},
+        "characterization": {"roast": "medium", "style": "walk-up cafe", "setting": "side street"},
+    },
+    {
+        "name": "Fourtillfour Cafe",
+        "city": "Encinitas",
+        "area": "Leucadia",
+        "address": "1114 N Coast Hwy 101, Encinitas",
+        "website": "",
+        "title": "Drinks",
+        "raw_menu": {"items": [
+            {"name": "Espresso", "price": 3.75},
+            {"name": "Latte", "price": 5.50},
+            {"name": "Pour over", "price": 5.50},
+            {"name": "Pastry", "price": 4.50, "kind": "food"},
+        ]},
+        "characterization": {"roast": "medium", "style": "roaster cafe", "setting": "patio"},
+    },
+    {
+        "name": "Crossings Coffee Roasters",
+        "city": "Encinitas",
+        "area": "Leucadia",
+        "address": "312 N Coast Hwy 101, Encinitas",
+        "website": "",
+        "title": "Drinks",
+        "raw_menu": {"items": [
+            {"name": "Espresso", "price": 3.50},
+            {"name": "Cortado", "price": 4.50},
+            {"name": "Batch brew", "price": 4.00},
+        ]},
+        "characterization": {"roast": "light-medium", "style": "micro-roaster", "setting": "Leucadia shop"},
+    },
+    {
+        "name": "Sip-N-Sea",
+        "city": "Encinitas",
+        "area": "Leucadia",
+        "address": "1488 N Coast Hwy 101, Encinitas",
+        "website": "",
+        "title": "Coffee and bowls",
+        "raw_menu": {"items": [
+            {"name": "Espresso", "price": 3.50},
+            {"name": "Hazelnut fudge latte", "price": 5.75},
+            {"name": "Vanilla gold brew", "price": 5.00},
+            {"name": "Acai bowl", "price": 12.00, "kind": "food"},
+        ]},
+        "characterization": {"roast": "medium", "style": "beach cafe", "setting": "Coast Highway"},
+    },
+    {
+        "name": "Queenstage",
+        "city": "Encinitas",
+        "area": "Downtown",
+        "address": "Encinitas",
+        "website": "",
+        "title": "Drinks",
+        "raw_menu": {"items": [
+            {"name": "Espresso", "price": 3.50},
+            {"name": "Latte", "price": 5.50},
+            {"name": "Drip", "price": 3.75},
+        ]},
+        "characterization": {"roast": "medium", "style": "cyclist cafe", "setting": "near 101"},
+    },
+    {
+        "name": "Surfdog's Java Hut",
+        "city": "Encinitas",
+        "area": "Downtown",
+        "address": "1126 S Coast Hwy 101, Encinitas",
+        "website": "http://www.surfdogjavahut.com/",
+        "title": "Cafe menu",
+        "raw_menu": {"items": [
+            {"name": "Drip coffee", "price": 3.50},
+            {"name": "Latte", "price": 5.25},
+            {"name": "Espresso", "price": 3.25},
+            {"name": "Bacon egg cheese bagel", "price": 10.00, "kind": "food"},
+            {"name": "Quesadilla", "price": 8.00, "kind": "food"},
+        ]},
+        "characterization": {"roast": "medium", "style": "surf cafe", "setting": "101 shack"},
+    },
 ]
 
 
@@ -144,6 +241,8 @@ def call(method, path, body=None):
     req.add_header("Accept", "application/json")
     if body is not None:
         req.add_header("Content-Type", "application/json")
+    if method != "GET" and WRITE_KEY:
+        req.add_header("X-Menu-Key", WRITE_KEY)
     try:
         res = urlopen(req)
         raw = res.read().decode("utf-8")
