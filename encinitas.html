@@ -172,7 +172,7 @@
         <h2>Browse by category</h2>
         <button type="button" id="summaryBtn">Hide</button>
       </div>
-      <p class="summary-help">What’s unusual and food — tap several. Same row is either/or; the two rows together is both.</p>
+      <p class="summary-help">Coffee, setting, mode, food — same row is either/or; different rows together is both.</p>
       <div class="groups" id="groups"></div>
     </section>
     <div class="active-row" id="activeRow" hidden></div>
@@ -387,32 +387,51 @@
       return chars;
     }
 
-    function unusualHooks(s) {
-      const hooks = [];
+    function shopHasRealFood(s) {
+      return (s.menus || []).some((m) =>
+        (m.items || []).some((i) => isFoodItem(i) && /bowl|burrito|sandwich|toast|scramble|quesadilla|bagel/.test((i.name || "").toLowerCase()))
+      );
+    }
+
+    function shopTags(s) {
       const chars = shopChars(s);
       const style = (chars.style || "").toLowerCase();
       const setting = (chars.setting || "").toLowerCase();
-      if (/roaster/.test(style + " " + setting)) hooks.push("Roasts in house");
-      if (/hidden|studio/.test(setting)) hooks.push("Hidden / studio");
-      if (/railroad|station/.test(setting)) hooks.push("Railroad station");
-      if (/patio/.test(setting)) hooks.push("Patio");
-      if (/walk-up|walk up/.test(setting + " " + style)) hooks.push("Walk-up");
-      if (/cyclist/.test(style)) hooks.push("Cyclist cafe");
-      if (/beach|surf/.test(style + " " + setting)) hooks.push("Near the beach");
       const names = (s.menus || []).flatMap((m) => (m.items || []).map((i) => i.name || "")).join(" ").toLowerCase();
-      if (/cardamom|hazelnut|gold brew|açaí|acai|matcha/.test(names)) hooks.push("Unusual drinks");
-      if ((s.menus || []).some((m) => (m.items || []).some((i) => isFoodItem(i) && /bowl|burrito|sandwich|toast/.test((i.name || "").toLowerCase())))) {
-        hooks.push("Real food");
-      }
-      return hooks;
+      const coffee = [];
+      const place = [];
+      const mode = [];
+      const food = [];
+      if (/roaster/.test(style + " " + setting)) coffee.push("Roasts in house");
+      if (/cardamom|hazelnut|gold brew|açaí|acai|matcha/.test(names)) coffee.push("Unusual drinks");
+      if (/patio/.test(setting)) place.push("Patio");
+      if (/beach|surf/.test(style + " " + setting)) place.push("Near the beach");
+      if (/railroad|station/.test(setting)) place.push("Railroad station");
+      if (/hidden|studio/.test(setting)) place.push("Hidden / studio");
+      if (/walk-up|walk up/.test(setting + " " + style)) mode.push("Walk-up");
+      if (/cyclist/.test(style)) mode.push("Cyclist cafe");
+      if (shopHasFood(s)) food.push("Serves food");
+      if (shopHasRealFood(s)) food.push("Real food");
+      (s.menus || []).forEach((m) => {
+        (m.items || []).forEach((i) => {
+          if (isFoodItem(i)) {
+            const cat = foodCategory(i.name);
+            if (food.indexOf(cat) === -1) food.push(cat);
+          }
+        });
+      });
+      return { Coffee: coffee, Setting: place, Mode: mode, Food: food };
+    }
+
+    function unusualHooks(s) {
+      const t = shopTags(s);
+      return [].concat(t.Coffee, t.Setting, t.Mode);
     }
 
     function shopInCategory(s, group, trait) {
       if (group === "Place" || group === "Area") return (s.neighborhood || "") === trait;
-      if (group === "Food") {
-        if (trait === "Serves food") return shopHasFood(s);
-        return (s.menus || []).some((m) => (m.items || []).some((i) => isFoodItem(i) && foodCategory(i.name) === trait));
-      }
+      const tags = shopTags(s);
+      if (tags[group]) return tags[group].indexOf(trait) !== -1;
       if (group === "What's unusual") return unusualHooks(s).indexOf(trait) !== -1;
       return false;
     }
@@ -508,7 +527,7 @@
     }
 
     function renderSummary(shops) {
-      const buckets = { Food: {}, "What's unusual": {} };
+      const buckets = { Coffee: {}, Setting: {}, Mode: {}, Food: {} };
       const push = (group, key, shop) => {
         if (!key) return;
         buckets[group] = buckets[group] || {};
@@ -516,18 +535,15 @@
         if (!buckets[group][key].some((s) => s.id === shop.id)) buckets[group][key].push(shop);
       };
       for (const s of shops) {
-        unusualHooks(s).forEach((h) => push("What's unusual", h, s));
-        if (shopHasFood(s)) push("Food", "Serves food", s);
-        (s.menus || []).forEach((m) => {
-          (m.items || []).forEach((i) => {
-            if (isFoodItem(i)) push("Food", foodCategory(i.name), s);
-          });
+        const tags = shopTags(s);
+        Object.keys(tags).forEach((group) => {
+          tags[group].forEach((trait) => push(group, trait, s));
         });
       }
       const root = $("groups");
       if (!root) return;
       root.innerHTML = "";
-      const order = ["What's unusual", "Food"];
+      const order = ["Coffee", "Setting", "Mode", "Food"];
       for (const groupName of order) {
         const entries = Object.entries(buckets[groupName] || {});
         if (!entries.length) continue;
