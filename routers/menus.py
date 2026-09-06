@@ -101,17 +101,23 @@ def list_restaurants():
                 items = parsed
             if not items:
                 continue
+            updated_at = None
+            if version:
+                updated_at = version.get("created_at") or version.get("updated_at") or version.get("inserted_at")
             menu_payload.append({
                 "id": menu.get("id"),
                 "name": menu.get("title") or "Menu",
                 "items": items,
                 "characterization": chars,
+                "updated_at": updated_at,
+                "version_number": (version or {}).get("version_number"),
             })
         shop_out = dict(shop)
         shop_out["neighborhood"] = shop.get("area") or shop.get("city") or ""
         shop_out["url"] = shop.get("website") or ""
         shop_out["characterization"] = characterization
         shop_out["menus"] = menu_payload
+        shop_out["menu_updated_at"] = next((m.get("updated_at") for m in menu_payload if m.get("updated_at")), shop.get("created_at"))
         enriched.append(shop_out)
     return enriched
 
