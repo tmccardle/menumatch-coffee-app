@@ -119,6 +119,18 @@
       font-weight: 500; cursor: pointer; padding: .28rem .55rem; border-radius: 999px; font-size: .78rem;
     }
     button.cat-pick.on { background: var(--sea); color: #fff; border-color: var(--sea); }
+    button.cat-pick.zero { opacity: .45; }
+    .active-row {
+      display: flex; flex-wrap: wrap; gap: .35rem; align-items: center;
+      margin: 0 0 .75rem; min-height: 0;
+    }
+    .active-row[hidden] { display: none; }
+    .active-row .label { font-size: .75rem; color: var(--mute); margin-right: .15rem; }
+    .active-row button {
+      font: inherit; font-size: .75rem; border: 1px solid var(--sea); background: #e8f3f4;
+      color: var(--sea); border-radius: 999px; padding: .22rem .55rem; cursor: pointer;
+    }
+    .active-row button.clear { border-color: var(--line); background: var(--foam); color: var(--mute); }
     @media (max-width: 640px) {
       header { padding: 1.15rem 1rem 1.25rem; }
       header h1 { font-size: 1.45rem; }
@@ -155,14 +167,15 @@
     </div>
   </header>
   <main class="wrap">
-    <section class="summary collapsed" id="summary">
+    <section class="summary" id="summary">
       <div class="summary-bar" id="summaryToggle">
         <h2>Browse by category</h2>
-        <button type="button" id="summaryBtn">Show</button>
+        <button type="button" id="summaryBtn">Hide</button>
       </div>
-      <p class="summary-help">A few hooks only: place, food, and what stands out. Click one to filter.</p>
+      <p class="summary-help">What’s unusual and food — tap several. Same row is either/or; the two rows together is both.</p>
       <div class="groups" id="groups"></div>
     </section>
+    <div class="active-row" id="activeRow" hidden></div>
     <div class="filters">
       <input type="search" id="q" placeholder="Search shop or drink…" />
       <button type="button" class="chip on" data-hood="all">All</button>
@@ -265,7 +278,7 @@
       }
     ];
 
-    const state = { shops: [], hood: "all", q: "", source: "idle", cat: null, openGroups: {} };
+    const state = { shops: [], hood: "all", q: "", source: "idle", cats: {}, openGroups: {} };
 
     const $ = (id) => document.getElementById(id);
 
@@ -397,14 +410,105 @@
     function shopInCategory(s, group, trait) {
       if (group === "Place" || group === "Area") return (s.neighborhood || "") === trait;
       if (group === "Food") {
+        if (trait === "Serves food") return shopHasFood(s);
         return (s.menus || []).some((m) => (m.items || []).some((i) => isFoodItem(i) && foodCategory(i.name) === trait));
       }
       if (group === "What's unusual") return unusualHooks(s).indexOf(trait) !== -1;
       return false;
     }
 
+    function selectedTraits(group) {
+      return (state.cats && state.cats[group]) || [];
+    }
+
+    function shopMatchesGroup(s, group, traits) {
+      if (!traits || !traits.length) return true;
+      return traits.some((t) => shopInCategory(s, group, t));
+    }
+
+    function shopMatchesCats(s, cats) {
+      const used = cats || state.cats || {};
+      return Object.keys(used).every((group) => shopMatchesGroup(s, group, used[group]));
+    }
+
+    function matchesHoodAndQuery(s) {
+      if (state.hood === "food") {
+        if (!shopHasFood(s)) return false;
+      } else if (state.hood === "drinks") {
+        /* keep every shop; food lines are hidden on the card */
+      } else if (state.hood !== "all") {
+        const h = (s.neighborhood || "").toLowerCase();
+        if (!h.includes(state.hood.toLowerCase())) return false;
+      }
+      const q = state.q.trim().toLowerCase();
+      if (!q) return true;
+      const blob = [s.name, s.address, s.note, s.neighborhood]
+        .concat(s.menus.flatMap((m) => m.items.map((i) => i.name + " " + (i.description || ""))))
+        .join(" ")
+        .toLowerCase();
+      return blob.includes(q);
+    }
+
+    function toggleTrait(group, trait) {
+      const cur = selectedTraits(group).slice();
+      const i = cur.indexOf(trait);
+      if (i >= 0) cur.splice(i, 1);
+      else cur.push(trait);
+      if (cur.length) state.cats[group] = cur;
+      else delete state.cats[group];
+    }
+
+    function clearCats() {
+      state.cats = {};
+    }
+
+    function activeCatList() {
+      const out = [];
+      Object.keys(state.cats || {}).forEach((group) => {
+        (state.cats[group] || []).forEach((trait) => out.push({ group, trait }));
+      });
+      return out;
+    }
+
+    function countForTrait(group, trait) {
+      const others = {};
+      Object.keys(state.cats || {}).forEach((g) => {
+        if (g !== group) others[g] = state.cats[g].slice();
+      });
+      return state.shops.filter((s) =>
+        matchesHoodAndQuery(s) && shopMatchesCats(s, others) && shopInCategory(s, group, trait)
+      ).length;
+    }
+
+    function renderActiveRow() {
+      const row = $("activeRow");
+      if (!row) return;
+      const picks = activeCatList();
+      if (!picks.length) {
+        row.hidden = true;
+        row.innerHTML = "";
+        return;
+      }
+      row.hidden = false;
+      row.innerHTML =
+        "<span class=\"label\">Filters</span>" +
+        picks.map((p) =>
+          "<button type=\"button\" data-group=\"" + escapeHtml(p.group) +
+          "\" data-trait=\"" + escapeHtml(p.trait) + "\">" +
+          escapeHtml(p.trait) + " ×</button>"
+        ).join("") +
+        "<button type=\"button\" class=\"clear\" data-clear=\"1\">Clear</button>";
+      row.querySelectorAll("button").forEach((btn) => {
+        btn.addEventListener("click", () => {
+          if (btn.dataset.clear) clearCats();
+          else toggleTrait(btn.dataset.group, btn.dataset.trait);
+          render();
+        });
+      });
+    }
+
     function renderSummary(shops) {
-      const buckets = { Place: {}, Food: {}, "What's unusual": {} };
+      const buckets = { Food: {}, "What's unusual": {} };
       const push = (group, key, shop) => {
         if (!key) return;
         buckets[group] = buckets[group] || {};
@@ -412,7 +516,6 @@
         if (!buckets[group][key].some((s) => s.id === shop.id)) buckets[group][key].push(shop);
       };
       for (const s of shops) {
-        push("Place", s.neighborhood, s);
         unusualHooks(s).forEach((h) => push("What's unusual", h, s));
         if (shopHasFood(s)) push("Food", "Serves food", s);
         (s.menus || []).forEach((m) => {
@@ -424,24 +527,27 @@
       const root = $("groups");
       if (!root) return;
       root.innerHTML = "";
-      const order = ["What's unusual", "Place", "Food"];
+      const order = ["What's unusual", "Food"];
       for (const groupName of order) {
         const entries = Object.entries(buckets[groupName] || {});
         if (!entries.length) continue;
-        const selectedHere = state.cat && state.cat.group === groupName;
-        const open = selectedHere || !!state.openGroups[groupName];
+        const selectedHere = selectedTraits(groupName).length > 0;
+        const explicitlyShut = state.openGroups[groupName] === false;
+        const open = explicitlyShut ? false : (selectedHere || state.openGroups[groupName] !== false);
         const div = document.createElement("div");
         div.className = "group" + (open ? "" : " shut");
         div.dataset.group = groupName;
         div.innerHTML =
           "<button type=\"button\" class=\"group-toggle\" data-group=\"" + escapeHtml(groupName) + "\">" +
           "<strong>" + escapeHtml(groupName) + "</strong>" +
-          "<span>" + entries.length + (open ? " · hide" : " · show") + "</span></button><ul>" +
-          entries.map(([trait, list]) => {
-            const on = state.cat && state.cat.group === groupName && state.cat.trait === trait ? " on" : "";
-            return "<li><button type=\"button\" class=\"cat-pick" + on + "\" data-group=\"" +
+          "<span>" + entries.length + (open ? "" : " · show") + "</span></button><ul>" +
+          entries.map(([trait]) => {
+            const on = selectedTraits(groupName).indexOf(trait) !== -1 ? " on" : "";
+            const n = countForTrait(groupName, trait);
+            const zero = n === 0 ? " zero" : "";
+            return "<li><button type=\"button\" class=\"cat-pick" + on + zero + "\" data-group=\"" +
               escapeHtml(groupName) + "\" data-trait=\"" + escapeHtml(trait) + "\">" +
-              escapeHtml(trait) + " · " + list.length + "</button></li>";
+              escapeHtml(trait) + " · " + n + "</button></li>";
           }).join("") + "</ul>";
         root.appendChild(div);
       }
@@ -452,43 +558,25 @@
         btn.addEventListener("click", (ev) => {
           ev.stopPropagation();
           const name = btn.dataset.group;
-          state.openGroups[name] = !state.openGroups[name];
+          state.openGroups[name] = state.openGroups[name] === false;
           renderSummary(state.shops);
         });
       });
       root.querySelectorAll(".cat-pick").forEach((btn) => {
         btn.addEventListener("click", () => {
-          const next = { group: btn.dataset.group, trait: btn.dataset.trait };
-          if (state.cat && state.cat.group === next.group && state.cat.trait === next.trait) state.cat = null;
-          else {
-            state.cat = next;
-            state.openGroups[next.group] = true;
-          }
+          toggleTrait(btn.dataset.group, btn.dataset.trait);
+          state.openGroups[btn.dataset.group] = true;
           render();
         });
       });
+      renderActiveRow();
     }
 
     function render() {
       const q = state.q.trim().toLowerCase();
       const filtered = state.shops.filter((s) => {
-        if (state.hood === "food") {
-          if (!shopHasFood(s)) return false;
-        } else if (state.hood === "drinks") {
-          /* keep every shop; food lines are hidden on the card */
-        } else if (state.hood !== "all") {
-          const h = (s.neighborhood || "").toLowerCase();
-          if (!h.includes(state.hood.toLowerCase())) return false;
-        }
-        if (state.cat) {
-          if (!shopInCategory(s, state.cat.group, state.cat.trait)) return false;
-        }
-        if (!q) return true;
-        const blob = [s.name, s.address, s.note, s.neighborhood]
-          .concat(s.menus.flatMap((m) => m.items.map((i) => i.name + " " + (i.description || ""))))
-          .join(" ")
-          .toLowerCase();
-        return blob.includes(q);
+        if (!matchesHoodAndQuery(s)) return false;
+        return shopMatchesCats(s);
       }).sort((a, b) => {
         const ta = Date.parse(a.menu_updated_at || (a.menus[0] && a.menus[0].updated_at) || 0) || 0;
         const tb = Date.parse(b.menu_updated_at || (b.menus[0] && b.menus[0].updated_at) || 0) || 0;
@@ -498,6 +586,11 @@
       const grid = $("grid");
       grid.innerHTML = "";
       $("empty").hidden = filtered.length > 0;
+      if (!filtered.length) {
+        $("empty").textContent = activeCatList().length || state.hood !== "all" || q
+          ? "No shops match those filters. Clear one to widen the list."
+          : "No shops match that filter.";
+      }
       renderSummary(state.shops);
 
       for (const s of filtered) {
