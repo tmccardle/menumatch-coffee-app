@@ -102,11 +102,31 @@
       display: inline-block; font-size: .7rem; letter-spacing: .04em; text-transform: uppercase;
       background: #efe4d4; color: var(--roast); padding: .15rem .45rem; border-radius: 6px; font-weight: 600;
     }
-    .menu { margin-top: .4rem; border-top: 1px dashed var(--line); padding-top: .55rem; }
-    .menu h3 { margin: 0 0 .35rem; font-size: .78rem; text-transform: uppercase; letter-spacing: .08em; color: var(--mute); }
-    .item { display: flex; justify-content: space-between; gap: .75rem; font-size: .9rem; padding: .18rem 0; }
-    .item span.price { color: var(--sea); font-weight: 600; white-space: nowrap; }
-    .item .desc { display: block; color: var(--mute); font-size: .78rem; }
+    .menus {
+      display: grid; grid-template-columns: 1fr 1fr; gap: .4rem; margin-top: .1rem;
+    }
+    .menus:has(.menu:only-child) { grid-template-columns: 1fr; }
+    .menu {
+      margin: 0; border: 1px solid var(--line); border-radius: 8px;
+      padding: .32rem .45rem .38rem;
+    }
+    .menu.drinks { background: #e7eef3; }
+    .menu.food { background: #f4e8e1; }
+    .menu h3 {
+      margin: 0 0 .2rem; font-size: .68rem; text-transform: uppercase; letter-spacing: .08em;
+      color: var(--mute); font-weight: 600;
+    }
+    article h2[data-tip] {
+      cursor: default;
+      text-decoration: underline; text-decoration-style: dotted; text-underline-offset: 3px;
+    }
+    .item {
+      font-size: .8rem; line-height: 1.28; padding: .02rem 0;
+    }
+    .item[data-tip] {
+      cursor: default;
+      text-decoration: underline; text-decoration-style: dotted; text-underline-offset: 2px;
+    }
     .summary {
       background: var(--foam); border: 1px solid var(--line); border-radius: 16px;
       padding: 1rem 1.1rem 1.2rem; margin-bottom: 1.1rem;
@@ -169,6 +189,13 @@
       .search-row input[type="search"] { width: 11rem; flex-basis: 11rem; }
       .chip { padding: .28rem .55rem; font-size: .75rem; }
       .groups { grid-template-columns: 1fr 1fr; gap: .45rem; }
+      article { padding: .7rem .75rem .75rem; gap: .28rem; border-radius: 12px; }
+      article h2 { font-size: 1.05rem; }
+      article .meta { font-size: .75rem; }
+      article .to-top { display: none; }
+      .item { font-size: .75rem; }
+      .menus { gap: .3rem; }
+      .menu { padding: .28rem .35rem .3rem; }
     }
     article { scroll-margin-top: 1rem; }
     article:target { outline: 2px solid var(--sea); }
@@ -832,33 +859,30 @@
         const hood = s.neighborhood
           ? `<span class="badge">${escapeHtml(s.neighborhood)}</span>`
           : "";
-        const menusHtml = (s.menus || []).map((m) => {
-          const drinks = (m.items || []).filter((i) => !isFoodItem(i));
-          const foods = (m.items || []).filter(isFoodItem);
-          const row = (i) => `
-            <div class="item">
-              <div>
-                ${escapeHtml(i.name)}
-                ${i.description ? `<span class="desc">${escapeHtml(i.description)}</span>` : ""}
-              </div>
-              <span class="price">${escapeHtml(money(i.price))}</span>
-            </div>`;
-          let html = "";
-          const when = formatWhen(m.updated_at);
-          const stamp = when ? `<div class="meta">Menu updated ${escapeHtml(when)}</div>` : "";
-          if (drinks.length) html += `<div class="menu"><h3>Drinks</h3>${drinks.map(row).join("")}</div>`;
-          if (foods.length && state.hood !== "drinks") html += `<div class="menu"><h3>Food</h3>${foods.map(row).join("")}</div>`;
-          return (html || `<div class="menu"><h3>${escapeHtml(m.name)}</h3><div class="meta">No items yet</div></div>`) + stamp;
-        }).join("");
+        const items = uniqueMenuItems(s);
+        const drinks = items.filter((i) => !isFoodItem(i));
+        const foods = items.filter(isFoodItem);
+        const row = (i) => {
+          const bits = [];
+          const p = money(i.price);
+          if (p) bits.push(p);
+          if (i.description) bits.push(i.description);
+          const tip = bits.length ? " data-tip=\"" + escapeHtml(bits.join(" · ")) + "\"" : "";
+          return `<div class="item"${tip}>${escapeHtml(i.name)}</div>`;
+        };
+        const cols = [];
+        if (drinks.length) cols.push(`<div class="menu drinks"><h3>Drinks</h3>${drinks.map(row).join("")}</div>`);
+        if (foods.length && state.hood !== "drinks") cols.push(`<div class="menu food"><h3>Food</h3>${foods.map(row).join("")}</div>`);
+        const menusHtml = cols.length ? `<div class="menus">${cols.join("")}</div>` : "";
         const shopWhen = formatWhen(s.menu_updated_at || (s.menus[0] && s.menus[0].updated_at));
+        const nameTip = shopWhen ? " data-tip=\"" + escapeHtml("Updated " + shopWhen) + "\"" : "";
 
         const hookBadges = unusualHooks(s).map((h) => `<span class="badge">${escapeHtml(h)}</span>`).join("");
         el.innerHTML = `
           ${hood}${hookBadges}
-          <h2>${escapeHtml(s.name)}</h2>
+          <h2${nameTip}>${escapeHtml(s.name)}</h2>
           <div class="meta">${escapeHtml(s.address || "")}</div>
           ${s.note ? `<div class="meta">${escapeHtml(s.note)}</div>` : ""}
-          ${shopWhen ? `<div class="meta">Last menu version ${escapeHtml(shopWhen)}</div>` : ""}
           ${menusHtml || "<div class='menu'><h3>Menu</h3><div class='meta'>No menu loaded</div></div>"}
           <button type="button" class="ghost to-top" data-shop="${escapeHtml(s.id)}">↑ Back to top</button>
         `;
@@ -899,18 +923,26 @@
       return [base[0] + jitterLat, lng];
     }
 
-    function shopItemCount(s) {
-      return shopItemNames(s).length;
-    }
-    function shopItemNames(s) {
-      const names = [];
+    function uniqueMenuItems(s) {
+      const seen = new Set();
+      const items = [];
       (s.menus || []).forEach((m) => {
         (m.items || []).forEach((item) => {
           const n = (item && item.name) ? String(item.name).trim() : "";
-          if (n) names.push(n);
+          if (!n) return;
+          const key = n.toLowerCase();
+          if (seen.has(key)) return;
+          seen.add(key);
+          items.push(item);
         });
       });
-      return names;
+      return items;
+    }
+    function shopItemCount(s) {
+      return uniqueMenuItems(s).length;
+    }
+    function shopItemNames(s) {
+      return uniqueMenuItems(s).map((item) => item.name);
     }
     function shopHookCount(s) {
       return (typeof unusualHooks === "function" ? unusualHooks(s) : []).length;
