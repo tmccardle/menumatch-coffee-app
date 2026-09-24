@@ -56,16 +56,23 @@
     .status.ok { color: #c6f0d6; }
     .status.err { color: #ffd2b8; }
     main { padding: 1.25rem; }
-    .filters {
-      display: flex; gap: .5rem; flex-wrap: wrap; margin-bottom: 1rem;
+    .search-row, .filters {
+      display: flex; gap: .4rem; flex-wrap: wrap; align-items: center; margin-bottom: .5rem;
     }
-    .filters input[type="search"] {
-      flex: 1; min-width: 12rem; font: inherit; padding: .55rem .75rem;
-      border: 1px solid var(--line); border-radius: 10px; background: var(--foam);
+    .search-row input[type="search"] {
+      flex: 0 1 14rem; width: 14rem; min-width: 9rem; font: inherit;
+      font-size: .8rem; padding: .32rem .55rem;
+      border: 1px solid var(--line); border-radius: 8px; background: var(--foam);
     }
+    .row-label, .filter-label, .view-label {
+      font-size: .72rem; letter-spacing: .06em; text-transform: uppercase; color: var(--mute);
+      flex: none; min-width: 3.4rem;
+    }
+    .chip-gap { width: 1px; height: 1.15rem; background: var(--line); margin: 0 .15rem; flex: none; }
+    .chip-set { display: inline-flex; flex-wrap: wrap; gap: .4rem; align-items: center; }
     .chip {
       border: 1px solid var(--line); background: var(--foam); border-radius: 999px;
-      padding: .4rem .7rem; font-size: .82rem; cursor: pointer; color: var(--mute);
+      padding: .32rem .58rem; font-size: .78rem; cursor: pointer; color: var(--mute);
     }
     .chip.on { background: var(--sea); color: #fff; border-color: var(--sea); }
     .grid {
@@ -95,26 +102,27 @@
     }
     .summary h2 { font-family: Fraunces, Georgia, serif; font-size: 1.2rem; margin: 0 0 .3rem; }
     .summary > p { margin: 0 0 .85rem; color: var(--mute); font-size: .88rem; }
-    .groups { display: flex; flex-direction: column; gap: .4rem; }
-    .group { background: #faf6ef; border: 1px solid var(--line); border-radius: 10px; padding: 0; overflow: hidden; }
-    .group-toggle {
-      width: 100%; display: flex; align-items: center; justify-content: space-between; gap: .5rem;
-      font: inherit; background: transparent; border: 0; cursor: pointer; text-align: left;
-      padding: .5rem .65rem; color: var(--ink);
+    .groups {
+      display: grid; grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: .5rem .65rem; margin-top: .65rem;
     }
-    .group-toggle strong { font-size: .78rem; letter-spacing: .06em; text-transform: uppercase; font-weight: 600; }
-    .group-toggle span { color: var(--mute); font-size: .75rem; }
-    .group ul { list-style: none; margin: 0; padding: 0 .65rem .6rem; display: flex; flex-direction: column; gap: .15rem; }
-    .group.shut ul { display: none; }
-    .group li { margin: 0; font-size: .88rem; line-height: 1.3; }
-    .group a { display: none; }
-    .group .trait { color: var(--roast); font-weight: 600; }
+    .group { border: 1px solid var(--line); border-radius: 10px; padding: .45rem .55rem .5rem; overflow: hidden; }
+    .group[data-group="Coffee"] { background: #f3ebe0; }
+    .group[data-group="Setting"] { background: #e8f0ea; }
+    .group[data-group="Mode"] { background: #e7eef3; }
+    .group[data-group="Food"] { background: #f4e8e1; }
+    .group h3 {
+      margin: 0 0 .2rem; font-size: .68rem; letter-spacing: .08em;
+      text-transform: uppercase; font-weight: 600; color: var(--mute);
+    }
+    .group ul { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: .02rem; }
+    .group li { margin: 0; }
     label.cat-check {
-      display: flex; align-items: center; gap: .45rem;
-      cursor: pointer; font-size: .88rem; color: var(--ink); padding: .18rem 0;
+      display: flex; align-items: center; gap: .35rem;
+      cursor: pointer; font-size: .78rem; color: var(--ink); padding: .1rem 0; line-height: 1.25;
     }
-    label.cat-check input { width: 1rem; height: 1rem; margin: 0; accent-color: var(--sea); flex: none; }
-    label.cat-check .n { color: var(--mute); font-size: .78rem; }
+    label.cat-check input { width: .85rem; height: .85rem; margin: 0; accent-color: var(--sea); flex: none; }
+    label.cat-check .n { color: var(--mute); font-size: .7rem; margin-left: auto; padding-left: .35rem; }
     label.cat-check.zero { color: var(--mute); }
     .summary.collapsed .groups,
     .summary.collapsed .summary-help { display: none; }
@@ -146,18 +154,23 @@
       .toolbar input { min-width: 0; width: 100%; }
       main { padding: 0.85rem 0.9rem; }
       .summary { padding: .7rem .75rem; border-radius: 12px; margin-bottom: .75rem; }
-      .filters { gap: .35rem; margin-bottom: .75rem; }
+      .search-row, .filters { gap: .3rem; margin-bottom: .4rem; }
+      .search-row input[type="search"] { width: 11rem; flex-basis: 11rem; }
       .chip { padding: .28rem .55rem; font-size: .75rem; }
-      .groups { gap: .4rem; }
+      .groups { grid-template-columns: 1fr 1fr; gap: .45rem; }
     }
     article { scroll-margin-top: 1rem; }
     article:target { outline: 2px solid var(--sea); }
     .empty { color: var(--mute); padding: 2rem 0; text-align: center; }
     footer { padding: 1.5rem 1.25rem 2.5rem; color: var(--mute); font-size: .8rem; text-align: center; }
     code { background: #efe4d4; padding: .05rem .3rem; border-radius: 4px; font-size: .85em; }
-    .pages-row { display: flex; gap: .6rem 1.2rem; flex-wrap: wrap; align-items: center; margin: 0 0 .85rem; }
-    .pages { display: flex; gap: .4rem; flex-wrap: wrap; margin: 0; }
-    .sort-cluster { display: flex; gap: .4rem; flex-wrap: wrap; align-items: center; }
+    .pages-row { display: flex; flex-direction: column; align-items: flex-start; gap: .45rem; margin: 0 0 .85rem; }
+    .pages { display: flex; gap: .4rem; flex-wrap: wrap; align-items: center; margin: 0; }
+    .sort-cluster {
+      display: flex; gap: .4rem; flex-wrap: wrap; align-items: center;
+      margin-left: calc(3.4rem + .4rem);
+    }
+    .sort-cluster[hidden] { display: none; }
     .sort-label { font-size: .72rem; letter-spacing: .06em; text-transform: uppercase; color: var(--mute); }
     .page-btn {
       font: inherit; font-weight: 600; cursor: pointer;
@@ -171,6 +184,15 @@
     table.sheet { width: 100%; border-collapse: collapse; font-size: .85rem; }
     table.sheet th, table.sheet td { text-align: left; padding: .45rem .55rem; border-bottom: 1px solid var(--line); vertical-align: top; }
     table.sheet th { position: sticky; top: 0; background: #efe4d4; font-size: .72rem; letter-spacing: .06em; text-transform: uppercase; }
+    table.sheet td:nth-child(2),
+    table.sheet td:nth-child(3),
+    table.sheet td:nth-child(4) { white-space: nowrap; }
+    table.sheet td:nth-child(4),
+    table.sheet td.sheet-items { font-variant-numeric: tabular-nums; }
+    table.sheet td.sheet-date { white-space: nowrap; }
+    table.sheet td.sheet-date[data-tip] { cursor: default; }
+    table.sheet td.sheet-items { text-align: right; width: 4.2rem; white-space: nowrap; }
+    table.sheet td.sheet-items[data-tip] { cursor: default; text-decoration: underline; text-decoration-style: dotted; text-underline-offset: 3px; }
     .th-sort {
       font: inherit; letter-spacing: inherit; text-transform: inherit; color: var(--ink);
       background: none; border: none; padding: 0; cursor: pointer; display: inline-flex; align-items: center; gap: .25rem;
@@ -181,10 +203,27 @@
     tr.row-highlight td { background: #e8f3f4; transition: background 1.4s ease; }
     table.sheet tr:hover td { background: #faf6ef; }
     table.sheet a { color: var(--sea); font-weight: 600; text-decoration: none; }
+    table.sheet a[data-tip] { text-decoration: underline; text-decoration-style: dotted; text-underline-offset: 3px; }
+    #hoverTip {
+      position: fixed; z-index: 40; max-width: 24rem; pointer-events: none;
+      background: #1c1914; color: #fffaf3; font-size: 18px; line-height: 1.4;
+      font-family: "IBM Plex Sans", system-ui, sans-serif;
+      padding: .7rem .85rem; border-radius: 10px;
+      box-shadow: 0 8px 24px rgba(28, 25, 20, .28);
+      white-space: pre-line; display: none;
+    }
     #map { height: 420px; border-radius: 12px; border: 1px solid var(--line); background: #d7e4e6; }
-    .shop-pin { width: 30px; height: 40px; cursor: pointer; }
-    .shop-pin .pin-fill { fill: var(--sea); }
-    .shop-pin text { fill: #fff; font-size: 13px; font-weight: 700; }
+    .shop-pin {
+      width: 28px; height: 28px; cursor: pointer;
+      filter: drop-shadow(0 0 1px rgba(255, 250, 243, .9));
+    }
+    .shop-pin .pin-fill { fill: none; stroke: #e8c547; }
+    .shop-pin text {
+      fill: #1a3d8f; font-size: 11px; font-weight: 700;
+      font-family: "IBM Plex Sans", system-ui, sans-serif;
+      stroke: #fffaf3; stroke-width: 3px; paint-order: stroke fill;
+    }
+    .shop-pin:hover { transform: scale(1.12); }
     .popup-links { margin-top: .35rem; padding-top: .35rem; border-top: 1px dashed var(--line); }
     .popup-links a { font-size: .8rem; }
     .maplibregl-popup-content {
@@ -223,18 +262,26 @@
       <div class="groups" id="groups"></div>
     </section>
     <div class="active-row" id="activeRow" hidden></div>
-    <div class="filters">
-      <input type="search" id="q" placeholder="Search shop or drink…" />
+    <div class="search-row">
+      <span class="row-label">Search</span>
+      <input type="search" id="q" placeholder="Shop or drink" aria-label="Search shop or drink" />
+    </div>
+    <div class="filters" aria-label="Filter">
+      <span class="row-label">Filter</span>
       <button type="button" class="chip on" data-hood="all">All</button>
       <button type="button" class="chip" data-hood="food">Food</button>
       <button type="button" class="chip" data-hood="drinks">Drinks only</button>
-      <button type="button" class="chip" data-hood="Leucadia">Leucadia</button>
-      <button type="button" class="chip" data-hood="Downtown">Downtown</button>
-      <button type="button" class="chip" data-hood="Cardiff">Cardiff</button>
+      <span class="chip-gap" aria-hidden="true"></span>
+      <span class="chip-set">
+        <button type="button" class="chip" data-hood="Leucadia">Leucadia</button>
+        <button type="button" class="chip" data-hood="Downtown">Downtown</button>
+        <button type="button" class="chip" data-hood="Cardiff">Cardiff</button>
+      </span>
     </div>
     <div class="pages-row">
-      <div class="pages" role="tablist">
-        <button type="button" class="page-btn on" data-page="search">Search</button>
+      <div class="pages" role="tablist" aria-label="View">
+        <span class="view-label">View</span>
+        <button type="button" class="page-btn on" data-page="search">List</button>
         <button type="button" class="page-btn" data-page="sheet">Spreadsheet</button>
         <button type="button" class="page-btn" data-page="map">Map</button>
       </div>
@@ -257,13 +304,12 @@
               <th>#</th>
               <th><button type="button" class="th-sort" data-sort-col="az">Shop</button></th>
               <th><button type="button" class="th-sort" data-sort-col="region">Place</button></th>
-              <th>Address</th>
               <th title="Approximate, from a demo anchor point — same caveat as the map pins">
-                <button type="button" class="th-sort" data-sort-col="distance">Distance</button>
+                <button type="button" class="th-sort" data-sort-col="distance">Mi</button>
               </th>
               <th><button type="button" class="th-sort" data-sort-col="hooks">Hooks</button></th>
-              <th><button type="button" class="th-sort" data-sort-col="updated">Updated</button></th>
               <th><button type="button" class="th-sort" data-sort-col="items">Items</button></th>
+              <th><button type="button" class="th-sort" data-sort-col="updated">Updated</button></th>
             </tr>
           </thead>
           <tbody id="sheetBody"></tbody>
@@ -279,6 +325,7 @@
     MenuMatch Encinitas guide · reads <code>GET /restaurants</code> and <code>GET /restaurants/{id}/menus</code>
     (falls back to <code>/menus?restaurant_id=</code>). Serve this file next to the FastAPI app or open it locally with CORS enabled.
   </footer>
+  <div id="hoverTip" role="tooltip"></div>
 
   <script src="https://unpkg.com/maplibre-gl@4/dist/maplibre-gl.js"></script>
   <script>
@@ -407,6 +454,7 @@
     }
     let maplibreMap = null;
     let mapMarkers = [];
+    let lastFilteredShops = [];
 
     const $ = (id) => document.getElementById(id);
 
@@ -470,6 +518,16 @@
       const d = new Date(iso);
       if (isNaN(d.getTime())) return String(iso);
       return d.toLocaleString(undefined, { dateStyle: "medium", timeStyle: "short" });
+    }
+
+    function formatSheetDate(iso) {
+      if (!iso) return { short: "", full: "" };
+      const d = new Date(iso);
+      if (isNaN(d.getTime())) return { short: String(iso), full: String(iso) };
+      const mm = String(d.getMonth() + 1).padStart(2, "0");
+      const dd = String(d.getDate()).padStart(2, "0");
+      const yy = String(d.getFullYear()).slice(-2);
+      return { short: mm + "/" + dd + "/" + yy, full: formatWhen(iso) };
     }
 
     function normalizeItem(item) {
@@ -678,16 +736,11 @@
       for (const groupName of order) {
         const entries = Object.entries(buckets[groupName] || {});
         if (!entries.length) continue;
-        const selectedHere = selectedTraits(groupName).length > 0;
-        const explicitlyOpen = state.openGroups[groupName] === true;
-        const open = selectedHere || explicitlyOpen;
         const div = document.createElement("div");
-        div.className = "group" + (open ? "" : " shut");
+        div.className = "group";
         div.dataset.group = groupName;
         div.innerHTML =
-          "<button type=\"button\" class=\"group-toggle\" data-group=\"" + escapeHtml(groupName) + "\">" +
-          "<strong>" + escapeHtml(groupName) + "</strong>" +
-          "<span>" + entries.length + (open ? "" : " · show") + "</span></button><ul>" +
+          "<h3>" + escapeHtml(groupName) + "</h3><ul>" +
           entries.map(([trait]) => {
             const n = countForTrait(groupName, trait);
             const checked = selectedTraits(groupName).indexOf(trait) !== -1 ? " checked" : "";
@@ -701,18 +754,9 @@
       if (!root.children.length) {
         root.innerHTML = "<p class='meta'>No categories yet.</p>";
       }
-      root.querySelectorAll(".group-toggle").forEach((btn) => {
-        btn.addEventListener("click", (ev) => {
-          ev.stopPropagation();
-          const name = btn.dataset.group;
-          state.openGroups[name] = state.openGroups[name] !== true;
-          renderSummary(state.shops);
-        });
-      });
       root.querySelectorAll("input[type=checkbox]").forEach((box) => {
         box.addEventListener("change", () => {
           toggleTrait(box.dataset.group, box.dataset.trait);
-          state.openGroups[box.dataset.group] = true;
           render();
         });
       });
@@ -725,6 +769,7 @@
         if (!matchesHoodAndQuery(s)) return false;
         return shopMatchesCats(s);
       }));
+      lastFilteredShops = filtered;
 
       const grid = $("grid");
       grid.innerHTML = "";
@@ -810,7 +855,17 @@
     }
 
     function shopItemCount(s) {
-      return (s.menus || []).reduce((acc, m) => acc + ((m.items || []).length), 0);
+      return shopItemNames(s).length;
+    }
+    function shopItemNames(s) {
+      const names = [];
+      (s.menus || []).forEach((m) => {
+        (m.items || []).forEach((item) => {
+          const n = (item && item.name) ? String(item.name).trim() : "";
+          if (n) names.push(n);
+        });
+      });
+      return names;
     }
     function shopHookCount(s) {
       return (typeof unusualHooks === "function" ? unusualHooks(s) : []).length;
@@ -824,14 +879,27 @@
       if (!body) return;
       body.innerHTML = shops.map((s, i) => {
         const hooks = (typeof unusualHooks === "function" ? unusualHooks(s) : []).join(", ");
-        const when = formatWhen(s.menu_updated_at || (s.menus[0] && s.menus[0].updated_at));
+        const when = formatSheetDate(s.menu_updated_at || (s.menus[0] && s.menus[0].updated_at));
+        const addr = (s.address || "").trim();
+        const names = shopItemNames(s);
+        const nItems = names.length;
+        const itemTip = names.join("\n");
+        const nameLink = "<a href=\"#shop-" + encodeURIComponent(s.id) + "\" data-jump=\"" +
+          escapeHtml(String(s.id)) + "\"" +
+          (addr ? " data-tip=\"" + escapeHtml(addr) + "\"" : "") +
+          ">" + escapeHtml(s.name) + "</a>";
+        const whenCell = when.short
+          ? "<td class=\"sheet-date\"" + (when.full ? " data-tip=\"" + escapeHtml(when.full) + "\"" : "") + ">" + escapeHtml(when.short) + "</td>"
+          : "<td class=\"sheet-date\"></td>";
+        const itemsCell = "<td class=\"sheet-items\"" +
+          (itemTip ? " data-tip=\"" + escapeHtml(itemTip) + "\"" : "") +
+          ">" + nItems + "</td>";
         return "<tr id=\"sheet-row-" + escapeHtml(String(s.id)) + "\"><td>" + (i + 1) +
-          "</td><td><a href=\"#shop-" + encodeURIComponent(s.id) + "\" data-jump=\"" +
-          escapeHtml(String(s.id)) + "\">" + escapeHtml(s.name) + "</a></td><td>" +
-          escapeHtml(s.neighborhood || "") + "</td><td>" + escapeHtml(s.address || "") +
-          "</td><td>" + shopDistanceMi(s).toFixed(1) + " mi</td><td>" + escapeHtml(hooks) +
-          "</td><td>" + escapeHtml(when) + "</td><td>" + shopItemCount(s) + "</td></tr>";
-      }).join("") || "<tr><td colspan=\"8\">No shops match those filters.</td></tr>";
+          "</td><td>" + nameLink + "</td><td>" +
+          escapeHtml(s.neighborhood || "") + "</td><td>" + shopDistanceMi(s).toFixed(1) +
+          "</td><td>" + escapeHtml(hooks) +
+          "</td>" + itemsCell + whenCell + "</tr>";
+      }).join("") || "<tr><td colspan=\"7\">No shops match those filters.</td></tr>";
       body.querySelectorAll("a[data-jump]").forEach((a) => {
         a.addEventListener("click", (ev) => {
           ev.preventDefault();
@@ -846,13 +914,13 @@
     function renderMap(shops) {
       const note = $("mapNote");
       if (!window.maplibregl) {
-        if (note) note.textContent = "Map library did not load. Check network / OpenFreeMap.";
+        if (note) note.textContent = "Map library did not load. Check network / MapTiler.";
         return;
       }
       if (!maplibreMap) {
         maplibreMap = new maplibregl.Map({
           container: "map",
-          style: "https://tiles.openfreemap.org/styles/positron",
+          style: "https://api.maptiler.com/maps/streets-v2/style.json?key=l6G90OH41Wq9GwBp0VpZ",
           center: [AREA_LATLNG.Downtown[1], AREA_LATLNG.Downtown[0]],
           zoom: 13,
           attributionControl: { compact: true }
@@ -861,40 +929,64 @@
       }
       mapMarkers.forEach((m) => m.remove());
       mapMarkers = [];
-      const bounds = new maplibregl.LngLatBounds();
       shops.forEach((s, i) => {
         const [lat, lng] = shopLatLng(s);
-        bounds.extend([lng, lat]);
         const hooks = (typeof unusualHooks === "function" ? unusualHooks(s) : []).join(" · ");
         const el = document.createElement("div");
         el.className = "shop-pin";
         el.innerHTML =
-          '<svg viewBox="0 0 30 40" xmlns="http://www.w3.org/2000/svg">' +
-          '<path class="pin-fill" stroke="#fff" stroke-width="2" ' +
-          'd="M15 1c-7.7 0-14 6.3-14 14 0 9.7 14 24 14 24s14-14.3 14-24c0-7.7-6.3-14-14-14z"/>' +
-          '<text x="15" y="19" text-anchor="middle">' + (i + 1) + "</text></svg>";
-        const popup = new maplibregl.Popup({ offset: 18, closeButton: false }).setHTML(
+          '<svg viewBox="0 0 28 28" xmlns="http://www.w3.org/2000/svg">' +
+          '<circle class="pin-fill" cx="14" cy="14" r="11.25" stroke-width="2.25"/>' +
+          '<text x="14" y="18" text-anchor="middle">' + (i + 1) + "</text></svg>";
+        const popup = new maplibregl.Popup({ offset: 16, closeButton: false }).setHTML(
           "<strong>" + (i + 1) + ". " + escapeHtml(s.name) + "</strong><br>" +
           escapeHtml(s.address || s.neighborhood || "") +
           (hooks ? "<br>" + escapeHtml(hooks) : "") +
           "<div class='popup-links'><a href='#' data-jump-sheet='" + escapeHtml(String(s.id)) + "'>View in spreadsheet →</a></div>"
         );
-        const marker = new maplibregl.Marker({ element: el, anchor: "bottom" })
+        const marker = new maplibregl.Marker({ element: el, anchor: "center" })
           .setLngLat([lng, lat])
           .setPopup(popup)
           .addTo(maplibreMap);
         mapMarkers.push(marker);
       });
-      if (shops.length) {
-        maplibreMap.fitBounds(bounds, { padding: 40, maxZoom: 15, duration: 0 });
-      } else {
-        maplibreMap.jumpTo({ center: [AREA_LATLNG.Downtown[1], AREA_LATLNG.Downtown[0]], zoom: 13 });
-      }
+      focusMap(shops);
       if (note) {
         note.textContent = shops.length
           ? shops.length + " pin" + (shops.length === 1 ? "" : "s") + " · neighborhood-approximate, not surveyed GPS."
           : "No shops match those filters.";
       }
+    }
+
+    function focusMap(shops) {
+      if (!maplibreMap) return;
+      const list = shops || lastFilteredShops || [];
+      const dur = state.page === "map" ? 700 : 0;
+      const area = AREA_LATLNG[state.hood];
+      if (area && list.length) {
+        const b = new maplibregl.LngLatBounds();
+        list.forEach((s) => {
+          const [lat, lng] = shopLatLng(s);
+          b.extend([lng, lat]);
+        });
+        maplibreMap.fitBounds(b, { padding: 70, maxZoom: 14.2, duration: dur });
+        return;
+      }
+      if (area) {
+        maplibreMap.easeTo({ center: [area[1], area[0]], zoom: 14, duration: dur });
+        return;
+      }
+      if (list.length) {
+        const b = new maplibregl.LngLatBounds();
+        list.forEach((s) => {
+          const [lat, lng] = shopLatLng(s);
+          b.extend([lng, lat]);
+        });
+        maplibreMap.fitBounds(b, { padding: 40, maxZoom: 13.6, duration: dur });
+        return;
+      }
+      const downtown = AREA_LATLNG.Downtown;
+      maplibreMap.easeTo({ center: [downtown[1], downtown[0]], zoom: 12.6, duration: dur });
     }
 
     function showPage(name) {
@@ -905,8 +997,13 @@
       document.querySelectorAll(".page").forEach((p) => {
         p.classList.toggle("on", p.id === "page-" + name);
       });
+      const sort = document.querySelector(".sort-cluster");
+      if (sort) sort.hidden = name !== "search";
       if (name === "map" && maplibreMap) {
-        setTimeout(() => maplibreMap.resize(), 80);
+        setTimeout(() => {
+          maplibreMap.resize();
+          focusMap(lastFilteredShops);
+        }, 80);
       }
     }
 
@@ -1052,6 +1149,40 @@
         render();
       });
     });
+    function placeHoverTip(ev) {
+      const tip = $("hoverTip");
+      if (!tip || tip.style.display === "none") return;
+      const pad = 12;
+      const w = tip.offsetWidth;
+      const h = tip.offsetHeight;
+      let x = ev.clientX - w - 16;
+      let y = ev.clientY - h - 14;
+      if (x < pad) x = ev.clientX + 18;
+      if (y < pad) y = ev.clientY + 20;
+      if (x + w + pad > window.innerWidth) x = window.innerWidth - w - pad;
+      if (y + h + pad > window.innerHeight) y = window.innerHeight - h - pad;
+      tip.style.left = Math.max(8, x) + "px";
+      tip.style.top = Math.max(8, y) + "px";
+    }
+
+    document.addEventListener("pointerover", (ev) => {
+      const el = ev.target.closest("[data-tip]");
+      if (!el) return;
+      const tip = $("hoverTip");
+      if (!tip) return;
+      tip.textContent = el.getAttribute("data-tip") || "";
+      tip.style.display = "block";
+      placeHoverTip(ev);
+    });
+    document.addEventListener("pointermove", placeHoverTip);
+    document.addEventListener("pointerout", (ev) => {
+      const el = ev.target.closest("[data-tip]");
+      if (!el) return;
+      if (el.contains(ev.relatedTarget)) return;
+      const tip = $("hoverTip");
+      if (tip) tip.style.display = "none";
+    });
+
     document.addEventListener("click", (ev) => {
       const link = ev.target.closest("[data-jump-sheet]");
       if (!link) return;
