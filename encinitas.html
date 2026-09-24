@@ -248,10 +248,11 @@
     table.sheet { width: 100%; border-collapse: collapse; font-size: .85rem; }
     table.sheet th, table.sheet td { text-align: left; padding: .45rem .55rem; border-bottom: 1px solid var(--line); vertical-align: top; }
     table.sheet th { position: sticky; top: 0; background: #efe4d4; font-size: .72rem; letter-spacing: .06em; text-transform: uppercase; }
-    table.sheet td:nth-child(2),
-    table.sheet td:nth-child(3),
-    table.sheet td:nth-child(4) { white-space: nowrap; }
-    table.sheet td:nth-child(4),
+    table.sheet td.sheet-shop { font-size: .72rem; max-width: 8.5rem; }
+    table.sheet td.sheet-mi,
+    table.sheet td.sheet-place,
+    table.sheet td.sheet-date { white-space: nowrap; }
+    table.sheet td.sheet-mi,
     table.sheet td.sheet-items { font-variant-numeric: tabular-nums; }
     table.sheet td.sheet-date { white-space: nowrap; }
     table.sheet td.sheet-date[data-tip] { cursor: default; }
@@ -358,12 +359,12 @@
             <tr>
               <th>#</th>
               <th><button type="button" class="th-sort" data-sort-col="az">Shop</button></th>
-              <th><button type="button" class="th-sort" data-sort-col="region">Place</button></th>
               <th title="Approximate, from a demo anchor point — same caveat as the map pins">
                 <button type="button" class="th-sort" data-sort-col="distance">Mi</button>
               </th>
               <th><button type="button" class="th-sort" data-sort-col="hooks">Hooks</button></th>
               <th><button type="button" class="th-sort" data-sort-col="items">Items</button></th>
+              <th><button type="button" class="th-sort" data-sort-col="region">Place</button></th>
               <th><button type="button" class="th-sort" data-sort-col="updated">Updated</button></th>
             </tr>
           </thead>
@@ -1011,10 +1012,12 @@
           (itemTip ? " data-tip=\"" + escapeHtml(itemTip) + "\"" : "") +
           ">" + nItems + "</td>";
         return "<tr id=\"sheet-row-" + escapeHtml(String(s.id)) + "\"><td>" + (i + 1) +
-          "</td><td>" + nameLink + "</td><td>" +
-          escapeHtml(s.neighborhood || "") + "</td><td>" + shopDistanceMi(s).toFixed(1) +
+          "</td><td class=\"sheet-shop\">" + nameLink +
+          "</td><td class=\"sheet-mi\">" + shopDistanceMi(s).toFixed(1) +
           "</td><td>" + escapeHtml(hooks) +
-          "</td>" + itemsCell + whenCell + "</tr>";
+          "</td>" + itemsCell +
+          "<td class=\"sheet-place\">" + escapeHtml(s.neighborhood || "") + "</td>" +
+          whenCell + "</tr>";
       }).join("") || "<tr><td colspan=\"7\">No shops match those filters.</td></tr>";
       body.querySelectorAll("a[data-jump]").forEach((a) => {
         a.addEventListener("click", (ev) => {
