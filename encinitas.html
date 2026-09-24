@@ -247,6 +247,10 @@
         </label>
         <button type="button" id="reload">Load from API</button>
         <button type="button" class="ghost" id="demo">Use sample data</button>
+        <label>
+          MapTiler key
+          <input id="mapKey" value="" spellcheck="false" autocomplete="off" placeholder="optional — public map if empty" />
+        </label>
       </div>
       <div class="status" id="status">Waiting to load…</div>
       <div class="status" id="buildInfo" style="opacity:.65; font-size:.85em;"></div>
@@ -455,6 +459,34 @@
     let maplibreMap = null;
     let mapMarkers = [];
     let lastFilteredShops = [];
+    const MAP_KEY_STORE = "menumatch.maptilerKey";
+    const PUBLIC_MAP_STYLE = "https://tiles.openfreemap.org/styles/bright";
+
+    function mapTilerKey() {
+      const q = new URLSearchParams(location.search).get("maptiler");
+      const typed = $("mapKey") ? $("mapKey").value : "";
+      return String(q || typed || localStorage.getItem(MAP_KEY_STORE) || "").trim();
+    }
+    function mapStyleUrl() {
+      const key = mapTilerKey();
+      if (key) return "https://api.maptiler.com/maps/streets-v2/style.json?key=" + encodeURIComponent(key);
+      return PUBLIC_MAP_STYLE;
+    }
+    function rememberMapKey() {
+      const el = $("mapKey");
+      if (!el) return;
+      const v = el.value.trim();
+      if (v) localStorage.setItem(MAP_KEY_STORE, v);
+      else localStorage.removeItem(MAP_KEY_STORE);
+    }
+    function applyMapStyle() {
+      if (!maplibreMap) return;
+      const url = mapStyleUrl();
+      if (maplibreMap._mmStyle === url) return;
+      maplibreMap._mmStyle = url;
+      maplibreMap.setStyle(url);
+      maplibreMap.once("style.load", () => renderMap(lastFilteredShops));
+    }
 
     const $ = (id) => document.getElementById(id);
 
@@ -914,18 +946,23 @@
     function renderMap(shops) {
       const note = $("mapNote");
       if (!window.maplibregl) {
-        if (note) note.textContent = "Map library did not load. Check network / MapTiler.";
+        if (note) note.textContent = "Map library did not load. Check network / map tiles.";
         return;
       }
+      const styleUrl = mapStyleUrl();
       if (!maplibreMap) {
         maplibreMap = new maplibregl.Map({
           container: "map",
-          style: "https://api.maptiler.com/maps/streets-v2/style.json?key=l6G90OH41Wq9GwBp0VpZ",
+          style: styleUrl,
           center: [AREA_LATLNG.Downtown[1], AREA_LATLNG.Downtown[0]],
           zoom: 13,
           attributionControl: { compact: true }
         });
+        maplibreMap._mmStyle = styleUrl;
         maplibreMap.addControl(new maplibregl.NavigationControl({ showCompass: false }), "top-left");
+      } else if (maplibreMap._mmStyle !== styleUrl) {
+        applyMapStyle();
+        return;
       }
       mapMarkers.forEach((m) => m.remove());
       mapMarkers = [];
@@ -1135,6 +1172,16 @@
     });
     $("reload").addEventListener("click", loadFromApi);
     $("demo").addEventListener("click", loadDemo);
+    (function initMapKey() {
+      const el = $("mapKey");
+      if (!el) return;
+      const q = new URLSearchParams(location.search).get("maptiler");
+      el.value = q || localStorage.getItem(MAP_KEY_STORE) || "";
+      el.addEventListener("change", () => {
+        rememberMapKey();
+        applyMapStyle();
+      });
+    })();
     document.querySelectorAll(".page-btn[data-page]").forEach((btn) => {
       btn.addEventListener("click", () => showPage(btn.dataset.page));
     });
