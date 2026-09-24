@@ -25,7 +25,7 @@
     header {
       background: linear-gradient(160deg, #163a3e 0%, #1e5a62 55%, #c9783a 140%);
       color: #fffaf3;
-      padding: 2.2rem 1.25rem 2.4rem;
+      padding: 1.45rem 1.25rem 1.55rem;
     }
     .wrap { max-width: 1080px; margin: 0 auto; }
     header h1 {
@@ -35,26 +35,28 @@
       letter-spacing: -0.02em;
     }
     header p { margin: 0; opacity: .88; max-width: 42rem; line-height: 1.5; }
-    .toolbar {
-      display: flex; flex-wrap: wrap; gap: .6rem; align-items: center;
-      margin-top: 1.25rem;
+    .dev-tools {
+      margin-top: .85rem; font-size: .78rem; color: var(--mute); text-align: left;
     }
-    .toolbar label { font-size: .78rem; opacity: .85; }
+    .dev-tools summary { cursor: pointer; list-style: none; opacity: .7; }
+    .dev-tools summary::-webkit-details-marker { display: none; }
+    .toolbar {
+      display: flex; flex-wrap: wrap; gap: .5rem; align-items: center;
+      margin-top: .55rem;
+    }
+    .toolbar label { font-size: .78rem; color: var(--mute); }
     .toolbar input, .toolbar select, .toolbar button {
-      font: inherit; border-radius: 8px; border: 0;
+      font: inherit; border-radius: 8px; border: 1px solid var(--line);
     }
     .toolbar input {
-      padding: .45rem .65rem; min-width: 16rem; background: #fffaf3; color: #1c1914;
+      padding: .35rem .55rem; min-width: 12rem; background: var(--foam); color: var(--ink);
     }
     .toolbar button {
-      padding: .45rem .85rem; background: #fffaf3; color: #163a3e; font-weight: 600; cursor: pointer;
+      padding: .35rem .7rem; background: var(--foam); color: var(--ink); font-weight: 600; cursor: pointer;
     }
-    .toolbar button.ghost { background: transparent; color: #fffaf3; border: 1px solid rgba(255,250,243,.35); }
-    .status {
-      font-size: .8rem; margin-top: .85rem; opacity: .9;
-    }
-    .status.ok { color: #c6f0d6; }
-    .status.err { color: #ffd2b8; }
+    .toolbar button.ghost { background: transparent; }
+    .status { font-size: .8rem; margin-top: .45rem; color: var(--mute); }
+    .status.err { color: var(--warn); }
     main { padding: 1.25rem; }
     .search-row, .filters {
       display: flex; gap: .4rem; flex-wrap: wrap; align-items: center; margin-bottom: .5rem;
@@ -77,14 +79,21 @@
     .chip.on { background: var(--sea); color: #fff; border-color: var(--sea); }
     .grid {
       display: grid; gap: 1rem;
-      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      grid-template-columns: repeat(2, minmax(0, 1fr));
     }
     article {
       background: #fffaf3; border: 1px solid var(--line); border-radius: 16px;
       padding: 1rem 1.05rem 1.1rem; display: flex; flex-direction: column; gap: .45rem;
     }
-    .grid article:nth-child(even) { background: #f2ebe0; }
-    .grid article:nth-child(odd) { background: #faf6ef; }
+    .grid article:nth-child(4n + 1),
+    .grid article:nth-child(4n + 4) { background: #faf6ef; }
+    .grid article:nth-child(4n + 2),
+    .grid article:nth-child(4n + 3) { background: #f2ebe0; }
+    @media (max-width: 640px) {
+      .grid { grid-template-columns: 1fr; }
+      .grid article:nth-child(odd) { background: #faf6ef; }
+      .grid article:nth-child(even) { background: #f2ebe0; }
+    }
     article h2 {
       font-family: Fraunces, Georgia, serif; font-size: 1.2rem; margin: 0;
     }
@@ -241,21 +250,7 @@
     <div class="wrap">
       <div class="badge">MenuMatch · North County</div>
       <h1>Encinitas coffee guide</h1>
-      <p>Live list from the MenuMatch API — shops, current menus, and versions stored in Supabase. Static page only; no Next.js.</p>
-      <div class="toolbar">
-        <label>
-          API base
-          <input id="apiBase" value="" spellcheck="false" placeholder="http://localhost:8000" />
-        </label>
-        <button type="button" id="reload">Load from API</button>
-        <button type="button" class="ghost" id="demo">Use sample data</button>
-        <label>
-          MapTiler key
-          <input id="mapKey" value="" spellcheck="false" autocomplete="off" placeholder="optional — public map if empty" />
-        </label>
-      </div>
-      <div class="status" id="status">Waiting to load…</div>
-      <div class="status" id="buildInfo" style="opacity:.65; font-size:.85em;"></div>
+      <p>Coffee shops in Encinitas, Leucadia, and Cardiff — menus, a list, a spreadsheet, and a map.</p>
     </div>
   </header>
   <main class="wrap">
@@ -328,8 +323,24 @@
     </section>
   </main>
   <footer>
-    MenuMatch Encinitas guide · reads <code>GET /restaurants</code> and <code>GET /restaurants/{id}/menus</code>
-    (falls back to <code>/menus?restaurant_id=</code>). Serve this file next to the FastAPI app or open it locally with CORS enabled.
+    MenuMatch · Encinitas
+    <details class="dev-tools">
+      <summary>Developer</summary>
+      <div class="toolbar">
+        <label>
+          API base
+          <input id="apiBase" value="" spellcheck="false" placeholder="http://localhost:8000" />
+        </label>
+        <button type="button" id="reload">Reload API</button>
+        <button type="button" class="ghost" id="demo">Sample data</button>
+        <label>
+          MapTiler key
+          <input id="mapKey" value="" spellcheck="false" autocomplete="off" placeholder="optional" />
+        </label>
+      </div>
+      <div class="status" id="status" hidden></div>
+      <div class="status" id="buildInfo"></div>
+    </details>
   </footer>
   <div id="hoverTip" role="tooltip"></div>
 
@@ -1056,8 +1067,10 @@
 
     function setStatus(msg, kind) {
       const el = $("status");
-      el.textContent = msg;
+      if (!el) return;
+      el.textContent = msg || "";
       el.className = "status" + (kind ? " " + kind : "");
+      el.hidden = kind !== "err";
     }
 
     async function fetchJson(url) {

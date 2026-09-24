@@ -24,7 +24,10 @@ app.include_router(router)
 
 @app.get("/encinitas.html")
 def encinitas_guide():
-    return FileResponse(Path(__file__).parent / "encinitas.html")
+    return FileResponse(
+        Path(__file__).parent / "encinitas.html",
+        headers={"Cache-Control": "no-store, max-age=0"},
+    )
 
 
 @app.get("/")
