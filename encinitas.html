@@ -79,7 +79,7 @@
     }
     .chip.on, .page-btn.on { background: var(--sea); color: #fff; border-color: var(--sea); }
     .grid {
-      display: grid; gap: 1rem;
+      display: grid; gap: .7rem; padding: .32rem .65rem .65rem;
       grid-template-columns: repeat(2, minmax(0, 1fr));
     }
     article {
@@ -96,12 +96,22 @@
       .grid article:nth-child(even) { background: #f2ebe0; }
     }
     article h2 {
-      font-family: Fraunces, Georgia, serif; font-size: 1.2rem; margin: 0;
+      font-family: Fraunces, Georgia, serif; font-size: .76rem; margin: 0;
     }
     .meta { color: var(--mute); font-size: .82rem; }
+    article .meta { font-size: .64rem; }
     .badge {
       display: inline-block; font-size: .7rem; letter-spacing: .04em; text-transform: uppercase;
       background: #efe4d4; color: var(--roast); padding: .15rem .45rem; border-radius: 6px; font-weight: 600;
+    }
+    .card-head { display: flex; align-items: baseline; gap: .4rem; }
+    .card-head h2 { flex: none; white-space: nowrap; }
+    .card-head .card-tags { flex: 1; min-width: 0; }
+    .card-head .badge { display: block; min-width: 0; white-space: normal; }
+    .card-tags { display: flex; flex-direction: column; gap: .16rem; }
+    article .badge {
+      font-size: .58rem; letter-spacing: .05em; padding: .05rem .38rem; border-radius: 5px;
+      text-transform: none; background: none;
     }
     .menus {
       display: grid; grid-template-columns: 1fr 1fr; gap: .4rem; margin-top: .1rem;
@@ -188,19 +198,22 @@
       .summary { padding: .7rem .75rem; border-radius: 12px; margin-bottom: .75rem; }
       .search-row, .filters { gap: .25rem; margin-bottom: .35rem; }
       .search-row input[type="search"] { width: 9.5rem; flex-basis: 9.5rem; font-size: .75rem; padding: .22rem .4rem; }
-      .row-label, .filter-label, .view-label, .sort-label { min-width: 2.6rem; font-size: .62rem; }
+      .row-label, .filter-label, .view-label { min-width: 2.6rem; font-size: .62rem; }
       .chip, .page-btn { padding: .16rem .4rem; font-size: .68rem; }
       .chip-set { gap: .25rem; }
-      .pages-row { gap: .3rem; margin-bottom: .55rem; }
-      .pages, .sort-cluster { gap: .25rem; flex-wrap: nowrap; }
-      .sort-cluster { margin-left: calc(2.6rem + .25rem); }
-      .lbl-full { display: none; }
-      .lbl-short { display: inline; }
+      .pages-row { margin-bottom: .45rem; }
+      .pages { flex-wrap: nowrap; }
+      .list-block { border-radius: 12px; }
+      .list-toolbar { padding: .12rem .45rem; }
+      .sort-btn { padding: .06rem .28rem; font-size: .56rem; }
+      .grid { gap: .5rem; padding: .22rem .45rem .45rem; }
       .summary-bar button { padding: .15rem .4rem; font-size: .7rem; }
       .groups { grid-template-columns: 1fr 1fr; gap: .45rem; }
       article { padding: .7rem .75rem .75rem; gap: .28rem; border-radius: 12px; }
-      article h2 { font-size: 1.05rem; }
-      article .meta { font-size: .75rem; }
+      article h2 { font-size: .7rem; }
+      article .meta { font-size: .58rem; }
+      article .badge { font-size: .52rem; padding: .04rem .3rem; background: none; }
+      .card-tags { gap: .12rem; }
       article .to-top { display: none; }
       .item { font-size: .75rem; }
       .menus { gap: .3rem; }
@@ -211,15 +224,24 @@
     .empty { color: var(--mute); padding: 2rem 0; text-align: center; }
     footer { padding: 1.5rem 1.25rem 2.5rem; color: var(--mute); font-size: .8rem; text-align: center; }
     code { background: #efe4d4; padding: .05rem .3rem; border-radius: 4px; font-size: .85em; }
-    .pages-row { display: flex; flex-direction: column; align-items: flex-start; gap: .45rem; margin: 0 0 .85rem; }
+    .pages-row { margin: 0 0 .7rem; }
     .pages { display: flex; gap: .4rem; flex-wrap: wrap; align-items: center; margin: 0; }
-    .sort-cluster {
-      display: flex; gap: .4rem; flex-wrap: wrap; align-items: center;
-      margin-left: calc(3.4rem + .4rem);
+    .list-block {
+      border: 1px solid #eadfcf; border-radius: 16px; overflow: hidden;
+      background: var(--sand);
     }
-    .sort-cluster[hidden] { display: none; }
-    .sort-label { font-size: .72rem; letter-spacing: .06em; text-transform: uppercase; color: var(--mute); }
-    .lbl-short { display: none; }
+    .list-toolbar {
+      display: flex; gap: .28rem; flex-wrap: wrap; align-items: center;
+      margin: 0; padding: .14rem .55rem;
+      background: #f8f4ed; border-bottom: 1px solid #eadfcf;
+    }
+    .sort-btn {
+      font: inherit; font-weight: 600; cursor: pointer;
+      border: 1px solid transparent; background: transparent; color: var(--mute);
+      border-radius: 999px; padding: .08rem .38rem; font-size: .62rem; line-height: 1.2;
+    }
+    .sort-btn:hover { border-color: var(--line); background: var(--foam); }
+    .sort-btn.on { background: var(--sea); color: #fff; border-color: var(--sea); }
     .page { display: none; }
     .page.on { display: block; }
     .sheet-wrap { overflow: auto; border: 1px solid var(--line); border-radius: 12px; background: var(--foam); }
@@ -314,18 +336,19 @@
       <div class="pages" role="tablist" aria-label="View">
         <span class="view-label">View</span>
         <button type="button" class="page-btn on" data-page="search">List</button>
-        <button type="button" class="page-btn" data-page="sheet"><span class="lbl-full">Spreadsheet</span><span class="lbl-short">Sheet</span></button>
+        <button type="button" class="page-btn" data-page="sheet">Spreadsheet</button>
         <button type="button" class="page-btn" data-page="map">Map</button>
-      </div>
-      <div class="sort-cluster" aria-label="Sort results">
-        <span class="sort-label">Sort</span>
-        <button type="button" class="page-btn" data-sort="distance">Distance</button>
-        <button type="button" class="page-btn" data-sort="az">Name</button>
-        <button type="button" class="page-btn on" data-sort="region"><span class="lbl-full">Neighborhood</span><span class="lbl-short">Place</span></button>
       </div>
     </div>
     <section class="page on" id="page-search">
-      <div class="grid" id="grid"></div>
+      <div class="list-block">
+        <div class="list-toolbar" aria-label="Sort results">
+          <button type="button" class="sort-btn on" data-sort="distance">Distance</button>
+          <button type="button" class="sort-btn" data-sort="az">Name</button>
+          <button type="button" class="sort-btn" data-sort="region">Neighborhood</button>
+        </div>
+        <div class="grid" id="grid"></div>
+      </div>
       <p class="empty" id="empty" hidden>No shops match that filter.</p>
     </section>
     <section class="page" id="page-sheet">
@@ -461,7 +484,7 @@
       }
     ];
 
-    const state = { shops: [], hood: "all", q: "", source: "idle", cats: {}, openGroups: {}, page: "search", sort: "region", sortDir: 1 };
+    const state = { shops: [], hood: "all", q: "", source: "idle", cats: {}, openGroups: {}, page: "search", sort: "distance", sortDir: 1 };
     const AREA_LATLNG = {
       Leucadia: [33.0668, -117.2945],
       Downtown: [33.0370, -117.2920],
@@ -495,7 +518,7 @@
         items: (a, b) => shopItemCount(a) - shopItemCount(b),
         hooks: (a, b) => shopHookCount(a) - shopHookCount(b)
       };
-      const cmp = comparators[state.sort] || comparators.region;
+      const cmp = comparators[state.sort] || comparators.distance;
       const sorted = list.slice();
       sorted.sort((a, b) => dir * cmp(a, b));
       return sorted;
@@ -636,10 +659,11 @@
 
     function foodCategory(name) {
       const n = (name || "").toLowerCase();
-      if (/toast|bagel|burrito|sandwich/.test(n)) return "Savory";
-      if (/pastry|croissant|muffin|scone|bread|bun|cookie|cake|tart|donut/.test(n)) return "Pastry";
-      if (/bowl|granola|salad/.test(n)) return "Bowls";
-      return "Food";
+      if (/smoothie|juice|lemonade/.test(n)) return null;
+      if (/toast|bagel|burrito|sandwich|quesadilla|scramble|soup|quiche|egg|breakfast/.test(n)) return "Savory";
+      if (/pastry|pastries|croissant|muffin|scone|bread|bun|cookie|cake|tart|donut/.test(n)) return "Pastry";
+      if (/bowl|granola|salad|parfait|yogurt/.test(n)) return "Bowls";
+      return "Other";
     }
 
     function shopHasFood(s) {
@@ -650,12 +674,6 @@
       const chars = Object.assign({}, s.characterization);
       (s.menus || []).forEach((m) => Object.assign(chars, m.characterization || {}));
       return chars;
-    }
-
-    function shopHasRealFood(s) {
-      return (s.menus || []).some((m) =>
-        (m.items || []).some((i) => isFoodItem(i) && /bowl|burrito|sandwich|toast|scramble|quesadilla|bagel/.test((i.name || "").toLowerCase()))
-      );
     }
 
     function shopTags(s) {
@@ -675,13 +693,11 @@
       if (/hidden|studio/.test(setting)) place.push("Hidden / studio");
       if (/walk-up|walk up/.test(setting + " " + style)) mode.push("Walk-up");
       if (/cyclist/.test(style)) mode.push("Cyclist cafe");
-      if (shopHasFood(s)) food.push("Serves food");
-      if (shopHasRealFood(s)) food.push("Real food");
       (s.menus || []).forEach((m) => {
         (m.items || []).forEach((i) => {
           if (isFoodItem(i)) {
             const cat = foodCategory(i.name);
-            if (food.indexOf(cat) === -1) food.push(cat);
+            if (cat && food.indexOf(cat) === -1) food.push(cat);
           }
         });
       });
@@ -812,6 +828,14 @@
       for (const groupName of order) {
         const entries = Object.entries(buckets[groupName] || {});
         if (!entries.length) continue;
+        if (groupName === "Food") {
+          const orderFood = ["Savory", "Bowls", "Pastry", "Other"];
+          entries.sort((a, b) => {
+            const ia = orderFood.indexOf(a[0]);
+            const ib = orderFood.indexOf(b[0]);
+            return (ia < 0 ? 99 : ia) - (ib < 0 ? 99 : ib);
+          });
+        }
         const div = document.createElement("div");
         div.className = "group";
         div.dataset.group = groupName;
@@ -860,9 +884,6 @@
       for (const s of filtered) {
         const el = document.createElement("article");
         el.id = "shop-" + s.id;
-        const hood = s.neighborhood
-          ? `<span class="badge">${escapeHtml(s.neighborhood)}</span>`
-          : "";
         const items = uniqueMenuItems(s);
         const drinks = items.filter((i) => !isFoodItem(i));
         const foods = items.filter(isFoodItem);
@@ -879,13 +900,27 @@
         if (foods.length && state.hood !== "drinks") cols.push(`<div class="menu food"><h3>Food</h3>${foods.map(row).join("")}</div>`);
         const menusHtml = cols.length ? `<div class="menus">${cols.join("")}</div>` : "";
         const shopWhen = formatWhen(s.menu_updated_at || (s.menus[0] && s.menus[0].updated_at));
-        const nameTip = shopWhen ? " data-tip=\"" + escapeHtml("Updated " + shopWhen) + "\"" : "";
+        const tipBits = [];
+        if (s.address) tipBits.push(s.address);
+        tipBits.push(shopDistanceMi(s).toFixed(1) + " mi");
+        if (shopWhen) tipBits.push("Updated " + shopWhen);
+        const nameTip = " data-tip=\"" + escapeHtml(tipBits.join("\n")) + "\"";
 
-        const hookBadges = unusualHooks(s).map((h) => `<span class="badge">${escapeHtml(h)}</span>`).join("");
+        const hooks = unusualHooks(s);
+        const extra = hooks.length ? hooks.join(", ").toLowerCase() : "";
+        let tagHtml = "";
+        if (s.neighborhood && extra) {
+          tagHtml = `<span class="badge"><span class="hood">${escapeHtml(s.neighborhood)}</span> - ${escapeHtml(extra)}</span>`;
+        } else if (s.neighborhood) {
+          tagHtml = `<span class="badge"><span class="hood">${escapeHtml(s.neighborhood)}</span></span>`;
+        } else if (extra) {
+          tagHtml = `<span class="badge">${escapeHtml(extra)}</span>`;
+        }
         el.innerHTML = `
-          ${hood}${hookBadges}
-          <h2${nameTip}>${escapeHtml(s.name)}</h2>
-          <div class="meta">${escapeHtml(s.address || "")}</div>
+          <div class="card-head">
+            <h2${nameTip}>${escapeHtml(s.name)}</h2>
+            <div class="card-tags">${tagHtml}</div>
+          </div>
           ${s.note ? `<div class="meta">${escapeHtml(s.note)}</div>` : ""}
           ${menusHtml || "<div class='menu'><h3>Menu</h3><div class='meta'>No menu loaded</div></div>"}
           <button type="button" class="ghost to-top" data-shop="${escapeHtml(s.id)}">↑ Back to top</button>
@@ -1083,8 +1118,6 @@
       document.querySelectorAll(".page").forEach((p) => {
         p.classList.toggle("on", p.id === "page-" + name);
       });
-      const sort = document.querySelector(".sort-cluster");
-      if (sort) sort.hidden = name !== "search";
       if (name === "map" && maplibreMap) {
         setTimeout(() => {
           maplibreMap.resize();
