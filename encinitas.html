@@ -80,9 +80,11 @@
       grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
     }
     article {
-      background: var(--foam); border: 1px solid var(--line); border-radius: 16px;
+      background: #fffaf3; border: 1px solid var(--line); border-radius: 16px;
       padding: 1rem 1.05rem 1.1rem; display: flex; flex-direction: column; gap: .45rem;
     }
+    .grid article:nth-child(even) { background: #f2ebe0; }
+    .grid article:nth-child(odd) { background: #faf6ef; }
     article h2 {
       font-family: Fraunces, Georgia, serif; font-size: 1.2rem; margin: 0;
     }
