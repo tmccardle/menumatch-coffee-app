@@ -72,11 +72,12 @@
     }
     .chip-gap { width: 1px; height: 1.15rem; background: var(--line); margin: 0 .15rem; flex: none; }
     .chip-set { display: inline-flex; flex-wrap: wrap; gap: .4rem; align-items: center; }
-    .chip {
-      border: 1px solid var(--line); background: var(--foam); border-radius: 999px;
-      padding: .32rem .58rem; font-size: .78rem; cursor: pointer; color: var(--mute);
+    .chip, .page-btn {
+      font: inherit; font-weight: 600; cursor: pointer;
+      border: 1px solid var(--line); background: var(--foam); color: var(--mute);
+      border-radius: 999px; padding: .28rem .55rem; font-size: .78rem; line-height: 1.2;
     }
-    .chip.on { background: var(--sea); color: #fff; border-color: var(--sea); }
+    .chip.on, .page-btn.on { background: var(--sea); color: #fff; border-color: var(--sea); }
     .grid {
       display: grid; gap: 1rem;
       grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -185,9 +186,17 @@
       .toolbar input { min-width: 0; width: 100%; }
       main { padding: 0.85rem 0.9rem; }
       .summary { padding: .7rem .75rem; border-radius: 12px; margin-bottom: .75rem; }
-      .search-row, .filters { gap: .3rem; margin-bottom: .4rem; }
-      .search-row input[type="search"] { width: 11rem; flex-basis: 11rem; }
-      .chip { padding: .28rem .55rem; font-size: .75rem; }
+      .search-row, .filters { gap: .25rem; margin-bottom: .35rem; }
+      .search-row input[type="search"] { width: 9.5rem; flex-basis: 9.5rem; font-size: .75rem; padding: .22rem .4rem; }
+      .row-label, .filter-label, .view-label, .sort-label { min-width: 2.6rem; font-size: .62rem; }
+      .chip, .page-btn { padding: .16rem .4rem; font-size: .68rem; }
+      .chip-set { gap: .25rem; }
+      .pages-row { gap: .3rem; margin-bottom: .55rem; }
+      .pages, .sort-cluster { gap: .25rem; flex-wrap: nowrap; }
+      .sort-cluster { margin-left: calc(2.6rem + .25rem); }
+      .lbl-full { display: none; }
+      .lbl-short { display: inline; }
+      .summary-bar button { padding: .15rem .4rem; font-size: .7rem; }
       .groups { grid-template-columns: 1fr 1fr; gap: .45rem; }
       article { padding: .7rem .75rem .75rem; gap: .28rem; border-radius: 12px; }
       article h2 { font-size: 1.05rem; }
@@ -210,12 +219,7 @@
     }
     .sort-cluster[hidden] { display: none; }
     .sort-label { font-size: .72rem; letter-spacing: .06em; text-transform: uppercase; color: var(--mute); }
-    .page-btn {
-      font: inherit; font-weight: 600; cursor: pointer;
-      border: 1px solid var(--line); background: var(--foam); color: var(--mute);
-      border-radius: 10px; padding: .45rem .8rem;
-    }
-    .page-btn.on { background: var(--sea); color: #fff; border-color: var(--sea); }
+    .lbl-short { display: none; }
     .page { display: none; }
     .page.on { display: block; }
     .sheet-wrap { overflow: auto; border: 1px solid var(--line); border-radius: 12px; background: var(--foam); }
@@ -310,14 +314,14 @@
       <div class="pages" role="tablist" aria-label="View">
         <span class="view-label">View</span>
         <button type="button" class="page-btn on" data-page="search">List</button>
-        <button type="button" class="page-btn" data-page="sheet">Spreadsheet</button>
+        <button type="button" class="page-btn" data-page="sheet"><span class="lbl-full">Spreadsheet</span><span class="lbl-short">Sheet</span></button>
         <button type="button" class="page-btn" data-page="map">Map</button>
       </div>
       <div class="sort-cluster" aria-label="Sort results">
         <span class="sort-label">Sort</span>
         <button type="button" class="page-btn" data-sort="distance">Distance</button>
         <button type="button" class="page-btn" data-sort="az">Name</button>
-        <button type="button" class="page-btn on" data-sort="region">Neighborhood</button>
+        <button type="button" class="page-btn on" data-sort="region"><span class="lbl-full">Neighborhood</span><span class="lbl-short">Place</span></button>
       </div>
     </div>
     <section class="page on" id="page-search">
