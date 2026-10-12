@@ -1,0 +1,1093 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>MenuMatch · Theme & Lighting Studio</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --bg: #0f172a;
+      --surface: #1e293b;
+      --surface-card: #24344d;
+      --surface-border: #334155;
+      --accent: #38bdf8;
+      --accent-hover: #0ea5e9;
+      --text: #f8fafc;
+      --text-muted: #94a3b8;
+      --success: #10b981;
+      --warning: #f59e0b;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: "IBM Plex Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+    header {
+      background: var(--surface);
+      border-bottom: 1px solid var(--surface-border);
+      padding: .85rem 1.4rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: .8rem;
+      position: sticky;
+      top: 0;
+      z-index: 10;
+    }
+    .header-left {
+      display: flex;
+      align-items: center;
+      gap: .9rem;
+    }
+    .header-title {
+      font-size: 1.05rem;
+      font-weight: 700;
+      letter-spacing: -0.01em;
+      margin: 0;
+      display: flex;
+      align-items: center;
+      gap: .6rem;
+    }
+    .studio-badge {
+      font-size: .62rem;
+      text-transform: uppercase;
+      letter-spacing: .08em;
+      background: rgba(56, 189, 248, 0.15);
+      color: var(--accent);
+      border: 1px solid rgba(56, 189, 248, 0.35);
+      padding: .15rem .45rem;
+      border-radius: 999px;
+      font-weight: 700;
+    }
+    .connection-status {
+      display: flex;
+      align-items: center;
+      gap: .45rem;
+      font-size: .78rem;
+      color: var(--text-muted);
+      background: rgba(0, 0, 0, 0.25);
+      padding: .25rem .65rem;
+      border-radius: 999px;
+      border: 1px solid var(--surface-border);
+    }
+    .status-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: #64748b;
+      transition: background 0.2s ease, box-shadow 0.2s ease;
+    }
+    .status-dot.connected {
+      background: var(--success);
+      box-shadow: 0 0 10px var(--success);
+    }
+    .header-actions {
+      display: flex;
+      align-items: center;
+      gap: .5rem;
+    }
+    button.btn {
+      font: inherit;
+      font-size: .78rem;
+      font-weight: 600;
+      cursor: pointer;
+      border-radius: 6px;
+      padding: .38rem .75rem;
+      display: inline-flex;
+      align-items: center;
+      gap: .4rem;
+      border: 1px solid var(--surface-border);
+      background: var(--surface-card);
+      color: var(--text);
+      transition: all 0.15s ease;
+    }
+    button.btn:hover {
+      background: #2d4160;
+      border-color: #475569;
+    }
+    button.btn.primary {
+      background: var(--accent);
+      color: #041727;
+      border-color: var(--accent);
+    }
+    button.btn.primary:hover {
+      background: var(--accent-hover);
+    }
+    main {
+      flex: 1;
+      max-width: 1200px;
+      width: 100%;
+      margin: 0 auto;
+      padding: 1.25rem 1.4rem 2.5rem;
+      display: flex;
+      flex-direction: column;
+      gap: 1.25rem;
+    }
+    .presets-card {
+      background: var(--surface);
+      border: 1px solid var(--surface-border);
+      border-radius: 12px;
+      padding: 1rem 1.2rem;
+    }
+    .section-title {
+      font-size: .78rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: .08em;
+      color: var(--accent);
+      margin: 0 0 .75rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .preset-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
+      gap: .65rem;
+    }
+    .preset-btn {
+      font: inherit;
+      background: var(--surface-card);
+      border: 1px solid var(--surface-border);
+      border-radius: 8px;
+      padding: .65rem .8rem;
+      cursor: pointer;
+      text-align: left;
+      color: var(--text);
+      transition: all 0.15s ease;
+      display: flex;
+      flex-direction: column;
+      gap: .25rem;
+    }
+    .preset-btn:hover {
+      border-color: var(--accent);
+      background: #2a3d5b;
+      transform: translateY(-1px);
+    }
+    .preset-name {
+      font-weight: 700;
+      font-size: .84rem;
+    }
+    .preset-desc {
+      font-size: .72rem;
+      color: var(--text-muted);
+    }
+    .preset-palette {
+      display: flex;
+      gap: 4px;
+      margin-top: .3rem;
+    }
+    .preset-swatch {
+      width: 14px;
+      height: 14px;
+      border-radius: 50%;
+      border: 1px solid rgba(255,255,255,0.2);
+    }
+    .studio-tabs {
+      display: flex;
+      gap: .4rem;
+      border-bottom: 1px solid var(--surface-border);
+      padding-bottom: .4rem;
+    }
+    .tab-btn {
+      font: inherit;
+      font-size: .82rem;
+      font-weight: 600;
+      background: transparent;
+      border: 1px solid transparent;
+      color: var(--text-muted);
+      padding: .45rem .9rem;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: all 0.15s ease;
+    }
+    .tab-btn:hover {
+      color: var(--text);
+      background: rgba(255,255,255,0.05);
+    }
+    .tab-btn.active {
+      color: var(--text);
+      background: var(--surface);
+      border-color: var(--surface-border);
+    }
+    .tab-panel {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+      gap: 1.1rem;
+    }
+    .tab-panel[hidden] {
+      display: none;
+    }
+    .param-group {
+      background: var(--surface);
+      border: 1px solid var(--surface-border);
+      border-radius: 12px;
+      padding: 1.05rem 1.15rem;
+      display: flex;
+      flex-direction: column;
+      gap: .75rem;
+    }
+    .group-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      border-bottom: 1px solid rgba(255,255,255,0.06);
+      padding-bottom: .45rem;
+    }
+    .group-title {
+      font-size: .82rem;
+      font-weight: 700;
+      color: #e2e8f0;
+      margin: 0;
+    }
+    .group-subtitle {
+      font-size: .68rem;
+      color: var(--text-muted);
+    }
+    .ctrl-row {
+      display: flex;
+      align-items: center;
+      gap: .65rem;
+      font-size: .78rem;
+    }
+    .ctrl-label {
+      width: 7.2rem;
+      flex: none;
+      color: #cbd5e1;
+      font-weight: 500;
+    }
+    .ctrl-input-color {
+      width: 2.2rem;
+      height: 1.6rem;
+      padding: 0;
+      border: 1px solid var(--surface-border);
+      border-radius: 6px;
+      background: none;
+      cursor: pointer;
+      flex: none;
+    }
+    .hex-val {
+      font-family: "JetBrains Mono", monospace;
+      font-size: .74rem;
+      background: rgba(0, 0, 0, 0.3);
+      padding: .18rem .45rem;
+      border-radius: 5px;
+      color: var(--text-muted);
+      border: 1px solid rgba(255,255,255,0.06);
+      min-width: 4.4rem;
+      text-align: center;
+    }
+    .ctrl-slider {
+      flex: 1;
+      height: .42rem;
+      -webkit-appearance: none;
+      appearance: none;
+      background: #334155;
+      border-radius: 999px;
+      outline: none;
+      cursor: pointer;
+    }
+    .ctrl-slider::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      width: .95rem;
+      height: .95rem;
+      border-radius: 50%;
+      background: var(--accent);
+      cursor: pointer;
+      border: 2px solid #0f172a;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.4);
+    }
+    .slider-val {
+      font-family: "JetBrains Mono", monospace;
+      font-size: .75rem;
+      width: 2.7rem;
+      text-align: right;
+      color: #e2e8f0;
+      flex: none;
+    }
+    .help-note {
+      font-size: .72rem;
+      color: var(--text-muted);
+      line-height: 1.4;
+      background: rgba(0,0,0,0.22);
+      border-left: 3px solid var(--accent);
+      padding: .45rem .65rem;
+      border-radius: 0 6px 6px 0;
+      margin: .2rem 0 0;
+    }
+    .code-preview-drawer {
+      background: var(--surface);
+      border: 1px solid var(--surface-border);
+      border-radius: 12px;
+      padding: 1rem 1.2rem;
+      margin-top: .5rem;
+    }
+    pre.code-box {
+      font-family: "JetBrains Mono", monospace;
+      font-size: .76rem;
+      background: #090d16;
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 8px;
+      padding: .85rem 1rem;
+      overflow-x: auto;
+      color: #38bdf8;
+      max-height: 12rem;
+      line-height: 1.5;
+      margin: .5rem 0 0;
+    }
+    .toast {
+      position: fixed;
+      bottom: 1.2rem;
+      right: 1.4rem;
+      background: #10b981;
+      color: #042f2e;
+      font-weight: 700;
+      font-size: .8rem;
+      padding: .5rem .9rem;
+      border-radius: 8px;
+      box-shadow: 0 6px 20px rgba(0,0,0,0.3);
+      opacity: 0;
+      transform: translateY(10px);
+      transition: all 0.2s ease;
+      pointer-events: none;
+      z-index: 100;
+    }
+    .toast.show {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <div class="header-left">
+      <h1 class="header-title">
+        MenuMatch Studio
+        <span class="studio-badge">Live Controller</span>
+      </h1>
+      <div class="connection-status" id="connStatus" title="Status of connection to encinitas.html">
+        <span class="status-dot" id="statusDot"></span>
+        <span id="statusText">Checking connection...</span>
+      </div>
+    </div>
+    <div class="header-actions">
+      <button type="button" class="btn" id="btnLaunchApp" title="Open encinitas.html in a side window">
+        ↗ Open Coffee Guide
+      </button>
+      <button type="button" class="btn" id="btnCopyCss" title="Copy full :root CSS block to clipboard">
+        📋 Copy :root CSS
+      </button>
+      <button type="button" class="btn" id="btnReset" title="Reset all properties to factory defaults">
+        ↺ Factory Defaults
+      </button>
+    </div>
+  </header>
+
+  <main>
+    <!-- PRESETS ROW -->
+    <div class="presets-card">
+      <div class="section-title">
+        <span>Instant Mood Presets</span>
+        <span style="font-size:.7rem; color:var(--text-muted); font-weight:normal;">1-Click theme & lighting presets</span>
+      </div>
+      <div class="preset-grid">
+        <button type="button" class="preset-btn" data-preset="golden-hour">
+          <div class="preset-name">Encinitas Golden Hour</div>
+          <div class="preset-desc">Amber sunlight, coastal turquoise, warm sand & silky 14px frosted glass</div>
+          <div class="preset-palette">
+            <span class="preset-swatch" style="background:#f59e0b;"></span>
+            <span class="preset-swatch" style="background:#0284c7;"></span>
+            <span class="preset-swatch" style="background:#fffdf8;"></span>
+            <span class="preset-swatch" style="background:#122844;"></span>
+          </div>
+        </button>
+
+        <button type="button" class="preset-btn" data-preset="pacific-marine">
+          <div class="preset-name">Pacific Marine</div>
+          <div class="preset-desc">Deep ocean blue, crisp ice crystal glass, vivid cyan water reflections</div>
+          <div class="preset-palette">
+            <span class="preset-swatch" style="background:#0284c7;"></span>
+            <span class="preset-swatch" style="background:#0ea5e9;"></span>
+            <span class="preset-swatch" style="background:#f0f9ff;"></span>
+            <span class="preset-swatch" style="background:#0c4a6e;"></span>
+          </div>
+        </button>
+
+        <button type="button" class="preset-btn" data-preset="beach-mist">
+          <div class="preset-name">Morning Beach Mist</div>
+          <div class="preset-desc">Soft sage-teal, muted warm cream, diffuse high-frosted matte slabs</div>
+          <div class="preset-palette">
+            <span class="preset-swatch" style="background:#0d9488;"></span>
+            <span class="preset-swatch" style="background:#d97706;"></span>
+            <span class="preset-swatch" style="background:#f4efe6;"></span>
+            <span class="preset-swatch" style="background:#1e3a5f;"></span>
+          </div>
+        </button>
+
+        <button type="button" class="preset-btn" data-preset="sunset-glow">
+          <div class="preset-name">Sunset Glow</div>
+          <div class="preset-desc">Vibrant coral amber, deep dusk navy header, rich warm catch-lights</div>
+          <div class="preset-palette">
+            <span class="preset-swatch" style="background:#f97316;"></span>
+            <span class="preset-swatch" style="background:#db2777;"></span>
+            <span class="preset-swatch" style="background:#fff1f2;"></span>
+            <span class="preset-swatch" style="background:#31104b;"></span>
+          </div>
+        </button>
+      </div>
+    </div>
+
+    <!-- TABS NAVIGATION -->
+    <div class="studio-tabs">
+      <button type="button" class="tab-btn active" data-tab="panel-atmosphere">1. Background Atmosphere</button>
+      <button type="button" class="tab-btn" data-tab="panel-glass">2. Cards & Glassmorphism</button>
+      <button type="button" class="tab-btn" data-tab="panel-header-buttons">3. Header & 3D Buttons</button>
+      <button type="button" class="tab-btn" data-tab="panel-menus">4. Menus & Category Tray</button>
+    </div>
+
+    <!-- TAB 1: BACKGROUND ATMOSPHERE -->
+    <div class="tab-panel" id="panel-atmosphere">
+      <div class="param-group">
+        <div class="group-header">
+          <h2 class="group-title">Ambient Coastal Light Pools</h2>
+          <span class="group-subtitle">Refracted behind the glass</span>
+        </div>
+        <div class="ctrl-row">
+          <span class="ctrl-label">Canvas Wash Base</span>
+          <input type="color" class="ctrl-input-color" id="meshBgBase" value="#e9e3d6">
+          <span class="hex-val" id="meshBgBaseHex">#e9e3d6</span>
+        </div>
+        <div class="ctrl-row">
+          <span class="ctrl-label">Sunset Gold Pool</span>
+          <input type="color" class="ctrl-input-color" id="meshPoolGold" value="#f59e0b">
+          <span class="hex-val" id="meshPoolGoldHex">#f59e0b</span>
+          <input type="range" class="ctrl-slider" id="meshPoolGoldOp" min="0" max="70" value="32">
+          <span class="slider-val" id="meshPoolGoldOpVal">32%</span>
+        </div>
+        <div class="ctrl-row">
+          <span class="ctrl-label">Pacific Blue Pool</span>
+          <input type="color" class="ctrl-input-color" id="meshPoolBlue" value="#0284c7">
+          <span class="hex-val" id="meshPoolBlueHex">#0284c7</span>
+          <input type="range" class="ctrl-slider" id="meshPoolBlueOp" min="0" max="70" value="35">
+          <span class="slider-val" id="meshPoolBlueOpVal">35%</span>
+        </div>
+        <div class="ctrl-row">
+          <span class="ctrl-label">Coastal Teal Pool</span>
+          <input type="color" class="ctrl-input-color" id="meshPoolTeal" value="#0d9488">
+          <span class="hex-val" id="meshPoolTealHex">#0d9488</span>
+          <input type="range" class="ctrl-slider" id="meshPoolTealOp" min="0" max="70" value="28">
+          <span class="slider-val" id="meshPoolTealOpVal">28%</span>
+        </div>
+        <div class="ctrl-row">
+          <span class="ctrl-label">Amber Glow Pool</span>
+          <input type="color" class="ctrl-input-color" id="meshPoolAmber" value="#d97706">
+          <span class="hex-val" id="meshPoolAmberHex">#d97706</span>
+          <input type="range" class="ctrl-slider" id="meshPoolAmberOp" min="0" max="70" value="28">
+          <span class="slider-val" id="meshPoolAmberOpVal">28%</span>
+        </div>
+      </div>
+
+      <div class="param-group">
+        <div class="group-header">
+          <h2 class="group-title">Atmosphere Optics</h2>
+          <span class="group-subtitle">Diffusion and daylight balance</span>
+        </div>
+        <div class="ctrl-row">
+          <span class="ctrl-label">Color Saturation</span>
+          <input type="range" class="ctrl-slider" id="meshIntensity" min="50" max="200" step="5" value="100">
+          <span class="slider-val" id="meshIntensityVal">1.00x</span>
+        </div>
+        <div class="ctrl-row">
+          <span class="ctrl-label">Sunlight Daylight</span>
+          <input type="range" class="ctrl-slider" id="pageAmbient" min="0" max="100" step="5" value="45">
+          <span class="slider-val" id="pageAmbientVal">45%</span>
+        </div>
+        <p class="help-note">
+          <strong>Tip for Laptop vs. iPhone:</strong> On iPhone 13 OLED screens, higher saturation pops intensely. On laptops, lowering saturation slightly creates a soft, misty look.
+        </p>
+      </div>
+    </div>
+
+    <!-- TAB 2: CARDS & GLASSMORPHISM -->
+    <div class="tab-panel" id="panel-glass" hidden>
+      <div class="param-group">
+        <div class="group-header">
+          <h2 class="group-title">Card Glass Tints (Alternating Grid)</h2>
+          <span class="group-subtitle">Surfaces 1 & 4 vs 2 & 3</span>
+        </div>
+        <div class="ctrl-row">
+          <span class="ctrl-label">Card Light (1 & 4)</span>
+          <input type="color" class="ctrl-input-color" id="cardAColor" value="#fffdf8">
+          <span class="hex-val" id="cardAColorHex">#fffdf8</span>
+          <input type="range" class="ctrl-slider" id="cardAOpacity" min="10" max="95" step="1" value="55">
+          <span class="slider-val" id="cardAOpacityVal">55%</span>
+        </div>
+        <div class="ctrl-row">
+          <span class="ctrl-label">Card Warm (2 & 3)</span>
+          <input type="color" class="ctrl-input-color" id="cardBColor" value="#f8f4ec">
+          <span class="hex-val" id="cardBColorHex">#f8f4ec</span>
+          <input type="range" class="ctrl-slider" id="cardBOpacity" min="10" max="95" step="1" value="48">
+          <span class="slider-val" id="cardBOpacityVal">48%</span>
+        </div>
+        <div class="ctrl-row">
+          <span class="ctrl-label">Backdrop Blur</span>
+          <input type="range" class="ctrl-slider" id="cardBlur" min="0" max="30" step="1" value="14">
+          <span class="slider-val" id="cardBlurVal">14px</span>
+        </div>
+        <p class="help-note">
+          <strong>Sweet Spot for Text Legibility:</strong> 45%–60% opacity provides great frosted glass refraction while ensuring all black coffee menu items remain easy to read.
+        </p>
+      </div>
+
+      <div class="param-group">
+        <div class="group-header">
+          <h2 class="group-title">Physical Elevation & Lighting</h2>
+          <span class="group-subtitle">Shadow depth and top rim specular catch</span>
+        </div>
+        <div class="ctrl-row">
+          <span class="ctrl-label">Shadow Blur</span>
+          <input type="range" class="ctrl-slider" id="cardShadowBlur" min="0" max="40" step="1" value="18">
+          <span class="slider-val" id="cardShadowBlurVal">18px</span>
+        </div>
+        <div class="ctrl-row">
+          <span class="ctrl-label">Shadow Opacity</span>
+          <input type="range" class="ctrl-slider" id="cardShadowOpacity" min="0" max="25" step="1" value="6">
+          <span class="slider-val" id="cardShadowOpacityVal">6%</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- TAB 3: HEADER & 3D BUTTONS -->
+    <div class="tab-panel" id="panel-header-buttons" hidden>
+      <div class="param-group">
+        <div class="group-header">
+          <h2 class="group-title">Top Header Banner</h2>
+          <span class="group-subtitle">Gradient canopy & ambient sun flare</span>
+        </div>
+        <div class="ctrl-row">
+          <span class="ctrl-label">Gradient Angle</span>
+          <input type="range" class="ctrl-slider" id="hdrAngle" min="0" max="360" step="5" value="160">
+          <span class="slider-val" id="hdrAngleVal">160°</span>
+        </div>
+        <div class="ctrl-row">
+          <span class="ctrl-label">Start Stop</span>
+          <input type="color" class="ctrl-input-color" id="hdrStart" value="#122844">
+          <span class="hex-val" id="hdrStartHex">#122844</span>
+        </div>
+        <div class="ctrl-row">
+          <span class="ctrl-label">Mid Stop</span>
+          <input type="color" class="ctrl-input-color" id="hdrMid" value="#1d4e7f">
+          <span class="hex-val" id="hdrMidHex">#1d4e7f</span>
+        </div>
+        <div class="ctrl-row">
+          <span class="ctrl-label">End Stop</span>
+          <input type="color" class="ctrl-input-color" id="hdrEnd" value="#0d1e33">
+          <span class="hex-val" id="hdrEndHex">#0d1e33</span>
+        </div>
+        <div class="ctrl-row">
+          <span class="ctrl-label">Sun Flare Glow</span>
+          <input type="color" class="ctrl-input-color" id="hdrGlowColor" value="#ffffff">
+          <span class="hex-val" id="hdrGlowColorHex">#ffffff</span>
+          <input type="range" class="ctrl-slider" id="hdrGlowOpacity" min="0" max="60" value="16">
+          <span class="slider-val" id="hdrGlowOpacityVal">16%</span>
+        </div>
+      </div>
+
+      <div class="param-group">
+        <div class="group-header">
+          <h2 class="group-title">3D Convex Filter Buttons</h2>
+          <span class="group-subtitle">Resting and Active states</span>
+        </div>
+        <div class="ctrl-row">
+          <span class="ctrl-label">Resting Top Rim</span>
+          <input type="color" class="ctrl-input-color" id="btnLightTop" value="#ffffff">
+          <span class="hex-val" id="btnLightTopHex">#ffffff</span>
+        </div>
+        <div class="ctrl-row">
+          <span class="ctrl-label">Resting Bottom Tone</span>
+          <input type="color" class="ctrl-input-color" id="btnLightBot" value="#ece5d8">
+          <span class="hex-val" id="btnLightBotHex">#ece5d8</span>
+        </div>
+        <div class="ctrl-row">
+          <span class="ctrl-label">Active Top Shine</span>
+          <input type="color" class="ctrl-input-color" id="btnActiveTop" value="#2b7bc4">
+          <span class="hex-val" id="btnActiveTopHex">#2b7bc4</span>
+        </div>
+        <div class="ctrl-row">
+          <span class="ctrl-label">Active Deep Bot</span>
+          <input type="color" class="ctrl-input-color" id="btnActiveBot" value="#123d64">
+          <span class="hex-val" id="btnActiveBotHex">#123d64</span>
+        </div>
+        <div class="ctrl-row">
+          <span class="ctrl-label">Specular Rim Light</span>
+          <input type="range" class="ctrl-slider" id="rimLight" min="0" max="100" step="5" value="95">
+          <span class="slider-val" id="rimLightVal">95%</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- TAB 4: MENUS & CATEGORY TRAY -->
+    <div class="tab-panel" id="panel-menus" hidden>
+      <div class="param-group">
+        <div class="group-header">
+          <h2 class="group-title">Nested Glass Menus</h2>
+          <span class="group-subtitle">Drinks and food columns inside cards</span>
+        </div>
+        <div class="ctrl-row">
+          <span class="ctrl-label">Drinks Menu Box</span>
+          <input type="color" class="ctrl-input-color" id="drinksColor" value="#e4e9eb">
+          <span class="hex-val" id="drinksColorHex">#e4e9eb</span>
+          <input type="range" class="ctrl-slider" id="drinksOpacity" min="10" max="95" value="55">
+          <span class="slider-val" id="drinksOpacityVal">55%</span>
+        </div>
+        <div class="ctrl-row">
+          <span class="ctrl-label">Food Menu Box</span>
+          <input type="color" class="ctrl-input-color" id="foodColor" value="#f4e2d8">
+          <span class="hex-val" id="foodColorHex">#f4e2d8</span>
+          <input type="range" class="ctrl-slider" id="foodOpacity" min="10" max="95" value="55">
+          <span class="slider-val" id="foodOpacityVal">55%</span>
+        </div>
+      </div>
+
+      <div class="param-group">
+        <div class="group-header">
+          <h2 class="group-title">Accents & Badges</h2>
+          <span class="group-subtitle">Pills, section dividers, metallic borders</span>
+        </div>
+        <div class="ctrl-row">
+          <span class="ctrl-label">Label Navy Blue</span>
+          <input type="color" class="ctrl-input-color" id="labelBlue" value="#163d68">
+          <span class="hex-val" id="labelBlueHex">#163d68</span>
+        </div>
+        <div class="ctrl-row">
+          <span class="ctrl-label">Dither Gold Border</span>
+          <input type="color" class="ctrl-input-color" id="ditherGold" value="#cca038">
+          <span class="hex-val" id="ditherGoldHex">#cca038</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- CODE PREVIEW DRAWER -->
+    <div class="code-preview-drawer">
+      <div class="section-title">
+        <span>Production Ready CSS Token Output</span>
+        <button type="button" class="btn" id="btnCopyCssDrawer" style="font-size:.7rem; padding:.2rem .5rem;">📋 Copy</button>
+      </div>
+      <pre class="code-box" id="cssOutput">/* Live CSS Tokens will appear here */</pre>
+    </div>
+  </main>
+
+  <div class="toast" id="toast">Copied to clipboard!</div>
+
+  <script>
+    // BROADCAST CHANNEL BRIDGE
+    const CHANNEL_NAME = "menumatch_theme";
+    const STORE_KEY = "encinitas-colors";
+    let bridge = null;
+    let connected = false;
+
+    if (typeof BroadcastChannel !== "undefined") {
+      bridge = new BroadcastChannel(CHANNEL_NAME);
+      bridge.onmessage = (e) => {
+        if (!e || !e.data) return;
+        if (e.data.type === "pong" || e.data.type === "app-ready") {
+          setConnected(true);
+        }
+      };
+      // Ping periodically to confirm connection
+      setInterval(() => {
+        bridge.postMessage({ type: "ping" });
+      }, 3000);
+      bridge.postMessage({ type: "ping" });
+    }
+
+    function setConnected(state) {
+      connected = state;
+      const dot = document.getElementById("statusDot");
+      const text = document.getElementById("statusText");
+      if (state) {
+        dot.className = "status-dot connected";
+        text.textContent = "Live connected to Coffee Guide";
+      } else {
+        dot.className = "status-dot";
+        text.textContent = "Waiting for Coffee Guide...";
+      }
+    }
+
+    // STATE STORE
+    const currentTheme = {};
+
+    function formatRgba(hex, alphaPercent) {
+      let c = hex.replace("#", "");
+      if (c.length === 3) c = c[0]+c[0]+c[1]+c[1]+c[2]+c[2];
+      const r = parseInt(c.slice(0, 2), 16) || 0;
+      const g = parseInt(c.slice(2, 4), 16) || 0;
+      const b = parseInt(c.slice(4, 6), 16) || 0;
+      const a = (alphaPercent / 100).toFixed(2);
+      return `rgba(${r}, ${g}, ${b}, ${a})`;
+    }
+
+    function dispatchProperty(prop, value) {
+      currentTheme[prop] = value;
+      if (bridge) {
+        bridge.postMessage({ type: "set-property", property: prop, value: value });
+      }
+      try {
+        const stored = JSON.parse(localStorage.getItem(STORE_KEY) || "{}");
+        stored[prop] = value;
+        localStorage.setItem(STORE_KEY, JSON.stringify(stored));
+      } catch (_) {}
+      updateCssPreview();
+    }
+
+    function dispatchFullTheme(themeObj) {
+      Object.assign(currentTheme, themeObj);
+      if (bridge) {
+        bridge.postMessage({ type: "set-theme", theme: themeObj });
+      }
+      try {
+        const stored = JSON.parse(localStorage.getItem(STORE_KEY) || "{}");
+        Object.assign(stored, themeObj);
+        localStorage.setItem(STORE_KEY, JSON.stringify(stored));
+      } catch (_) {}
+      updateControlsFromState();
+      updateCssPreview();
+    }
+
+    // TABS LOGIC
+    document.querySelectorAll(".tab-btn").forEach(btn => {
+      btn.addEventListener("click", () => {
+        document.querySelectorAll(".tab-btn").forEach(b => b.classList.remove("active"));
+        document.querySelectorAll(".tab-panel").forEach(p => p.hidden = true);
+        btn.classList.add("active");
+        const panel = document.getElementById(btn.dataset.tab);
+        if (panel) panel.hidden = false;
+      });
+    });
+
+    // BINDINGS SETUP
+    function setupColorAlphaBinding(colorId, alphaId, cssProp, defaultHex, defaultAlpha) {
+      const colorInput = document.getElementById(colorId);
+      const hexSpan = document.getElementById(colorId + "Hex");
+      const alphaInput = alphaId ? document.getElementById(alphaId) : null;
+      const alphaSpan = alphaId ? document.getElementById(alphaId + "Val") : null;
+
+      function update() {
+        const hex = colorInput.value.toLowerCase();
+        if (hexSpan) hexSpan.textContent = hex;
+        let finalVal = hex;
+        if (alphaInput) {
+          const alpha = parseInt(alphaInput.value, 10);
+          if (alphaSpan) alphaSpan.textContent = alpha + "%";
+          finalVal = formatRgba(hex, alpha);
+        }
+        dispatchProperty(cssProp, finalVal);
+      }
+
+      colorInput.addEventListener("input", update);
+      if (alphaInput) alphaInput.addEventListener("input", update);
+    }
+
+    function setupSliderBinding(sliderId, cssProp, unit, multiplier = 1, fixed = 0) {
+      const slider = document.getElementById(sliderId);
+      const valSpan = document.getElementById(sliderId + "Val");
+
+      slider.addEventListener("input", () => {
+        const raw = parseFloat(slider.value);
+        const computed = (raw * multiplier).toFixed(fixed);
+        const finalVal = unit ? `${computed}${unit}` : computed;
+        if (valSpan) valSpan.textContent = unit === "%" || unit === "px" || unit === "°" ? `${raw}${unit}` : (unit === "x" ? `${(raw/100).toFixed(2)}x` : finalVal);
+        dispatchProperty(cssProp, finalVal);
+      });
+    }
+
+    // WIRE UP ALL CONTROLLERS
+    // 1. Atmosphere
+    setupColorAlphaBinding("meshBgBase", null, "--mesh-bg-base");
+    setupColorAlphaBinding("meshPoolGold", "meshPoolGoldOp", "--mesh-pool-gold");
+    setupColorAlphaBinding("meshPoolBlue", "meshPoolBlueOp", "--mesh-pool-blue");
+    setupColorAlphaBinding("meshPoolTeal", "meshPoolTealOp", "--mesh-pool-teal");
+    setupColorAlphaBinding("meshPoolAmber", "meshPoolAmberOp", "--mesh-pool-amber");
+    setupSliderBinding("meshIntensity", "--mesh-intensity", "", 0.01, 2);
+    setupSliderBinding("pageAmbient", "--page-ambient", "", 0.01, 2);
+
+    // 2. Cards
+    setupColorAlphaBinding("cardAColor", "cardAOpacity", "--card-a");
+    setupColorAlphaBinding("cardBColor", "cardBOpacity", "--card-b");
+    setupSliderBinding("cardBlur", "--card-blur", "px", 1, 0);
+    setupSliderBinding("cardShadowBlur", "--card-shadow-blur", "px", 1, 0);
+    setupSliderBinding("cardShadowOpacity", "--card-shadow-opacity", "", 0.01, 2);
+
+    // 3. Header & Buttons
+    setupSliderBinding("hdrAngle", "--header-angle", "deg", 1, 0);
+    setupColorAlphaBinding("hdrStart", null, "--header-a");
+    setupColorAlphaBinding("hdrMid", null, "--header-b");
+    setupColorAlphaBinding("hdrEnd", null, "--header-c");
+    setupColorAlphaBinding("hdrGlowColor", "hdrGlowOpacity", "--header-glow");
+    setupColorAlphaBinding("btnLightTop", null, "--btn-light-top");
+    setupColorAlphaBinding("btnLightBot", null, "--btn-light-bot");
+    setupColorAlphaBinding("btnActiveTop", null, "--btn-active-top");
+    setupColorAlphaBinding("btnActiveBot", null, "--btn-active-bot");
+    setupSliderBinding("rimLight", "--rim-light", "", 0.01, 2);
+
+    // 4. Menus & Accents
+    setupColorAlphaBinding("drinksColor", "drinksOpacity", "--drinks");
+    setupColorAlphaBinding("foodColor", "foodOpacity", "--food");
+    setupColorAlphaBinding("labelBlue", null, "--label-blue");
+    setupColorAlphaBinding("ditherGold", null, "--dither-gold");
+
+    // PRESETS DEFINITIONS
+    const PRESETS = {
+      "golden-hour": {
+        "--mesh-bg-base": "#e9e3d6",
+        "--mesh-pool-gold": "rgba(245, 158, 11, 0.32)",
+        "--mesh-pool-blue": "rgba(2, 132, 199, 0.35)",
+        "--mesh-pool-teal": "rgba(13, 148, 136, 0.28)",
+        "--mesh-pool-amber": "rgba(217, 119, 6, 0.28)",
+        "--mesh-intensity": "1.00",
+        "--card-a": "rgba(255, 253, 248, 0.55)",
+        "--card-b": "rgba(248, 244, 236, 0.48)",
+        "--card-blur": "14px",
+        "--card-shadow-blur": "18px",
+        "--card-shadow-opacity": "0.06",
+        "--header-a": "#122844",
+        "--header-b": "#1d4e7f",
+        "--header-c": "#0d1e33",
+        "--header-angle": "160deg",
+        "--header-glow": "rgba(255, 255, 255, 0.16)",
+        "--btn-light-top": "#ffffff",
+        "--btn-light-bot": "#ece5d8",
+        "--btn-active-top": "#2b7bc4",
+        "--btn-active-bot": "#123d64",
+        "--rim-light": "0.95"
+      },
+      "pacific-marine": {
+        "--mesh-bg-base": "#dce8f2",
+        "--mesh-pool-gold": "rgba(14, 165, 233, 0.35)",
+        "--mesh-pool-blue": "rgba(3, 105, 161, 0.40)",
+        "--mesh-pool-teal": "rgba(6, 182, 212, 0.30)",
+        "--mesh-pool-amber": "rgba(59, 130, 246, 0.25)",
+        "--mesh-intensity": "1.15",
+        "--card-a": "rgba(255, 255, 255, 0.50)",
+        "--card-b": "rgba(240, 249, 255, 0.42)",
+        "--card-blur": "18px",
+        "--card-shadow-blur": "22px",
+        "--card-shadow-opacity": "0.08",
+        "--header-a": "#082f49",
+        "--header-b": "#0369a1",
+        "--header-c": "#0c4a6e",
+        "--header-angle": "145deg",
+        "--header-glow": "rgba(224, 242, 254, 0.25)",
+        "--btn-light-top": "#ffffff",
+        "--btn-light-bot": "#e0f2fe",
+        "--btn-active-top": "#0284c7",
+        "--btn-active-bot": "#082f49",
+        "--rim-light": "1.00"
+      },
+      "beach-mist": {
+        "--mesh-bg-base": "#e6e2d8",
+        "--mesh-pool-gold": "rgba(202, 138, 4, 0.22)",
+        "--mesh-pool-blue": "rgba(20, 184, 166, 0.25)",
+        "--mesh-pool-teal": "rgba(15, 118, 110, 0.22)",
+        "--mesh-pool-amber": "rgba(180, 83, 9, 0.20)",
+        "--mesh-intensity": "0.85",
+        "--card-a": "rgba(255, 253, 248, 0.62)",
+        "--card-b": "rgba(247, 243, 235, 0.56)",
+        "--card-blur": "12px",
+        "--card-shadow-blur": "14px",
+        "--card-shadow-opacity": "0.05",
+        "--header-a": "#1a365d",
+        "--header-b": "#2b4c7e",
+        "--header-c": "#0f233f",
+        "--header-angle": "165deg",
+        "--header-glow": "rgba(255, 255, 255, 0.12)",
+        "--btn-light-top": "#ffffff",
+        "--btn-light-bot": "#f0ebe1",
+        "--btn-active-top": "#2b6cb0",
+        "--btn-active-bot": "#1a365d",
+        "--rim-light": "0.90"
+      },
+      "sunset-glow": {
+        "--mesh-bg-base": "#edd8ce",
+        "--mesh-pool-gold": "rgba(249, 115, 22, 0.38)",
+        "--mesh-pool-blue": "rgba(219, 39, 119, 0.30)",
+        "--mesh-pool-teal": "rgba(245, 158, 11, 0.35)",
+        "--mesh-pool-amber": "rgba(194, 65, 12, 0.32)",
+        "--mesh-intensity": "1.25",
+        "--card-a": "rgba(255, 250, 246, 0.52)",
+        "--card-b": "rgba(254, 242, 238, 0.45)",
+        "--card-blur": "16px",
+        "--card-shadow-blur": "20px",
+        "--card-shadow-opacity": "0.08",
+        "--header-a": "#31104b",
+        "--header-b": "#701a75",
+        "--header-c": "#4a044e",
+        "--header-angle": "135deg",
+        "--header-glow": "rgba(254, 215, 170, 0.28)",
+        "--btn-light-top": "#ffffff",
+        "--btn-light-bot": "#fed7aa",
+        "--btn-active-top": "#ea580c",
+        "--btn-active-bot": "#4a044e",
+        "--rim-light": "1.00"
+      }
+    };
+
+    document.querySelectorAll(".preset-btn").forEach(btn => {
+      btn.addEventListener("click", () => {
+        const pKey = btn.dataset.preset;
+        if (PRESETS[pKey]) {
+          dispatchFullTheme(PRESETS[pKey]);
+          showToast(`Applied preset: ${pKey}`);
+        }
+      });
+    });
+
+    // UPDATE UI CONTROLS FROM STORED/ACTIVE STATE
+    function updateControlsFromState() {
+      // Helper to parse RGBA back to hex & alpha
+      function parseRgba(str) {
+        if (!str) return null;
+        const m = str.match(/rgba?\((\d+),\s*(\d+),\s*(\d+)(?:,\s*([\d.]+))?\)/);
+        if (!m) return null;
+        const r = parseInt(m[1], 10).toString(16).padStart(2, "0");
+        const g = parseInt(m[2], 10).toString(16).padStart(2, "0");
+        const b = parseInt(m[3], 10).toString(16).padStart(2, "0");
+        const a = m[4] !== undefined ? Math.round(parseFloat(m[4]) * 100) : 100;
+        return { hex: `#${r}${g}${b}`, alpha: a };
+      }
+
+      function syncPair(colorId, alphaId, val) {
+        if (!val) return;
+        const colorEl = document.getElementById(colorId);
+        const hexSpan = document.getElementById(colorId + "Hex");
+        const alphaEl = alphaId ? document.getElementById(alphaId) : null;
+        const alphaSpan = alphaId ? document.getElementById(alphaId + "Val") : null;
+
+        if (val.startsWith("#")) {
+          if (colorEl) colorEl.value = val;
+          if (hexSpan) hexSpan.textContent = val;
+        } else {
+          const parsed = parseRgba(val);
+          if (parsed) {
+            if (colorEl) colorEl.value = parsed.hex;
+            if (hexSpan) hexSpan.textContent = parsed.hex;
+            if (alphaEl) alphaEl.value = parsed.alpha;
+            if (alphaSpan) alphaSpan.textContent = parsed.alpha + "%";
+          }
+        }
+      }
+
+      function syncSlider(sliderId, val, unit, mult = 1) {
+        if (!val) return;
+        const slider = document.getElementById(sliderId);
+        const span = document.getElementById(sliderId + "Val");
+        let num = parseFloat(val);
+        if (mult !== 1) num = num / mult;
+        if (slider) slider.value = num;
+        if (span) span.textContent = unit === "x" ? `${num.toFixed(2)}x` : `${num}${unit || ''}`;
+      }
+
+      syncPair("meshBgBase", null, currentTheme["--mesh-bg-base"]);
+      syncPair("meshPoolGold", "meshPoolGoldOp", currentTheme["--mesh-pool-gold"]);
+      syncPair("meshPoolBlue", "meshPoolBlueOp", currentTheme["--mesh-pool-blue"]);
+      syncPair("meshPoolTeal", "meshPoolTealOp", currentTheme["--mesh-pool-teal"]);
+      syncPair("meshPoolAmber", "meshPoolAmberOp", currentTheme["--mesh-pool-amber"]);
+      syncSlider("meshIntensity", currentTheme["--mesh-intensity"], "x", 0.01);
+      syncSlider("pageAmbient", currentTheme["--page-ambient"], "%", 0.01);
+
+      syncPair("cardAColor", "cardAOpacity", currentTheme["--card-a"]);
+      syncPair("cardBColor", "cardBOpacity", currentTheme["--card-b"]);
+      syncSlider("cardBlur", currentTheme["--card-blur"], "px");
+      syncSlider("cardShadowBlur", currentTheme["--card-shadow-blur"], "px");
+      syncSlider("cardShadowOpacity", currentTheme["--card-shadow-opacity"], "%", 0.01);
+
+      syncSlider("hdrAngle", currentTheme["--header-angle"], "°");
+      syncPair("hdrStart", null, currentTheme["--header-a"]);
+      syncPair("hdrMid", null, currentTheme["--header-b"]);
+      syncPair("hdrEnd", null, currentTheme["--header-c"]);
+      syncPair("hdrGlowColor", "hdrGlowOpacity", currentTheme["--header-glow"]);
+
+      syncPair("btnLightTop", null, currentTheme["--btn-light-top"]);
+      syncPair("btnLightBot", null, currentTheme["--btn-light-bot"]);
+      syncPair("btnActiveTop", null, currentTheme["--btn-active-top"]);
+      syncPair("btnActiveBot", null, currentTheme["--btn-active-bot"]);
+      syncSlider("rimLight", currentTheme["--rim-light"], "%", 0.01);
+
+      syncPair("drinksColor", "drinksOpacity", currentTheme["--drinks"]);
+      syncPair("foodColor", "foodOpacity", currentTheme["--food"]);
+      syncPair("labelBlue", null, currentTheme["--label-blue"]);
+      syncPair("ditherGold", null, currentTheme["--dither-gold"]);
+    }
+
+    function updateCssPreview() {
+      const out = document.getElementById("cssOutput");
+      let lines = [":root {"];
+      const keys = Object.keys(currentTheme).sort();
+      keys.forEach(k => {
+        lines.push(`  ${k}: ${currentTheme[k]};`);
+      });
+      lines.push("}");
+      out.textContent = lines.join("\n");
+    }
+
+    function showToast(msg) {
+      const t = document.getElementById("toast");
+      t.textContent = msg;
+      t.classList.add("show");
+      setTimeout(() => t.classList.remove("show"), 2200);
+    }
+
+    // BUTTON HANDLERS
+    document.getElementById("btnLaunchApp").addEventListener("click", () => {
+      window.open("encinitas.html", "coffeeAppWindow", "width=850,height=900,left=800,top=50");
+    });
+
+    document.getElementById("btnCopyCss").addEventListener("click", () => {
+      const cssText = document.getElementById("cssOutput").textContent;
+      navigator.clipboard.writeText(cssText).then(() => {
+        showToast("Copied :root CSS to clipboard!");
+      });
+    });
+
+    document.getElementById("btnCopyCssDrawer").addEventListener("click", () => {
+      document.getElementById("btnCopyCss").click();
+    });
+
+    document.getElementById("btnReset").addEventListener("click", () => {
+      localStorage.removeItem(STORE_KEY);
+      if (bridge) {
+        bridge.postMessage({
+          type: "reset",
+          properties: Object.keys(currentTheme)
+        });
+      }
+      dispatchFullTheme(PRESETS["golden-hour"]);
+      showToast("Reset to Factory Defaults");
+    });
+
+    // INITIAL LOAD: Read from localStorage or Golden Hour default
+    try {
+      const saved = JSON.parse(localStorage.getItem(STORE_KEY) || "{}");
+      if (Object.keys(saved).length > 0) {
+        Object.assign(currentTheme, saved);
+      } else {
+        Object.assign(currentTheme, PRESETS["golden-hour"]);
+      }
+    } catch (_) {
+      Object.assign(currentTheme, PRESETS["golden-hour"]);
+    }
+    updateControlsFromState();
+    updateCssPreview();
+  </script>
+</body>
+</html>

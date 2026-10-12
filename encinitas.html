@@ -45,6 +45,14 @@
       --btn-light-bot: #ece5d8;
       --btn-active-top: #2b7bc4;
       --btn-active-bot: #123d64;
+      /* Ambient Canvas Mesh */
+      --mesh-bg-base: #e9e3d6;
+      --mesh-pool-gold: rgba(245, 158, 11, 0.32);
+      --mesh-pool-blue: rgba(2, 132, 199, 0.35);
+      --mesh-pool-teal: rgba(13, 148, 136, 0.28);
+      --mesh-pool-amber: rgba(217, 119, 6, 0.28);
+      --mesh-pool-indigo: rgba(37, 99, 235, 0.26);
+      --mesh-intensity: 1;
     }
     * { box-sizing: border-box; }
     html, body {
@@ -59,16 +67,17 @@
       inset: 0;
       z-index: 0;
       pointer-events: none;
-      background: #e9e3d6;
+      background: var(--mesh-bg-base, #e9e3d6);
       background-image: 
-        radial-gradient(circle at 10% 12%, rgba(245, 158, 11, 0.32) 0%, transparent 44%),
-        radial-gradient(circle at 90% 16%, rgba(2, 132, 199, 0.35) 0%, transparent 48%),
-        radial-gradient(circle at 15% 55%, rgba(13, 148, 136, 0.28) 0%, transparent 45%),
-        radial-gradient(circle at 85% 65%, rgba(217, 119, 6, 0.28) 0%, transparent 45%),
-        radial-gradient(circle at 45% 90%, rgba(37, 99, 235, 0.26) 0%, transparent 48%),
+        radial-gradient(circle at 10% 12%, var(--mesh-pool-gold, rgba(245, 158, 11, 0.32)) 0%, transparent 44%),
+        radial-gradient(circle at 90% 16%, var(--mesh-pool-blue, rgba(2, 132, 199, 0.35)) 0%, transparent 48%),
+        radial-gradient(circle at 15% 55%, var(--mesh-pool-teal, rgba(13, 148, 136, 0.28)) 0%, transparent 45%),
+        radial-gradient(circle at 85% 65%, var(--mesh-pool-amber, rgba(217, 119, 6, 0.28)) 0%, transparent 45%),
+        radial-gradient(circle at 45% 90%, var(--mesh-pool-indigo, rgba(37, 99, 235, 0.26)) 0%, transparent 48%),
         radial-gradient(circle at 88% 95%, rgba(249, 115, 22, 0.24) 0%, transparent 42%),
         linear-gradient(180deg, #edf2f7 0%, #e8e1d5 50%, #dfd5c4 100%);
       background-attachment: fixed;
+      filter: saturate(var(--mesh-intensity, 1));
     }
     header {
       background: linear-gradient(var(--header-angle, 160deg), var(--header-a) 0%, var(--header-b) 55%, var(--header-c) 140%);
@@ -835,6 +844,43 @@
         }
       });
     } catch (e) {}
+
+    // Live Bridge: Receive real-time theme & lighting changes from Theme Studio
+    if (typeof BroadcastChannel !== "undefined") {
+      var themeBridge = new BroadcastChannel("menumatch_theme");
+      themeBridge.onmessage = function (e) {
+        if (!e || !e.data) return;
+        var msg = e.data;
+        if (msg.type === "set-property" && msg.property && typeof msg.value === "string") {
+          document.documentElement.style.setProperty(msg.property, msg.value);
+        } else if (msg.type === "set-theme" && msg.theme) {
+          Object.keys(msg.theme).forEach(function (k) {
+            document.documentElement.style.setProperty(k, msg.theme[k]);
+          });
+        } else if (msg.type === "reset") {
+          localStorage.removeItem("encinitas-colors");
+          if (Array.isArray(msg.properties)) {
+            msg.properties.forEach(function (p) {
+              document.documentElement.style.removeProperty(p);
+            });
+          }
+        } else if (msg.type === "ping") {
+          themeBridge.postMessage({ type: "pong", url: location.href });
+        }
+      };
+      // Announce readiness on load
+      themeBridge.postMessage({ type: "app-ready", url: location.href });
+    }
+    window.addEventListener("storage", function (e) {
+      if (e.key === "encinitas-colors" && e.newValue) {
+        try {
+          var data = JSON.parse(e.newValue);
+          Object.keys(data).forEach(function (k) {
+            document.documentElement.style.setProperty(k, data[k]);
+          });
+        } catch (_) {}
+      }
+    });
   </script>
 </head>
 <body>
