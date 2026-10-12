@@ -836,14 +836,136 @@
   </style>
   <link rel="stylesheet" href="https://unpkg.com/maplibre-gl@4/dist/maplibre-gl.css" />
   <script>
-    try {
-      var savedColors = JSON.parse(localStorage.getItem("encinitas-colors") || "{}");
-      Object.keys(savedColors).forEach(function (name) {
-        if (name.indexOf("--") === 0 && typeof savedColors[name] === "string" && !/[<>{}\\]/.test(savedColors[name])) {
-          document.documentElement.style.setProperty(name, savedColors[name]);
+    var PRESETS = {
+      "golden-hour": {
+        "--mesh-bg-base": "#e9e3d6",
+        "--mesh-pool-gold": "rgba(245, 158, 11, 0.32)",
+        "--mesh-pool-blue": "rgba(2, 132, 199, 0.35)",
+        "--mesh-pool-teal": "rgba(13, 148, 136, 0.28)",
+        "--mesh-pool-amber": "rgba(217, 119, 6, 0.28)",
+        "--mesh-intensity": "1.00",
+        "--card-a": "rgba(255, 253, 248, 0.55)",
+        "--card-b": "rgba(248, 244, 236, 0.48)",
+        "--card-blur": "14px",
+        "--card-shadow-blur": "18px",
+        "--card-shadow-opacity": "0.06",
+        "--header-a": "#122844",
+        "--header-b": "#1d4e7f",
+        "--header-c": "#0d1e33",
+        "--header-angle": "160deg",
+        "--header-glow": "rgba(255, 255, 255, 0.16)",
+        "--btn-light-top": "#ffffff",
+        "--btn-light-bot": "#ece5d8",
+        "--btn-active-top": "#2b7bc4",
+        "--btn-active-bot": "#123d64",
+        "--rim-light": "0.95"
+      },
+      "pacific-marine": {
+        "--mesh-bg-base": "#dce8f2",
+        "--mesh-pool-gold": "rgba(14, 165, 233, 0.35)",
+        "--mesh-pool-blue": "rgba(3, 105, 161, 0.40)",
+        "--mesh-pool-teal": "rgba(6, 182, 212, 0.30)",
+        "--mesh-pool-amber": "rgba(59, 130, 246, 0.25)",
+        "--mesh-intensity": "1.15",
+        "--card-a": "rgba(255, 255, 255, 0.50)",
+        "--card-b": "rgba(240, 249, 255, 0.42)",
+        "--card-blur": "18px",
+        "--card-shadow-blur": "22px",
+        "--card-shadow-opacity": "0.08",
+        "--header-a": "#082f49",
+        "--header-b": "#0369a1",
+        "--header-c": "#0c4a6e",
+        "--header-angle": "145deg",
+        "--header-glow": "rgba(224, 242, 254, 0.25)",
+        "--btn-light-top": "#ffffff",
+        "--btn-light-bot": "#e0f2fe",
+        "--btn-active-top": "#0284c7",
+        "--btn-active-bot": "#082f49",
+        "--rim-light": "1.00"
+      },
+      "beach-mist": {
+        "--mesh-bg-base": "#e6e2d8",
+        "--mesh-pool-gold": "rgba(202, 138, 4, 0.22)",
+        "--mesh-pool-blue": "rgba(20, 184, 166, 0.25)",
+        "--mesh-pool-teal": "rgba(15, 118, 110, 0.22)",
+        "--mesh-pool-amber": "rgba(180, 83, 9, 0.20)",
+        "--mesh-intensity": "0.85",
+        "--card-a": "rgba(255, 253, 248, 0.62)",
+        "--card-b": "rgba(247, 243, 235, 0.56)",
+        "--card-blur": "12px",
+        "--card-shadow-blur": "14px",
+        "--card-shadow-opacity": "0.05",
+        "--header-a": "#1a365d",
+        "--header-b": "#2b4c7e",
+        "--header-c": "#0f233f",
+        "--header-angle": "165deg",
+        "--header-glow": "rgba(255, 255, 255, 0.12)",
+        "--btn-light-top": "#ffffff",
+        "--btn-light-bot": "#f0ebe1",
+        "--btn-active-top": "#2b6cb0",
+        "--btn-active-bot": "#1a365d",
+        "--rim-light": "0.90"
+      },
+      "sunset-glow": {
+        "--mesh-bg-base": "#edd8ce",
+        "--mesh-pool-gold": "rgba(249, 115, 22, 0.38)",
+        "--mesh-pool-blue": "rgba(219, 39, 119, 0.30)",
+        "--mesh-pool-teal": "rgba(245, 158, 11, 0.35)",
+        "--mesh-pool-amber": "rgba(194, 65, 12, 0.32)",
+        "--mesh-intensity": "1.25",
+        "--card-a": "rgba(255, 250, 246, 0.52)",
+        "--card-b": "rgba(254, 242, 238, 0.45)",
+        "--card-blur": "16px",
+        "--card-shadow-blur": "20px",
+        "--card-shadow-opacity": "0.08",
+        "--header-a": "#31104b",
+        "--header-b": "#701a75",
+        "--header-c": "#4a044e",
+        "--header-angle": "135deg",
+        "--header-glow": "rgba(254, 215, 170, 0.28)",
+        "--btn-light-top": "#ffffff",
+        "--btn-light-bot": "#fed7aa",
+        "--btn-active-top": "#ea580c",
+        "--btn-active-bot": "#4a044e",
+        "--rim-light": "1.00"
+      }
+    };
+
+    function applyThemeDict(dict) {
+      if (!dict) return;
+      Object.keys(dict).forEach(function (name) {
+        if (name.indexOf("--") === 0 && typeof dict[name] === "string" && !/[<>{}\\]/.test(dict[name])) {
+          document.documentElement.style.setProperty(name, dict[name]);
         }
       });
-    } catch (e) {}
+    }
+
+    function reloadColorsFromStorage() {
+      try {
+        var savedColors = JSON.parse(localStorage.getItem("encinitas-colors") || "{}");
+        applyThemeDict(savedColors);
+      } catch (e) {}
+    }
+
+    // 1. Check URL parameters for preset override (e.g. ?preset=sunset-glow)
+    try {
+      var urlParams = new URLSearchParams(location.search);
+      var reqPreset = urlParams.get("preset") || urlParams.get("theme");
+      if (reqPreset && PRESETS[reqPreset]) {
+        applyThemeDict(PRESETS[reqPreset]);
+        localStorage.setItem("encinitas-colors", JSON.stringify(PRESETS[reqPreset]));
+      } else {
+        reloadColorsFromStorage();
+      }
+    } catch (_) {
+      reloadColorsFromStorage();
+    }
+
+    // Listen for tab focus & page restores on mobile Safari
+    window.addEventListener("pageshow", reloadColorsFromStorage);
+    document.addEventListener("visibilitychange", function () {
+      if (document.visibilityState === "visible") reloadColorsFromStorage();
+    });
 
     // Live Bridge: Receive real-time theme & lighting changes from Theme Studio
     if (typeof BroadcastChannel !== "undefined") {
@@ -854,9 +976,7 @@
         if (msg.type === "set-property" && msg.property && typeof msg.value === "string") {
           document.documentElement.style.setProperty(msg.property, msg.value);
         } else if (msg.type === "set-theme" && msg.theme) {
-          Object.keys(msg.theme).forEach(function (k) {
-            document.documentElement.style.setProperty(k, msg.theme[k]);
-          });
+          applyThemeDict(msg.theme);
         } else if (msg.type === "reset") {
           localStorage.removeItem("encinitas-colors");
           if (Array.isArray(msg.properties)) {
@@ -875,9 +995,7 @@
       if (e.key === "encinitas-colors" && e.newValue) {
         try {
           var data = JSON.parse(e.newValue);
-          Object.keys(data).forEach(function (k) {
-            document.documentElement.style.setProperty(k, data[k]);
-          });
+          applyThemeDict(data);
         } catch (_) {}
       }
     });

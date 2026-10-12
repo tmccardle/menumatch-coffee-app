@@ -447,6 +447,17 @@
       </div>
     </div>
 
+    <!-- IPHONE PREVIEW LINK BAR -->
+    <div style="background:rgba(56, 189, 248, 0.08); border:1px solid rgba(56, 189, 248, 0.25); border-radius:10px; padding:.65rem 1rem; display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:.6rem;">
+      <div style="font-size:.78rem; display:flex; align-items:center; gap:.5rem; flex-wrap:wrap;">
+        <span>📱 <strong>Open on iPhone:</strong></span>
+        <a id="iphoneLink" href="http://192.168.0.54:8085/encinitas.html?preset=golden-hour" target="_blank" style="color:var(--accent); font-family:monospace; text-decoration:underline; word-break:break-all;">
+          http://192.168.0.54:8085/encinitas.html?preset=golden-hour
+        </a>
+      </div>
+      <button type="button" class="btn" id="btnCopyIphoneLink" style="font-size:.72rem; padding:.25rem .6rem;">📋 Copy Phone Link</button>
+    </div>
+
     <!-- TABS NAVIGATION -->
     <div class="studio-tabs">
       <button type="button" class="tab-btn active" data-tab="panel-atmosphere">1. Background Atmosphere</button>
@@ -947,10 +958,22 @@
         const pKey = btn.dataset.preset;
         if (PRESETS[pKey]) {
           dispatchFullTheme(PRESETS[pKey]);
+          updateIphoneLink(pKey);
           showToast(`Applied preset: ${pKey}`);
         }
       });
     });
+
+    function updateIphoneLink(presetKey) {
+      const host = location.hostname === "localhost" || location.hostname === "127.0.0.1" ? "192.168.0.54" : location.hostname;
+      const port = location.port || "8085";
+      const url = `http://${host}:${port}/encinitas.html?preset=${presetKey}`;
+      const linkEl = document.getElementById("iphoneLink");
+      if (linkEl) {
+        linkEl.href = url;
+        linkEl.textContent = url;
+      }
+    }
 
     // UPDATE UI CONTROLS FROM STORED/ACTIVE STATE
     function updateControlsFromState() {
@@ -1048,6 +1071,15 @@
     }
 
     // BUTTON HANDLERS
+    document.getElementById("btnCopyIphoneLink").addEventListener("click", () => {
+      const linkEl = document.getElementById("iphoneLink");
+      if (linkEl) {
+        navigator.clipboard.writeText(linkEl.href).then(() => {
+          showToast("Copied iPhone URL!");
+        });
+      }
+    });
+
     document.getElementById("btnLaunchApp").addEventListener("click", () => {
       window.open("encinitas.html", "coffeeAppWindow", "width=850,height=900,left=800,top=50");
     });
