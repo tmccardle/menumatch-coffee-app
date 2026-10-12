@@ -1,0 +1,2300 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>MenuMatch · Encinitas Coffee Guide</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,700&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --sand: #f4eee2;
+      --sand-subtle: #e5dcce;
+      --surface: #ffffff;
+      --surface-subtle: #f9f6f0;
+      --ink: #110f0d;
+      --ink-secondary: #221c16;
+      --mute: #463e34;
+      --mute-light: #6a6052;
+      --line: #cec2af;
+      --line-subtle: #dfd5c5;
+      --line-strong: #9e907d;
+      --sea: #0f4c54;
+      --sea-dark: #0a353b;
+      --sea-light: #e4f0f2;
+      --sea-border: #9ec6cc;
+      --roast: #8a3c0e;
+      --roast-light: #fbeee4;
+      --roast-border: #e8c2ab;
+      --radius-sm: 8px;
+      --radius-md: 12px;
+      --radius-lg: 16px;
+      --radius-full: 9999px;
+      --shadow-sm: 0 1px 4px rgba(17, 15, 13, 0.08);
+      --shadow-card: 0 3px 12px rgba(17, 15, 13, 0.09);
+      --shadow-hover: 0 8px 24px rgba(17, 15, 13, 0.14);
+      --shadow-pop: 0 12px 36px rgba(17, 15, 13, 0.18);
+    }
+    * { box-sizing: border-box; }
+    html, body {
+      margin: 0;
+      background: var(--sand);
+      color: var(--ink);
+      font-family: "IBM Plex Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      -webkit-font-smoothing: antialiased;
+    }
+    .wrap { max-width: 960px; margin: 0 auto; }
+
+    /* Header */
+    header {
+      background: linear-gradient(145deg, #072227 0%, #0f4c54 60%, #175e69 100%);
+      color: #fffaf4;
+      padding: 2.2rem 1.5rem 2.4rem;
+      position: relative;
+      overflow: hidden;
+      border-bottom: 3px solid #b85d19;
+    }
+    header::after {
+      content: "";
+      position: absolute;
+      top: -30%;
+      right: -10%;
+      width: 420px;
+      height: 420px;
+      background: radial-gradient(circle, rgba(212, 115, 45, 0.22) 0%, rgba(212, 115, 45, 0) 70%);
+      pointer-events: none;
+    }
+    .header-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      font-size: 0.72rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      font-weight: 700;
+      color: #ffe0cc;
+      background: rgba(0, 0, 0, 0.25);
+      border: 1px solid rgba(255, 255, 255, 0.25);
+      padding: 0.28rem 0.75rem;
+      border-radius: var(--radius-full);
+      backdrop-filter: blur(8px);
+      margin-bottom: 0.75rem;
+    }
+    .badge-dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: #f7a261;
+      box-shadow: 0 0 8px #f7a261;
+    }
+    header h1 {
+      font-family: "Fraunces", Georgia, serif;
+      font-size: clamp(2.2rem, 5vw, 3.2rem);
+      font-weight: 600;
+      line-height: 1.1;
+      margin: 0 0 0.5rem;
+      letter-spacing: -0.025em;
+      color: #ffffff;
+      text-shadow: 0 2px 4px rgba(0,0,0,0.25);
+    }
+    header p {
+      margin: 0;
+      color: #e5eff1;
+      max-width: 44rem;
+      font-size: 1.02rem;
+      line-height: 1.5;
+    }
+
+    /* Main Container */
+    main { padding: 1.25rem 1rem 3rem; }
+
+    /* Category Filter Section */
+    .summary {
+      background: var(--surface);
+      border: 1.5px solid var(--line-strong);
+      border-radius: var(--radius-lg);
+      padding: 1.1rem 1.25rem 1.2rem;
+      box-shadow: var(--shadow-sm);
+      margin-bottom: 1.1rem;
+      transition: all 0.2s ease;
+    }
+    .summary-bar {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 1rem;
+      cursor: pointer;
+    }
+    .summary-title-group h2 {
+      font-family: "Fraunces", Georgia, serif;
+      font-size: 1.28rem;
+      font-weight: 700;
+      margin: 0 0 0.2rem;
+      color: var(--ink);
+    }
+    .summary-help {
+      margin: 0;
+      color: var(--ink-secondary);
+      font-size: 0.85rem;
+      font-weight: 500;
+      line-height: 1.4;
+    }
+    .summary-toggle-btn {
+      font: inherit;
+      font-size: 0.78rem;
+      font-weight: 700;
+      color: var(--ink);
+      background: var(--sand);
+      border: 1px solid var(--line-strong);
+      border-radius: var(--radius-full);
+      padding: 0.32rem 0.85rem;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      transition: all 0.15s ease;
+      flex: none;
+    }
+    .summary-toggle-btn:hover {
+      background: var(--sand-subtle);
+      border-color: var(--ink);
+    }
+    .groups {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 1.2rem;
+      margin-top: 1rem;
+      padding-top: 1rem;
+      border-top: 1px solid var(--line);
+    }
+    .group {
+      background: transparent;
+      border: none;
+      padding: 0;
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+    }
+    .group h3 {
+      margin: 0;
+      font-size: 0.72rem;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      font-weight: 800;
+      color: var(--ink);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .group[data-group="Coffee"] h3::before { content: ""; width: 7px; height: 7px; border-radius: 50%; background: #b85d19; }
+    .group[data-group="Setting"] h3::before { content: ""; width: 7px; height: 7px; border-radius: 50%; background: #0f4c54; }
+    .group[data-group="Mode"] h3::before { content: ""; width: 7px; height: 7px; border-radius: 50%; background: #2f5f7a; }
+    .group[data-group="Food"] h3::before { content: ""; width: 7px; height: 7px; border-radius: 50%; background: #a84218; }
+    .group ul {
+      list-style: none;
+      margin: 0;
+      padding: 0;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.4rem;
+    }
+    .group li {
+      margin: 0;
+      display: inline-flex;
+    }
+    label.cat-check {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      cursor: pointer;
+      font-size: 0.78rem;
+      font-weight: 600;
+      color: var(--ink);
+      padding: 0.32rem 0.68rem;
+      border-radius: var(--radius-full);
+      background: #ffffff;
+      border: 1.5px solid var(--line-strong);
+      box-shadow: 0 1px 2px rgba(17, 15, 13, 0.06);
+      transition: all 0.15s ease;
+      user-select: none;
+      white-space: nowrap;
+    }
+    label.cat-check:hover {
+      background: var(--sand-subtle);
+      border-color: var(--ink);
+    }
+    label.cat-check:has(input:checked) {
+      background: var(--sea);
+      border-color: var(--sea-dark);
+      color: #ffffff;
+      box-shadow: 0 2px 6px rgba(15, 76, 84, 0.3);
+    }
+    label.cat-check:has(input:checked)::before {
+      content: "✓";
+      font-size: 0.72rem;
+      font-weight: 700;
+      margin-right: -1px;
+    }
+    label.cat-check input {
+      position: absolute;
+      opacity: 0;
+      width: 0;
+      height: 0;
+      pointer-events: none;
+    }
+    label.cat-check .n {
+      font-size: 0.68rem;
+      font-weight: 700;
+      color: var(--ink);
+      background: #eee8dc;
+      border: 1px solid var(--line-strong);
+      padding: 1px 5px;
+      border-radius: var(--radius-full);
+      margin-left: 2px;
+      font-variant-numeric: tabular-nums;
+    }
+    label.cat-check:has(input:checked) .n {
+      background: rgba(255, 255, 255, 0.28);
+      border-color: transparent;
+      color: #ffffff;
+    }
+    label.cat-check.zero {
+      opacity: 0.35;
+      pointer-events: none;
+    }
+    .summary.collapsed .groups,
+    .summary.collapsed .summary-help {
+      display: none;
+    }
+
+    /* Active Filter Badges */
+    .active-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.45rem;
+      align-items: center;
+      margin: 0 0 1rem;
+      padding: 0.6rem 0.85rem;
+      background: var(--surface);
+      border: 1.5px solid var(--line-strong);
+      border-radius: var(--radius-md);
+      box-shadow: var(--shadow-sm);
+    }
+    .active-row[hidden] { display: none; }
+    .active-row .label {
+      font-size: 0.75rem;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--ink);
+      margin-right: 0.2rem;
+    }
+    .active-row button {
+      font: inherit;
+      font-size: 0.78rem;
+      font-weight: 600;
+      border: 1.5px solid var(--sea-border);
+      background: var(--sea-light);
+      color: var(--sea-dark);
+      border-radius: var(--radius-full);
+      padding: 0.25rem 0.65rem;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      transition: all 0.15s ease;
+    }
+    .active-row button:hover {
+      background: #d8edf0;
+      border-color: #a4cbd0;
+    }
+    .active-row button.clear {
+      border: none;
+      background: transparent;
+      color: var(--ink-secondary);
+      font-size: 0.78rem;
+      font-weight: 700;
+      text-decoration: underline;
+      text-underline-offset: 3px;
+      cursor: pointer;
+      margin-left: auto;
+      padding: 0.2rem 0.4rem;
+    }
+    .active-row button.clear:hover {
+      color: var(--ink);
+    }
+
+    /* Modern App Toolbar */
+    .app-toolbar {
+      background: var(--surface);
+      border: 1.5px solid var(--line-strong);
+      border-radius: var(--radius-lg);
+      padding: 1rem 1.2rem;
+      box-shadow: var(--shadow-sm);
+      margin-bottom: 1.25rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.85rem;
+    }
+    .toolbar-search-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.75rem;
+      align-items: center;
+    }
+    .search-input-wrap {
+      position: relative;
+      display: flex;
+      align-items: center;
+      flex: 1 1 240px;
+    }
+    .search-icon {
+      position: absolute;
+      left: 13px;
+      color: var(--mute);
+      pointer-events: none;
+    }
+    .search-input-wrap input[type="search"] {
+      width: 100%;
+      font: inherit;
+      font-size: 0.9rem;
+      font-weight: 500;
+      padding: 0.55rem 0.95rem 0.55rem 2.45rem;
+      border: 1.5px solid var(--line-strong);
+      border-radius: var(--radius-full);
+      background: #ffffff;
+      color: var(--ink);
+      transition: all 0.18s ease;
+      outline: none;
+    }
+    .search-input-wrap input[type="search"]::placeholder {
+      color: var(--mute-light);
+      font-weight: 400;
+    }
+    .search-input-wrap input[type="search"]:focus {
+      background: #ffffff;
+      border-color: var(--sea);
+      box-shadow: 0 0 0 3px rgba(15, 76, 84, 0.18);
+    }
+    .filters {
+      display: flex;
+      align-items: center;
+      gap: 0.35rem;
+      flex-wrap: wrap;
+    }
+    .chip-set {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.35rem;
+      flex-wrap: wrap;
+    }
+    .chip-divider {
+      width: 1.5px;
+      height: 1.25rem;
+      background: var(--line-strong);
+      margin: 0 0.2rem;
+      flex: none;
+    }
+    .chip {
+      font: inherit;
+      font-weight: 600;
+      font-size: 0.8rem;
+      cursor: pointer;
+      border: 1.5px solid var(--line-strong);
+      background: #ffffff;
+      color: var(--ink);
+      border-radius: var(--radius-full);
+      padding: 0.38rem 0.85rem;
+      line-height: 1.2;
+      transition: all 0.15s ease;
+      white-space: nowrap;
+      box-shadow: 0 1px 2px rgba(17, 15, 13, 0.05);
+    }
+    .chip:hover {
+      border-color: var(--ink);
+      background: var(--sand-subtle);
+    }
+    .chip.on {
+      background: var(--sea);
+      color: #ffffff;
+      border-color: var(--sea-dark);
+      box-shadow: 0 2px 6px rgba(15, 76, 84, 0.28);
+    }
+
+    /* Sub Toolbar: Sort and View Controls */
+    .toolbar-actions-row {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: flex-start;
+      gap: 1.25rem;
+      padding-top: 0.75rem;
+      border-top: 1px solid var(--line);
+    }
+    .sort-cluster, .view-cluster {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      flex: 0 0 auto;
+    }
+    .control-label {
+      font-size: 0.72rem;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      font-weight: 800;
+      color: var(--ink);
+    }
+    .segmented-control {
+      display: inline-flex;
+      align-items: center;
+      background: #eae2d3;
+      border: 1.5px solid var(--line-strong);
+      border-radius: var(--radius-full);
+      padding: 2px;
+      gap: 2px;
+    }
+    .sort-btn, .page-btn {
+      font: inherit;
+      font-size: 0.76rem;
+      font-weight: 600;
+      border: none;
+      background: transparent;
+      color: var(--ink-secondary);
+      border-radius: var(--radius-full);
+      padding: 0.32rem 0.75rem;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      transition: all 0.15s ease;
+      white-space: nowrap;
+    }
+    .sort-btn:hover, .page-btn:hover {
+      color: var(--ink);
+    }
+    .sort-btn.on, .page-btn.on {
+      background: var(--sea);
+      color: #ffffff;
+      font-weight: 700;
+      box-shadow: 0 1px 3px rgba(17, 15, 13, 0.2);
+    }
+
+    /* Pages Container */
+    .page { display: none; }
+    .page.on { display: block; }
+
+    /* Card Grid */
+    .grid {
+      display: grid;
+      gap: 1.15rem;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+    article {
+      background: var(--surface);
+      border: 1.5px solid var(--line-strong);
+      border-radius: var(--radius-lg);
+      padding: 1.25rem 1.35rem 1.15rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.75rem;
+      box-shadow: var(--shadow-sm);
+      transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+      position: relative;
+    }
+    article:hover {
+      transform: translateY(-2px);
+      box-shadow: var(--shadow-hover);
+      border-color: var(--ink);
+    }
+    .card-head {
+      display: flex;
+      flex-direction: column;
+      gap: 0.35rem;
+    }
+    .card-badges {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 0.5rem;
+    }
+    .badge-hood {
+      font-size: 0.72rem;
+      font-weight: 800;
+      letter-spacing: 0.07em;
+      text-transform: uppercase;
+      color: var(--sea-dark);
+      background: var(--sea-light);
+      border: 1.5px solid var(--sea-border);
+      padding: 0.2rem 0.65rem;
+      border-radius: var(--radius-full);
+    }
+    .badge-dist {
+      font-size: 0.75rem;
+      font-weight: 700;
+      color: var(--ink);
+      background: var(--sand-subtle);
+      border: 1px solid var(--line-strong);
+      padding: 0.2rem 0.6rem;
+      border-radius: var(--radius-full);
+      font-variant-numeric: tabular-nums;
+    }
+    article h2 {
+      font-family: "Fraunces", Georgia, serif;
+      font-size: 1.35rem;
+      font-weight: 700;
+      line-height: 1.25;
+      margin: 0.15rem 0 0;
+      color: var(--ink);
+      letter-spacing: -0.015em;
+    }
+    .card-address {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      font-size: 0.82rem;
+      color: var(--ink-secondary);
+      font-weight: 500;
+    }
+    .card-hooks {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.35rem;
+      margin-top: 0.15rem;
+    }
+    .hook-pill {
+      font-size: 0.72rem;
+      font-weight: 600;
+      background: var(--sand-subtle);
+      color: var(--ink);
+      border: 1px solid var(--line-strong);
+      padding: 0.18rem 0.55rem;
+      border-radius: var(--radius-full);
+    }
+    .card-note {
+      font-size: 0.88rem;
+      line-height: 1.45;
+      color: var(--ink-secondary);
+      margin: 0;
+    }
+    .menus {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0.75rem;
+      margin-top: 0.15rem;
+    }
+    .menus:has(.menu:only-child) {
+      grid-template-columns: 1fr;
+    }
+    .menu {
+      border-radius: var(--radius-md);
+      padding: 0.85rem 0.95rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.35rem;
+      border: 1.5px solid transparent;
+    }
+    .menu.drinks {
+      background: #edf5f6;
+      border-color: #9ec6cc;
+    }
+    .menu.food {
+      background: #fcf1e8;
+      border-color: #e5bfaa;
+    }
+    .menu.empty-menu {
+      background: var(--sand-subtle);
+      border-color: var(--line-strong);
+    }
+    .menu-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 0.25rem;
+      padding-bottom: 0.25rem;
+      border-bottom: 1.5px solid rgba(0, 0, 0, 0.08);
+    }
+    .menu h3 {
+      font-size: 0.72rem;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      font-weight: 800;
+      margin: 0;
+    }
+    .menu.drinks h3 { color: var(--sea-dark); }
+    .menu.food h3 { color: var(--roast); }
+    .menu-count {
+      font-size: 0.7rem;
+      font-weight: 700;
+      color: var(--ink-secondary);
+    }
+    .item {
+      display: flex;
+      align-items: baseline;
+      justify-content: space-between;
+      gap: 0.6rem;
+      font-size: 0.84rem;
+      padding: 0.2rem 0;
+      line-height: 1.35;
+    }
+    .item-name {
+      font-weight: 600;
+      color: var(--ink);
+    }
+    .item-price {
+      font-weight: 700;
+      font-size: 0.84rem;
+      color: var(--sea-dark);
+      font-variant-numeric: tabular-nums;
+      flex: none;
+    }
+    .item-desc {
+      font-size: 0.75rem;
+      color: var(--ink-secondary);
+      line-height: 1.35;
+      margin-top: -0.15rem;
+      margin-bottom: 0.25rem;
+    }
+    .card-footer {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-top: auto;
+      padding-top: 0.65rem;
+      border-top: 1px solid var(--line);
+      font-size: 0.75rem;
+      color: var(--mute);
+    }
+    .card-updated {
+      font-size: 0.74rem;
+      color: var(--ink-secondary);
+      font-weight: 500;
+    }
+    .to-top {
+      font: inherit;
+      font-size: 0.75rem;
+      font-weight: 600;
+      color: var(--ink-secondary);
+      background: transparent;
+      border: none;
+      cursor: pointer;
+      padding: 0.2rem 0.5rem;
+      border-radius: var(--radius-sm);
+      transition: all 0.15s ease;
+    }
+    .to-top:hover {
+      color: var(--sea);
+      background: var(--sand-subtle);
+    }
+    .empty {
+      color: var(--mute);
+      padding: 3rem 1rem;
+      text-align: center;
+      font-size: 0.95rem;
+      background: var(--surface);
+      border: 1px dashed var(--line);
+      border-radius: var(--radius-lg);
+    }
+
+    /* High-End Modern Spreadsheet View */
+    .sheet-wrap {
+      overflow-x: auto;
+      background: var(--surface);
+      border: 1.5px solid var(--line-strong);
+      border-radius: var(--radius-md);
+      box-shadow: var(--shadow-sm);
+      -webkit-overflow-scrolling: touch;
+    }
+    .sheet-wrap::-webkit-scrollbar {
+      height: 7px;
+      width: 7px;
+    }
+    .sheet-wrap::-webkit-scrollbar-track {
+      background: var(--sand-subtle);
+    }
+    .sheet-wrap::-webkit-scrollbar-thumb {
+      background: var(--line-strong);
+      border-radius: 999px;
+    }
+    .sheet-wrap::-webkit-scrollbar-thumb:hover {
+      background: var(--ink);
+    }
+    button:focus-visible, input:focus-visible {
+      outline: 2px solid var(--sea);
+      outline-offset: 2px;
+    }
+    button:focus:not(:focus-visible), input:focus:not(:focus-visible) {
+      outline: none;
+    }
+    table.sheet {
+      width: 100%;
+      border-collapse: separate;
+      border-spacing: 0;
+      font-size: 0.86rem;
+      text-align: left;
+    }
+    table.sheet th,
+    table.sheet td {
+      border-bottom: 1px solid var(--line);
+      border-right: 1px solid rgba(17, 15, 13, 0.08);
+      vertical-align: middle;
+    }
+    table.sheet th:last-child,
+    table.sheet td:last-child {
+      border-right: none;
+    }
+    table.sheet th {
+      position: sticky;
+      top: 0;
+      background: #ece3d4;
+      color: var(--ink);
+      font-size: 0.72rem;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      font-weight: 800;
+      padding: 0.62rem 0.8rem;
+      border-bottom: 2px solid var(--line-strong);
+      white-space: nowrap;
+      z-index: 2;
+    }
+    table.sheet th.th-num {
+      width: 3rem;
+      text-align: center;
+    }
+    table.sheet td {
+      padding: 0.62rem 0.8rem;
+      color: var(--ink-secondary);
+      transition: background 0.12s ease;
+    }
+    table.sheet tbody tr:nth-child(even) td {
+      background: #faf7f2;
+    }
+    table.sheet tbody tr:nth-child(odd) td {
+      background: #ffffff;
+    }
+    table.sheet tbody tr:hover td {
+      background: #eaf3f4;
+    }
+    table.sheet tr:last-child td {
+      border-bottom: none;
+    }
+    tr.row-highlight td {
+      background: #d8edf0 !important;
+      transition: background 1.4s ease;
+    }
+    .sheet-num {
+      text-align: center;
+      font-size: 0.78rem;
+      color: var(--ink);
+      font-weight: 700;
+      font-variant-numeric: tabular-nums;
+    }
+    .sheet-shop {
+      min-width: 13rem;
+    }
+    .sheet-hooks {
+      min-width: 12rem;
+    }
+    .sheet-mi,
+    .sheet-items,
+    .sheet-date {
+      white-space: nowrap;
+      font-variant-numeric: tabular-nums;
+    }
+    .sheet-place {
+      white-space: nowrap;
+    }
+    .table-shop-name {
+      color: var(--sea-dark);
+      font-weight: 700;
+      font-size: 0.94rem;
+      text-decoration: none;
+      display: inline-block;
+      transition: color 0.15s ease;
+    }
+    .table-shop-name:hover {
+      color: var(--roast);
+      text-decoration: underline;
+    }
+    .table-address {
+      display: block;
+      font-size: 0.75rem;
+      color: var(--ink-secondary);
+      margin-top: 0.15rem;
+      font-weight: 500;
+    }
+    .dist-pill {
+      display: inline-flex;
+      align-items: center;
+      font-size: 0.78rem;
+      font-weight: 700;
+      color: var(--ink);
+      background: var(--sand-subtle);
+      border: 1px solid var(--line-strong);
+      padding: 0.18rem 0.55rem;
+      border-radius: var(--radius-full);
+      font-variant-numeric: tabular-nums;
+      white-space: nowrap;
+    }
+    .place-pill {
+      display: inline-flex;
+      align-items: center;
+      font-size: 0.76rem;
+      font-weight: 700;
+      color: var(--sea-dark);
+      background: var(--sea-light);
+      border: 1px solid var(--sea-border);
+      padding: 0.18rem 0.6rem;
+      border-radius: var(--radius-full);
+      white-space: nowrap;
+    }
+    .item-count-badge {
+      display: inline-flex;
+      align-items: center;
+      font-size: 0.78rem;
+      font-weight: 600;
+      color: var(--ink);
+      background: var(--sand-subtle);
+      border: 1px solid var(--line-strong);
+      padding: 0.18rem 0.55rem;
+      border-radius: 6px;
+      white-space: nowrap;
+      font-variant-numeric: tabular-nums;
+    }
+    .table-tag {
+      display: inline-flex;
+      align-items: center;
+      font-size: 0.72rem;
+      font-weight: 600;
+      background: #ffffff;
+      color: var(--ink);
+      border: 1px solid var(--line-strong);
+      padding: 0.15rem 0.48rem;
+      border-radius: 6px;
+      margin: 2px 3px 2px 0;
+      white-space: nowrap;
+      line-height: 1.25;
+    }
+    .date-pill {
+      font-size: 0.78rem;
+      font-weight: 600;
+      color: var(--ink-secondary);
+      font-variant-numeric: tabular-nums;
+      white-space: nowrap;
+    }
+    .muted-dash {
+      color: var(--mute-light);
+    }
+    .table-empty {
+      text-align: center;
+      padding: 2.5rem 1rem !important;
+      color: var(--ink);
+      font-style: italic;
+    }
+    .th-sort {
+      font: inherit;
+      letter-spacing: inherit;
+      text-transform: inherit;
+      color: var(--ink);
+      background: none;
+      border: none;
+      padding: 0;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.35rem;
+      transition: color 0.15s ease;
+      width: 100%;
+    }
+    .th-sort:hover {
+      color: var(--sea);
+    }
+    .th-sort.active {
+      color: var(--sea-dark);
+      font-weight: 800;
+    }
+    .th-sort::after {
+      content: "↕";
+      opacity: 0.5;
+      font-size: 0.85em;
+      margin-left: 2px;
+    }
+    .th-sort.active::after {
+      content: "↑";
+      opacity: 1;
+      color: var(--sea);
+    }
+    .th-sort.active.desc::after {
+      content: "↓";
+      opacity: 1;
+      color: var(--sea);
+    }
+    .th-sort.th-right {
+      justify-content: flex-end;
+    }
+    table.sheet th.th-mi,
+    table.sheet td.sheet-mi,
+    table.sheet th.th-items,
+    table.sheet td.sheet-items,
+    table.sheet th.th-date,
+    table.sheet td.sheet-date {
+      text-align: right;
+    }
+    @keyframes cardPulse {
+      0% { outline: 2px solid var(--sea); box-shadow: 0 0 0 6px rgba(22, 78, 86, 0.15); }
+      100% { outline: 2px solid transparent; box-shadow: var(--shadow-sm); }
+    }
+    article.card-highlight {
+      animation: cardPulse 1.6s ease;
+    }
+
+    /* Map View */
+    #map {
+      height: 480px;
+      border-radius: var(--radius-lg);
+      border: 1.5px solid var(--line-strong);
+      background: #d7e4e6;
+      box-shadow: var(--shadow-sm);
+    }
+    .shop-pin {
+      width: 30px;
+      height: 30px;
+      cursor: pointer;
+      filter: drop-shadow(0 2px 6px rgba(0, 0, 0, 0.25));
+      transition: transform 0.15s ease;
+    }
+    .shop-pin .pin-fill {
+      fill: var(--sea);
+      stroke: #ffffff;
+      stroke-width: 2px;
+    }
+    .shop-pin text {
+      fill: #ffffff;
+      font-size: 11px;
+      font-weight: 700;
+      font-family: "IBM Plex Sans", sans-serif;
+    }
+    .shop-pin:hover {
+      transform: scale(1.18);
+    }
+    .maplibregl-popup-content {
+      font-family: inherit;
+      padding: 0.8rem 0.95rem;
+      border-radius: var(--radius-md);
+      box-shadow: var(--shadow-pop);
+      border: 1.5px solid var(--line-strong);
+      line-height: 1.45;
+    }
+    .maplibregl-popup-content strong {
+      color: var(--ink);
+      font-size: 0.92rem;
+    }
+    .popup-links {
+      margin-top: 0.45rem;
+      padding-top: 0.45rem;
+      border-top: 1px solid var(--line-subtle);
+    }
+    .popup-links a {
+      font-size: 0.8rem;
+      color: var(--sea);
+      font-weight: 600;
+      text-decoration: none;
+    }
+    .popup-links a:hover {
+      text-decoration: underline;
+    }
+
+    /* Tooltip */
+    #hoverTip {
+      position: fixed;
+      z-index: 50;
+      max-width: 22rem;
+      pointer-events: none;
+      background: #191613;
+      color: #fffaf4;
+      font-size: 13px;
+      line-height: 1.45;
+      font-family: "IBM Plex Sans", system-ui, sans-serif;
+      padding: 0.65rem 0.85rem;
+      border-radius: 10px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.28);
+      white-space: pre-line;
+      display: none;
+      border: 1px solid rgba(255, 255, 255, 0.08);
+    }
+
+    /* Footer & Dev Tools */
+    footer {
+      padding: 2.5rem 1.25rem 3rem;
+      color: var(--ink-secondary);
+      font-size: 0.84rem;
+      text-align: center;
+      border-top: 1.5px solid var(--line-strong);
+      background: var(--sand);
+    }
+    .dev-tools {
+      margin-top: 1.25rem;
+      font-size: 0.78rem;
+      color: var(--mute);
+      max-width: 600px;
+      margin-left: auto;
+      margin-right: auto;
+      text-align: left;
+    }
+    .dev-tools summary {
+      cursor: pointer;
+      opacity: 0.75;
+      text-align: center;
+      font-weight: 500;
+    }
+    .dev-tools summary:hover { opacity: 1; }
+    .toolbar {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.6rem;
+      align-items: center;
+      margin-top: 0.75rem;
+      padding: 0.9rem;
+      background: var(--surface);
+      border: 1px solid var(--line);
+      border-radius: var(--radius-md);
+    }
+    .toolbar label { font-size: 0.78rem; color: var(--mute); }
+    .toolbar input, .toolbar select, .toolbar button {
+      font: inherit;
+      border-radius: var(--radius-sm);
+      border: 1px solid var(--line);
+    }
+    .toolbar input {
+      padding: 0.35rem 0.6rem;
+      background: var(--sand);
+      color: var(--ink);
+    }
+    .toolbar button {
+      padding: 0.35rem 0.75rem;
+      background: var(--sea);
+      color: #ffffff;
+      font-weight: 600;
+      border: none;
+      cursor: pointer;
+    }
+    .toolbar button.ghost {
+      background: transparent;
+      color: var(--ink);
+      border: 1px solid var(--line);
+    }
+    .status {
+      font-size: 0.8rem;
+      margin-top: 0.5rem;
+      color: var(--mute);
+    }
+    .status.err { color: #b91c1c; }
+    .status.ok { color: #15803d; }
+
+    /* Responsive Queries */
+    @media (max-width: 860px) {
+      .groups { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      .grid { grid-template-columns: 1fr; }
+    }
+    @media (max-width: 640px) {
+      header { padding: 1.15rem 0.85rem 1.25rem; }
+      header h1 { font-size: 1.6rem; }
+      header p { font-size: 0.86rem; line-height: 1.4; }
+      main { padding: 0.65rem 0.55rem 2rem; }
+      .summary { padding: 0.75rem 0.8rem; border-radius: var(--radius-md); margin-bottom: 0.65rem; }
+      .summary-title-group h2 { font-size: 1.1rem; }
+      .summary-help { font-size: 0.78rem; }
+      .groups { grid-template-columns: 1fr; gap: 0.55rem; margin-top: 0.65rem; padding-top: 0.65rem; }
+      .group h3 { font-size: 0.68rem; }
+      .group ul { gap: 0.3rem; }
+      label.cat-check { font-size: 0.75rem; padding: 0.25rem 0.55rem; }
+      .app-toolbar { padding: 0.65rem 0.75rem; border-radius: var(--radius-md); margin-bottom: 0.65rem; gap: 0.55rem; }
+      .toolbar-search-row {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 0.45rem;
+      }
+      .search-input-wrap { width: 100%; flex: 1 1 100%; }
+      .search-input-wrap input[type="search"] { padding: 0.48rem 0.8rem 0.48rem 2.25rem; font-size: 0.86rem; }
+      .filters {
+        width: 100%;
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+        padding-bottom: 2px;
+      }
+      .chip-set {
+        flex-wrap: nowrap;
+        width: max-content;
+        gap: 0.3rem;
+      }
+      .chip { font-size: 0.75rem; padding: 0.28rem 0.65rem; white-space: nowrap; }
+      .toolbar-actions-row {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 0.4rem;
+        padding-top: 0.4rem;
+      }
+      .sort-cluster, .view-cluster {
+        width: 100%;
+        display: flex;
+        align-items: center;
+        gap: 0.45rem;
+      }
+      .control-label {
+        font-size: 0.68rem;
+        min-width: 2.3rem;
+      }
+      .segmented-control {
+        flex: 1 1 auto;
+        display: inline-flex;
+        max-width: 320px;
+        padding: 2px;
+      }
+      .sort-btn, .page-btn {
+        flex: 1;
+        justify-content: center;
+        padding: 0.28rem 0.45rem;
+        font-size: 0.72rem;
+        gap: 3px;
+      }
+      .menus { grid-template-columns: 1fr; gap: 0.45rem; }
+      article { padding: 0.95rem 0.85rem 0.85rem; border-radius: var(--radius-md); gap: 0.55rem; }
+      article h2 { font-size: 1.2rem; }
+      .grid { gap: 0.65rem; }
+    }
+  </style>
+  <link rel="stylesheet" href="https://unpkg.com/maplibre-gl@4/dist/maplibre-gl.css" />
+</head>
+<body>
+  <header>
+    <div class="wrap">
+      <div class="header-badge">
+        <span class="badge-dot"></span> MenuMatch · North County
+      </div>
+      <h1>Encinitas coffee guide</h1>
+      <p>A curated guide to specialty coffee roasters, neighborhood cafes, and signature drinks in Encinitas, Leucadia, and Cardiff-by-the-Sea.</p>
+    </div>
+  </header>
+  <main class="wrap">
+    <!-- Category Attribute Filters -->
+    <section class="summary" id="summary">
+      <div class="summary-bar" id="summaryToggle">
+        <div class="summary-title-group">
+          <h2>Browse by category</h2>
+          <p class="summary-help">Filter shops by roast style, atmosphere, vibe, and food offerings.</p>
+        </div>
+        <button type="button" id="summaryBtn" class="summary-toggle-btn">Hide</button>
+      </div>
+      <div class="groups" id="groups"></div>
+    </section>
+
+    <!-- Active Filters Row -->
+    <div class="active-row" id="activeRow" hidden></div>
+
+    <!-- App Toolbar: Search, Filters, Sort & View Toggles -->
+    <div class="app-toolbar">
+      <div class="toolbar-search-row">
+        <div class="search-input-wrap">
+          <svg class="search-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="11" cy="11" r="8"></circle>
+            <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+          </svg>
+          <input type="search" id="q" placeholder="Search shops, beans, roast, or drink..." aria-label="Search shop or drink" />
+        </div>
+        <div class="filters" aria-label="Filter">
+          <div class="chip-set">
+            <button type="button" class="chip on" data-hood="all">All</button>
+            <button type="button" class="chip" data-hood="Downtown">Downtown</button>
+            <button type="button" class="chip" data-hood="Leucadia">Leucadia</button>
+            <button type="button" class="chip" data-hood="Cardiff">Cardiff</button>
+            <span class="chip-divider" aria-hidden="true"></span>
+            <button type="button" class="chip" data-hood="food">Food</button>
+            <button type="button" class="chip" data-hood="drinks">Drinks only</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="toolbar-actions-row">
+        <div class="sort-cluster">
+          <span class="control-label">Sort</span>
+          <div class="segmented-control" role="group" aria-label="Sort results">
+            <button type="button" class="sort-btn on" data-sort="distance">Distance</button>
+            <button type="button" class="sort-btn" data-sort="az">Name</button>
+            <button type="button" class="sort-btn" data-sort="region">Neighborhood</button>
+          </div>
+        </div>
+
+        <div class="view-cluster">
+          <span class="control-label">View</span>
+          <div class="segmented-control pages" role="tablist" aria-label="View">
+            <button type="button" class="page-btn on" data-page="search" title="Card List view">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7" rx="1"></rect><rect x="14" y="3" width="7" height="7" rx="1"></rect><rect x="14" y="14" width="7" height="7" rx="1"></rect><rect x="3" y="14" width="7" height="7" rx="1"></rect></svg>
+              <span>List</span>
+            </button>
+            <button type="button" class="page-btn" data-page="sheet" title="Spreadsheet view">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"></rect><line x1="3" y1="9" x2="21" y2="9"></line><line x1="3" y1="15" x2="21" y2="15"></line><line x1="9" y1="3" x2="9" y2="21"></line><line x1="15" y1="3" x2="15" y2="21"></line></svg>
+              <span>Spreadsheet</span>
+            </button>
+            <button type="button" class="page-btn" data-page="map" title="Map view">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="1 6 1 22 8 18 16 22 23 18 23 2 16 6 8 2 1 6"></polygon><line x1="8" y1="2" x2="8" y2="18"></line><line x1="16" y1="6" x2="16" y2="22"></line></svg>
+              <span>Map</span>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- View 1: Card List -->
+    <section class="page on" id="page-search">
+      <div class="grid" id="grid"></div>
+      <p class="empty" id="empty" hidden>No shops match that filter.</p>
+    </section>
+
+    <!-- View 2: Directory Table -->
+    <section class="page" id="page-sheet">
+      <div class="sheet-wrap">
+        <table class="sheet">
+          <thead>
+            <tr>
+              <th class="th-num">#</th>
+              <th><button type="button" class="th-sort" data-sort-col="az">Shop</button></th>
+              <th class="th-mi" title="Approximate distance from downtown Encinitas (101 & E)">
+                <button type="button" class="th-sort th-right" data-sort-col="distance">Mi</button>
+              </th>
+              <th><button type="button" class="th-sort" data-sort-col="hooks">Hooks</button></th>
+              <th class="th-items"><button type="button" class="th-sort th-right" data-sort-col="items">Items</button></th>
+              <th><button type="button" class="th-sort" data-sort-col="region">Place</button></th>
+              <th class="th-date"><button type="button" class="th-sort th-right" data-sort-col="updated">Updated</button></th>
+            </tr>
+          </thead>
+          <tbody id="sheetBody"></tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- View 3: Map -->
+    <section class="page" id="page-map">
+      <div id="map"></div>
+      <p class="meta" id="mapNote" style="margin:.75rem 0 0; color:var(--mute); font-size:0.82rem;">Pins are approximate from neighborhood, not surveyed GPS.</p>
+    </section>
+  </main>
+  <footer>
+    MenuMatch · Encinitas Coffee Guide
+    <details class="dev-tools">
+      <summary>Developer Tools</summary>
+      <div class="toolbar">
+        <label>
+          API base
+          <input id="apiBase" value="" spellcheck="false" placeholder="http://localhost:8000" />
+        </label>
+        <button type="button" id="reload">Reload API</button>
+        <button type="button" class="ghost" id="demo">Sample data</button>
+        <label>
+          MapTiler key
+          <input id="mapKey" value="" spellcheck="false" autocomplete="off" placeholder="optional" />
+        </label>
+      </div>
+      <div class="status" id="status" hidden></div>
+      <div class="status" id="buildInfo"></div>
+    </details>
+  </footer>
+  <div id="hoverTip" role="tooltip"></div>
+
+  <script src="https://unpkg.com/maplibre-gl@4/dist/maplibre-gl.js"></script>
+  <script>
+    const SAMPLE = [
+      {
+        id: "ironsmith",
+        name: "Ironsmith Coffee Roasters",
+        neighborhood: "Downtown",
+        address: "458 S Coast Hwy 101, Encinitas",
+        note: "In-house Diedrich roaster on 101. Single origins + espresso.",
+        characterization: { style: "single-origin", setting: "roaster cafe" },
+        menus: [
+          { name: "Drinks", items: [
+            { name: "Espresso", price: 3.5 },
+            { name: "Flat white", price: 5.25 },
+            { name: "Pour over", price: 5.5, description: "Rotating single origin" }
+          ]},
+          { name: "Food", items: [
+            { name: "New wave bagel", price: 8, kind: "food", description: "Whipped cream cheese, fresh dill" }
+          ]}
+        ]
+      },
+      {
+        id: "necessity",
+        name: "Necessity Coffee",
+        neighborhood: "Leucadia",
+        address: "687 2nd St, Encinitas",
+        note: "Roaster cafe tucked with an art studio.",
+        characterization: { style: "specialty roaster", setting: "hidden studio" },
+        menus: [
+          { name: "Drinks", items: [
+            { name: "House drip", price: 3.75 },
+            { name: "Cortado", price: 4.5 },
+            { name: "Batch brew", price: 4 },
+            { name: "Cardamom latte", price: 5.75 }
+          ]},
+          { name: "Food", items: [
+            { name: "Seasonal pastry", price: 4.25, kind: "food", description: "Rotating pastry from local bakehouse" }
+          ]}
+        ]
+      },
+      {
+        id: "bump",
+        name: "Bump Coffee",
+        neighborhood: "Cardiff",
+        address: "1302 N Coast Hwy 101, Encinitas",
+        note: "Cardiff patio stop near the VG donut corridor.",
+        characterization: { style: "surf cafe", setting: "patio" },
+        menus: [
+          { name: "Drinks", items: [
+            { name: "Latte", price: 5.5 },
+            { name: "Cold brew", price: 5 },
+            { name: "Matcha", price: 5.75 }
+          ]},
+          { name: "Food", items: [
+            { name: "Breakfast burrito", price: 9.5, kind: "food", description: "Egg, potato, cheese & salsa" }
+          ]}
+        ]
+      },
+      {
+        id: "coffee-coffee",
+        name: "Coffee Coffee",
+        neighborhood: "Leucadia",
+        address: "970 N Coast Hwy 101, Encinitas",
+        note: "Leucadia patio + Welcome to Leucadia mural.",
+        characterization: { style: "neighborhood cafe", setting: "patio near the beach" },
+        menus: [
+          { name: "Drinks", items: [
+            { name: "Americano", price: 4 },
+            { name: "Oat latte", price: 5.75 }
+          ]},
+          { name: "Food", items: [
+            { name: "Avocado toast", price: 9, kind: "food", description: "Sourdough, pickled onion, chili flake" }
+          ]}
+        ]
+      },
+      {
+        id: "lofty",
+        name: "Lofty Coffee — Encinitas",
+        neighborhood: "Downtown",
+        address: "Encinitas Roasting Works",
+        note: "Local roaster cafe downtown.",
+        characterization: { style: "organic roaster", setting: "roaster cafe walk-up" },
+        menus: [
+          { name: "Drinks", items: [
+            { name: "Drip", price: 3.5 },
+            { name: "Cappuccino", price: 5 }
+          ]},
+          { name: "Food", items: [
+            { name: "Morning bun", price: 4.5, kind: "food", description: "Cardamom & cinnamon sugar" }
+          ]}
+        ]
+      },
+      {
+        id: "birdrock",
+        name: "Bird Rock Coffee Roasters",
+        neighborhood: "Downtown",
+        address: "Encinitas",
+        note: "San Diego roaster outpost.",
+        characterization: { style: "award-winning roaster", setting: "roaster cafe" },
+        menus: [
+          { name: "Drinks", items: [
+            { name: "Espresso", price: 3.75 },
+            { name: "Filter", price: 5 }
+          ]}
+        ]
+      }
+    ];
+
+    const state = { shops: [], hood: "all", q: "", source: "idle", cats: {}, openGroups: {}, page: "search", sort: "distance", sortDir: 1 };
+    const AREA_LATLNG = {
+      Leucadia: [33.0668, -117.2945],
+      Downtown: [33.0370, -117.2920],
+      Cardiff: [33.0208, -117.2830]
+    };
+    // Demo-only anchor point (downtown Encinitas / Coast Hwy 101 & E). Distance below is
+    // measured from here using the same jittered/neighborhood-centroid coordinates the map
+    // already uses for shops without real lat/lng — approximate, not surveyed, same caveat
+    // as the map pins.
+    const DEMO_ANCHOR = [33.0370, -117.2920];
+    function milesBetween(a, b) {
+      const toRad = (d) => (d * Math.PI) / 180;
+      const R = 3958.8;
+      const dLat = toRad(b[0] - a[0]);
+      const dLng = toRad(b[1] - a[1]);
+      const lat1 = toRad(a[0]);
+      const lat2 = toRad(b[0]);
+      const h = Math.sin(dLat / 2) ** 2 + Math.cos(lat1) * Math.cos(lat2) * Math.sin(dLng / 2) ** 2;
+      return R * 2 * Math.asin(Math.sqrt(h));
+    }
+    function shopDistanceMi(s) {
+      return milesBetween(DEMO_ANCHOR, shopLatLng(s));
+    }
+    function sortShops(list) {
+      const dir = state.sortDir === -1 ? -1 : 1;
+      const comparators = {
+        distance: (a, b) => shopDistanceMi(a) - shopDistanceMi(b),
+        az: (a, b) => a.name.localeCompare(b.name),
+        region: (a, b) => (a.neighborhood || "").localeCompare(b.neighborhood || "") || a.name.localeCompare(b.name),
+        updated: (a, b) => shopUpdatedTs(a) - shopUpdatedTs(b),
+        items: (a, b) => shopItemCount(a) - shopItemCount(b),
+        hooks: (a, b) => shopHookCount(a) - shopHookCount(b)
+      };
+      const cmp = comparators[state.sort] || comparators.distance;
+      const sorted = list.slice();
+      sorted.sort((a, b) => dir * cmp(a, b));
+      return sorted;
+    }
+    let maplibreMap = null;
+    let mapMarkers = [];
+    let lastFilteredShops = [];
+    const MAP_KEY_STORE = "menumatch.maptilerKey";
+    const PUBLIC_MAP_STYLE = "https://tiles.openfreemap.org/styles/bright";
+
+    function mapTilerKey() {
+      const q = new URLSearchParams(location.search).get("maptiler");
+      const typed = $("mapKey") ? $("mapKey").value : "";
+      return String(q || typed || localStorage.getItem(MAP_KEY_STORE) || "").trim();
+    }
+    function mapStyleUrl() {
+      const key = mapTilerKey();
+      if (key) return "https://api.maptiler.com/maps/streets-v2/style.json?key=" + encodeURIComponent(key);
+      return PUBLIC_MAP_STYLE;
+    }
+    function rememberMapKey() {
+      const el = $("mapKey");
+      if (!el) return;
+      const v = el.value.trim();
+      if (v) localStorage.setItem(MAP_KEY_STORE, v);
+      else localStorage.removeItem(MAP_KEY_STORE);
+    }
+    function applyMapStyle() {
+      if (!maplibreMap) return;
+      const url = mapStyleUrl();
+      if (maplibreMap._mmStyle === url) return;
+      maplibreMap._mmStyle = url;
+      maplibreMap.setStyle(url);
+      maplibreMap.once("style.load", () => renderMap(lastFilteredShops));
+    }
+
+    const $ = (id) => document.getElementById(id);
+
+    function money(n) {
+      if (n == null || n === "") return "";
+      const num = Number(n);
+      if (Number.isNaN(num)) return String(n);
+      return "$" + num.toFixed(2).replace(/\.00$/, "");
+    }
+
+    function normShop(raw) {
+      if (!raw || typeof raw !== "object") return null;
+      const id = raw.id || raw.restaurant_id || raw.slug || raw.name;
+      const menus = raw.menus || raw.menu || raw.current_menu || [];
+      return {
+        id,
+        name: raw.name || raw.title || "Untitled shop",
+        neighborhood: raw.neighborhood || raw.area || raw.city || raw.hood || "",
+        address: raw.address || raw.street || raw.location || "",
+        note: raw.note || raw.description || raw.about || raw.tagline || "",
+        url: raw.url || raw.website || "",
+        lat: raw.lat != null ? Number(raw.lat) : (raw.latitude != null ? Number(raw.latitude) : null),
+        lng: raw.lng != null ? Number(raw.lng) : (raw.longitude != null ? Number(raw.longitude) : null),
+        coordinates_verified: raw.coordinates_verified === true,
+        characterization: raw.characterization || raw.characteristics || {},
+        menus: normalizeMenus(menus),
+        menu_updated_at: raw.menu_updated_at || raw.updated_at || raw.created_at || ""
+      };
+    }
+
+    function normalizeMenus(menus) {
+      if (!menus) return [];
+      if (Array.isArray(menus)) {
+        return menus.map(normalizeMenu).filter((m) => m && m.items && m.items.length);
+      }
+      if (typeof menus === "object") {
+        if (Array.isArray(menus.items)) return [normalizeMenu(menus)].filter(Boolean);
+        return Object.entries(menus).map(([name, items]) =>
+          normalizeMenu({ name, items })
+        ).filter(Boolean);
+      }
+      return [];
+    }
+
+    function normalizeMenu(menu) {
+      if (!menu) return null;
+      if (Array.isArray(menu)) {
+        return { name: "Menu", items: menu.map(normalizeItem).filter(Boolean) };
+      }
+      const items = menu.items || menu.menu_items || menu.entries || [];
+      return {
+        name: menu.name || menu.title || menu.version_label || "Menu",
+        items: (Array.isArray(items) ? items : []).map(normalizeItem).filter(Boolean),
+        characterization: menu.characterization || {},
+        updated_at: menu.updated_at || menu.created_at || ""
+      };
+    }
+
+    function formatWhen(iso) {
+      if (!iso) return "";
+      const d = new Date(iso);
+      if (isNaN(d.getTime())) return String(iso);
+      return d.toLocaleString(undefined, { dateStyle: "medium", timeStyle: "short" });
+    }
+
+    function formatSheetDate(iso) {
+      if (!iso) return { short: "", full: "" };
+      const d = new Date(iso);
+      if (isNaN(d.getTime())) return { short: String(iso), full: String(iso) };
+      const mm = String(d.getMonth() + 1).padStart(2, "0");
+      const dd = String(d.getDate()).padStart(2, "0");
+      const yy = String(d.getFullYear()).slice(-2);
+      return { short: mm + "/" + dd + "/" + yy, full: formatWhen(iso) };
+    }
+
+    function normalizeItem(item) {
+      if (!item) return null;
+      if (typeof item === "string") return { name: item, price: null, description: "" };
+      return {
+        name: item.name || item.title || item.item || "Item",
+        price: item.price ?? item.cost ?? item.amount ?? null,
+        description: item.description || item.notes || item.detail || "",
+        kind: item.kind || item.category || ""
+      };
+    }
+
+    function isFoodItem(item) {
+      if (!item) return false;
+      if (String(item.kind || "").toLowerCase() === "food") return true;
+      const n = (item.name || "").toLowerCase();
+      return /toast|muffin|pastry|bagel|donut|doughnut|bowl|salad|soup|quiche|croissant|burrito|sandwich|bread|scone|cookie|cake|tart|granola/.test(n);
+    }
+
+    function drinkCategory(name) {
+      const n = (name || "").toLowerCase();
+      if (/drip|batch|filter|pour/.test(n)) return "Drip / filter";
+      if (/espresso|cortado|macchiato/.test(n)) return "Espresso";
+      if (/latte|cappuccino|flat white|mocha|au lait/.test(n)) return "Milk drinks";
+      if (/cold brew|iced/.test(n)) return "Iced / cold brew";
+      if (/matcha|tea/.test(n)) return "Tea / matcha";
+      return "Other drinks";
+    }
+
+    function foodCategory(name) {
+      const n = (name || "").toLowerCase();
+      if (/smoothie|juice|lemonade/.test(n)) return null;
+      if (/toast|bagel|burrito|sandwich|quesadilla|scramble|soup|quiche|egg|breakfast/.test(n)) return "Savory";
+      if (/pastry|pastries|croissant|muffin|scone|bread|bun|cookie|cake|tart|donut/.test(n)) return "Pastry";
+      if (/bowl|granola|salad|parfait|yogurt/.test(n)) return "Bowls";
+      return "Other";
+    }
+
+    function shopHasFood(s) {
+      return (s.menus || []).some((m) => (m.items || []).some(isFoodItem));
+    }
+
+    function shopChars(s) {
+      const chars = Object.assign({}, s.characterization);
+      (s.menus || []).forEach((m) => Object.assign(chars, m.characterization || {}));
+      return chars;
+    }
+
+    function shopTags(s) {
+      const chars = shopChars(s);
+      const style = ((chars.style || "") + " " + (s.note || "")).toLowerCase();
+      const setting = ((chars.setting || "") + " " + (s.note || "")).toLowerCase();
+      const names = (s.menus || []).flatMap((m) => (m.items || []).map((i) => (i.name || "") + " " + (i.description || ""))).join(" ").toLowerCase();
+      const coffee = [];
+      const place = [];
+      const mode = [];
+      const food = [];
+      if (/roaster|roasts|roast/.test(style + " " + setting)) coffee.push("Roasts in house");
+      if (/cardamom|hazelnut|gold brew|açaí|acai|matcha|pour over/.test(names)) coffee.push("Unusual drinks");
+      if (/patio/.test(setting)) place.push("Patio");
+      if (/beach|surf|coast/.test(style + " " + setting + " " + (s.address || "").toLowerCase())) place.push("Near the beach");
+      if (/railroad|station/.test(setting)) place.push("Railroad station");
+      if (/hidden|studio/.test(setting)) place.push("Hidden / studio");
+      if (/walk-up|walk up/.test(setting + " " + style)) mode.push("Walk-up");
+      if (/cyclist/.test(style)) mode.push("Cyclist cafe");
+      (s.menus || []).forEach((m) => {
+        (m.items || []).forEach((i) => {
+          if (isFoodItem(i)) {
+            const cat = foodCategory(i.name);
+            if (cat && food.indexOf(cat) === -1) food.push(cat);
+          }
+        });
+      });
+      return { Coffee: coffee, Setting: place, Mode: mode, Food: food };
+    }
+
+    function unusualHooks(s) {
+      const t = shopTags(s);
+      return [].concat(t.Coffee, t.Setting, t.Mode);
+    }
+
+    function shopInCategory(s, group, trait) {
+      if (group === "Place" || group === "Area") return (s.neighborhood || "") === trait;
+      const tags = shopTags(s);
+      if (tags[group]) return tags[group].indexOf(trait) !== -1;
+      if (group === "What's unusual") return unusualHooks(s).indexOf(trait) !== -1;
+      return false;
+    }
+
+    function selectedTraits(group) {
+      return (state.cats && state.cats[group]) || [];
+    }
+
+    function shopMatchesGroup(s, group, traits) {
+      if (!traits || !traits.length) return true;
+      return traits.some((t) => shopInCategory(s, group, t));
+    }
+
+    function shopMatchesCats(s, cats) {
+      const used = cats || state.cats || {};
+      return Object.keys(used).every((group) => shopMatchesGroup(s, group, used[group]));
+    }
+
+    function matchesHoodAndQuery(s) {
+      if (state.hood === "food") {
+        if (!shopHasFood(s)) return false;
+      } else if (state.hood === "drinks") {
+        /* keep every shop; food lines are hidden on the card */
+      } else if (state.hood !== "all") {
+        const h = (s.neighborhood || "").toLowerCase();
+        if (!h.includes(state.hood.toLowerCase())) return false;
+      }
+      const q = state.q.trim().toLowerCase();
+      if (!q) return true;
+      const blob = [s.name, s.address, s.note, s.neighborhood]
+        .concat(s.menus.flatMap((m) => m.items.map((i) => i.name + " " + (i.description || ""))))
+        .join(" ")
+        .toLowerCase();
+      return blob.includes(q);
+    }
+
+    function toggleTrait(group, trait) {
+      const cur = selectedTraits(group).slice();
+      const i = cur.indexOf(trait);
+      if (i >= 0) cur.splice(i, 1);
+      else cur.push(trait);
+      if (cur.length) state.cats[group] = cur;
+      else delete state.cats[group];
+    }
+
+    function clearCats() {
+      state.cats = {};
+    }
+
+    function activeCatList() {
+      const out = [];
+      Object.keys(state.cats || {}).forEach((group) => {
+        (state.cats[group] || []).forEach((trait) => out.push({ group, trait }));
+      });
+      return out;
+    }
+
+    function countForTrait(group, trait) {
+      const others = {};
+      Object.keys(state.cats || {}).forEach((g) => {
+        if (g !== group) others[g] = state.cats[g].slice();
+      });
+      return state.shops.filter((s) =>
+        matchesHoodAndQuery(s) && shopMatchesCats(s, others) && shopInCategory(s, group, trait)
+      ).length;
+    }
+
+    function renderActiveRow() {
+      const row = $("activeRow");
+      if (!row) return;
+      const picks = activeCatList();
+      if (!picks.length) {
+        row.hidden = true;
+        row.innerHTML = "";
+        return;
+      }
+      row.hidden = false;
+      row.innerHTML =
+        "<span class=\"label\">Active:</span>" +
+        picks.map((p) =>
+          "<button type=\"button\" data-group=\"" + escapeHtml(p.group) +
+          "\" data-trait=\"" + escapeHtml(p.trait) + "\" title=\"Remove filter\">" +
+          escapeHtml(p.trait) + " &times;</button>"
+        ).join("") +
+        "<button type=\"button\" class=\"clear\" data-clear=\"1\">Clear all</button>";
+      row.querySelectorAll("button").forEach((btn) => {
+        btn.addEventListener("click", () => {
+          if (btn.dataset.clear) clearCats();
+          else toggleTrait(btn.dataset.group, btn.dataset.trait);
+          render();
+        });
+      });
+    }
+
+    function renderSummary(shops) {
+      const buckets = { Coffee: {}, Setting: {}, Mode: {}, Food: {} };
+      const push = (group, key, shop) => {
+        if (!key) return;
+        buckets[group] = buckets[group] || {};
+        buckets[group][key] = buckets[group][key] || [];
+        if (!buckets[group][key].some((s) => s.id === shop.id)) buckets[group][key].push(shop);
+      };
+      for (const s of shops) {
+        const tags = shopTags(s);
+        Object.keys(tags).forEach((group) => {
+          tags[group].forEach((trait) => push(group, trait, s));
+        });
+      }
+      const root = $("groups");
+      if (!root) return;
+      root.innerHTML = "";
+      const order = ["Coffee", "Setting", "Mode", "Food"];
+      for (const groupName of order) {
+        const entries = Object.entries(buckets[groupName] || {});
+        if (!entries.length) continue;
+        if (groupName === "Food") {
+          const orderFood = ["Savory", "Bowls", "Pastry", "Other"];
+          entries.sort((a, b) => {
+            const ia = orderFood.indexOf(a[0]);
+            const ib = orderFood.indexOf(b[0]);
+            return (ia < 0 ? 99 : ia) - (ib < 0 ? 99 : ib);
+          });
+        }
+        const div = document.createElement("div");
+        div.className = "group";
+        div.dataset.group = groupName;
+        div.innerHTML =
+          "<h3>" + escapeHtml(groupName) + "</h3><ul>" +
+          entries.map(([trait]) => {
+            const n = countForTrait(groupName, trait);
+            const checked = selectedTraits(groupName).indexOf(trait) !== -1 ? " checked" : "";
+            const zero = n === 0 ? " zero" : "";
+            return "<li><label class=\"cat-check" + zero + "\"><input type=\"checkbox\" data-group=\"" +
+              escapeHtml(groupName) + "\" data-trait=\"" + escapeHtml(trait) + "\"" + checked +
+              "> <span>" + escapeHtml(trait) + "</span> <span class=\"n\">" + n + "</span></label></li>";
+          }).join("") + "</ul>";
+        root.appendChild(div);
+      }
+      if (!root.children.length) {
+        root.innerHTML = "<p class='meta'>No categories yet.</p>";
+      }
+      root.querySelectorAll("input[type=checkbox]").forEach((box) => {
+        box.addEventListener("change", () => {
+          toggleTrait(box.dataset.group, box.dataset.trait);
+          render();
+        });
+      });
+      renderActiveRow();
+    }
+
+    function render() {
+      const q = state.q.trim().toLowerCase();
+      const filtered = sortShops(state.shops.filter((s) => {
+        if (!matchesHoodAndQuery(s)) return false;
+        return shopMatchesCats(s);
+      }));
+      lastFilteredShops = filtered;
+
+      const grid = $("grid");
+      grid.innerHTML = "";
+      $("empty").hidden = filtered.length > 0;
+      if (!filtered.length) {
+        $("empty").textContent = activeCatList().length || state.hood !== "all" || q
+          ? "No shops match those filters. Clear one to widen the list."
+          : "No shops match that filter.";
+      }
+      renderSummary(state.shops);
+
+      for (const s of filtered) {
+        const el = document.createElement("article");
+        el.id = "shop-" + s.id;
+        const items = uniqueMenuItems(s);
+        const drinks = items.filter((i) => !isFoodItem(i));
+        const foods = items.filter(isFoodItem);
+        const row = (i) => {
+          const p = money(i.price);
+          const tipBits = [];
+          if (p) tipBits.push(p);
+          if (i.description) tipBits.push(i.description);
+          const tip = tipBits.length ? " data-tip=\"" + escapeHtml(tipBits.join(" · ")) + "\"" : "";
+          return `
+            <div class="item"${tip}>
+              <span class="item-name">${escapeHtml(i.name)}</span>
+              ${p ? `<span class="item-price">${escapeHtml(p)}</span>` : ""}
+            </div>
+            ${i.description ? `<div class="item-desc">${escapeHtml(i.description)}</div>` : ""}
+          `;
+        };
+        const cols = [];
+        if (drinks.length) {
+          cols.push(`
+            <div class="menu drinks">
+              <div class="menu-header">
+                <h3>Drinks</h3>
+                <span class="menu-count">${drinks.length} items</span>
+              </div>
+              ${drinks.map(row).join("")}
+            </div>
+          `);
+        }
+        if (foods.length && state.hood !== "drinks") {
+          cols.push(`
+            <div class="menu food">
+              <div class="menu-header">
+                <h3>Food</h3>
+                <span class="menu-count">${foods.length} items</span>
+              </div>
+              ${foods.map(row).join("")}
+            </div>
+          `);
+        }
+        const menusHtml = cols.length ? `<div class="menus">${cols.join("")}</div>` : "";
+        const shopWhen = formatWhen(s.menu_updated_at || (s.menus[0] && s.menus[0].updated_at));
+        const tipBits = [];
+        if (s.address) tipBits.push(s.address);
+        tipBits.push(shopDistanceMi(s).toFixed(1) + " mi");
+        if (shopWhen) tipBits.push("Updated " + shopWhen);
+        const nameTip = " data-tip=\"" + escapeHtml(tipBits.join("\n")) + "\"";
+
+        const dist = shopDistanceMi(s).toFixed(1) + " mi";
+        const hooks = unusualHooks(s);
+        const hookPills = hooks.map((h) => `<span class="hook-pill">${escapeHtml(h)}</span>`).join("");
+
+        el.innerHTML = `
+          <div class="card-head">
+            <div class="card-badges">
+              ${s.neighborhood ? `<span class="badge-hood">${escapeHtml(s.neighborhood)}</span>` : "<span></span>"}
+              <span class="badge-dist">${dist}</span>
+            </div>
+            <h2${nameTip}>${escapeHtml(s.name)}</h2>
+            ${s.address ? `<div class="card-address"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle></svg> ${escapeHtml(s.address)}</div>` : ""}
+            ${hookPills ? `<div class="card-hooks">${hookPills}</div>` : ""}
+          </div>
+          ${s.note ? `<p class="card-note">${escapeHtml(s.note)}</p>` : ""}
+          ${menusHtml || "<div class='menu empty-menu'><div class='meta'>No menu loaded</div></div>"}
+          <div class="card-footer">
+            ${shopWhen ? `<span class="card-updated">Updated ${escapeHtml(shopWhen)}</span>` : "<span></span>"}
+            <button type="button" class="to-top" data-shop="${escapeHtml(s.id)}">↑ Back to top</button>
+          </div>
+        `;
+        grid.appendChild(el);
+      }
+
+      grid.querySelectorAll(".to-top").forEach((btn) => {
+        btn.addEventListener("click", () => window.scrollTo({ top: 0, behavior: "smooth" }));
+      });
+
+      renderSheet(filtered);
+      renderMap(filtered);
+      document.querySelectorAll("[data-sort]").forEach((b) => b.classList.toggle("on", b.dataset.sort === state.sort));
+      document.querySelectorAll(".th-sort").forEach((b) => {
+        const isActive = b.dataset.sortCol === state.sort;
+        b.classList.toggle("active", isActive);
+        b.classList.toggle("desc", isActive && state.sortDir === -1);
+      });
+      showPage(state.page);
+    }
+
+    function shopLatLng(s) {
+      if (s.lat != null && s.lng != null) return [Number(s.lat), Number(s.lng)];
+      const base = AREA_LATLNG[s.neighborhood] || AREA_LATLNG.Downtown;
+      let h = 0;
+      const key = String(s.id || s.name || "");
+      for (let i = 0; i < key.length; i++) h = (h * 31 + key.charCodeAt(i)) >>> 0;
+      const jitterLat = ((h % 17) - 8) * 0.0012;
+      const jitterLng = ((h >>> 4) % 17) * 0.0009;
+      // Hard floor, independent of the jitter math above: the coastline here runs
+      // diagonally (not a straight north-south line), so "move east of my own
+      // neighborhood's centroid" doesn't guarantee "east of the coastline at whatever
+      // latitude the (separate) lat jitter happened to land on" — a combination of the
+      // two jitters can still slide a point out past the coast. Rather than model the
+      // real coastline's geometry for placeholder demo data, just refuse to ever place
+      // a point west of a line comfortably inland of every neighborhood's coast.
+      const lng = Math.max(base[1] + jitterLng, -117.27);
+      return [base[0] + jitterLat, lng];
+    }
+
+    function uniqueMenuItems(s) {
+      const seen = new Set();
+      const items = [];
+      (s.menus || []).forEach((m) => {
+        (m.items || []).forEach((item) => {
+          const n = (item && item.name) ? String(item.name).trim() : "";
+          if (!n) return;
+          const key = n.toLowerCase();
+          if (seen.has(key)) return;
+          seen.add(key);
+          items.push(item);
+        });
+      });
+      return items;
+    }
+    function shopItemCount(s) {
+      return uniqueMenuItems(s).length;
+    }
+    function shopItemNames(s) {
+      return uniqueMenuItems(s).map((item) => item.name);
+    }
+    function shopHookCount(s) {
+      return (typeof unusualHooks === "function" ? unusualHooks(s) : []).length;
+    }
+    function shopUpdatedTs(s) {
+      return Date.parse(s.menu_updated_at || (s.menus[0] && s.menus[0].updated_at) || 0) || 0;
+    }
+
+    function renderSheet(shops) {
+      const body = $("sheetBody");
+      if (!body) return;
+      body.innerHTML = shops.map((s, i) => {
+        const hooks = (typeof unusualHooks === "function" ? unusualHooks(s) : []).map((h) => `<span class="table-tag">${escapeHtml(h)}</span>`).join(" ");
+        const when = formatSheetDate(s.menu_updated_at || (s.menus[0] && s.menus[0].updated_at));
+        const addr = (s.address || "").trim();
+        const names = shopItemNames(s);
+        const nItems = names.length;
+        const itemTip = names.join("\n");
+        const nameLink = "<a href=\"#shop-" + encodeURIComponent(s.id) + "\" class=\"table-shop-name\" data-jump=\"" +
+          escapeHtml(String(s.id)) + "\"" +
+          (addr ? " data-tip=\"" + escapeHtml(addr) + "\"" : "") +
+          ">" + escapeHtml(s.name) + "</a>" +
+          (addr ? "<span class=\"table-address\">" + escapeHtml(addr) + "</span>" : "");
+        const whenCell = when.short
+          ? "<td class=\"sheet-date\"" + (when.full ? " data-tip=\"" + escapeHtml(when.full) + "\"" : "") + "><span class=\"date-pill\">" + escapeHtml(when.short) + "</span></td>"
+          : "<td class=\"sheet-date\"><span class=\"muted-dash\">—</span></td>";
+        const itemsCell = "<td class=\"sheet-items\"" +
+          (itemTip ? " data-tip=\"" + escapeHtml(itemTip) + "\"" : "") +
+          "><span class=\"item-count-badge\">" + nItems + " items</span></td>";
+        return "<tr id=\"sheet-row-" + escapeHtml(String(s.id)) + "\">" +
+          "<td class=\"sheet-num\">" + (i + 1) + "</td>" +
+          "<td class=\"sheet-shop\">" + nameLink + "</td>" +
+          "<td class=\"sheet-mi\"><span class=\"dist-pill\">" + shopDistanceMi(s).toFixed(1) + " mi</span></td>" +
+          "<td class=\"sheet-hooks\">" + (hooks || "<span class=\"muted-dash\">—</span>") + "</td>" +
+          itemsCell +
+          "<td class=\"sheet-place\"><span class=\"place-pill\">" + escapeHtml(s.neighborhood || "—") + "</span></td>" +
+          whenCell + "</tr>";
+      }).join("") || "<tr><td colspan=\"7\" class=\"table-empty\">No shops match those filters.</td></tr>";
+      body.querySelectorAll("a[data-jump]").forEach((a) => {
+        a.addEventListener("click", (ev) => {
+          ev.preventDefault();
+          state.page = "search";
+          showPage("search");
+          const card = document.getElementById("shop-" + a.dataset.jump);
+          if (card) card.scrollIntoView({ behavior: "smooth", block: "start" });
+        });
+      });
+    }
+
+    function renderMap(shops) {
+      const note = $("mapNote");
+      if (!window.maplibregl) {
+        if (note) note.textContent = "Map library did not load. Check network / map tiles.";
+        return;
+      }
+      const styleUrl = mapStyleUrl();
+      if (!maplibreMap) {
+        maplibreMap = new maplibregl.Map({
+          container: "map",
+          style: styleUrl,
+          center: [AREA_LATLNG.Downtown[1], AREA_LATLNG.Downtown[0]],
+          zoom: 13,
+          attributionControl: { compact: true }
+        });
+        maplibreMap._mmStyle = styleUrl;
+        maplibreMap.addControl(new maplibregl.NavigationControl({ showCompass: false }), "top-left");
+      } else if (maplibreMap._mmStyle !== styleUrl) {
+        applyMapStyle();
+        return;
+      }
+      mapMarkers.forEach((m) => m.remove());
+      mapMarkers = [];
+      shops.forEach((s, i) => {
+        const [lat, lng] = shopLatLng(s);
+        const hooks = (typeof unusualHooks === "function" ? unusualHooks(s) : []).join(" · ");
+        const el = document.createElement("div");
+        el.className = "shop-pin";
+        el.innerHTML =
+          '<svg viewBox="0 0 28 28" xmlns="http://www.w3.org/2000/svg">' +
+          '<circle class="pin-fill" cx="14" cy="14" r="11.25" stroke-width="2.25"/>' +
+          '<text x="14" y="18" text-anchor="middle">' + (i + 1) + "</text></svg>";
+        const popup = new maplibregl.Popup({ offset: 16, closeButton: false }).setHTML(
+          "<strong>" + (i + 1) + ". " + escapeHtml(s.name) + "</strong><br>" +
+          escapeHtml(s.address || s.neighborhood || "") +
+          (hooks ? "<br>" + escapeHtml(hooks) : "") +
+          "<div class='popup-links'><a href='#' data-jump-sheet='" + escapeHtml(String(s.id)) + "'>View in table →</a></div>"
+        );
+        const marker = new maplibregl.Marker({ element: el, anchor: "center" })
+          .setLngLat([lng, lat])
+          .setPopup(popup)
+          .addTo(maplibreMap);
+        mapMarkers.push(marker);
+      });
+      focusMap(shops);
+      if (note) {
+        note.textContent = shops.length
+          ? shops.length + " pin" + (shops.length === 1 ? "" : "s") + " · neighborhood-approximate, not surveyed GPS."
+          : "No shops match those filters.";
+      }
+    }
+
+    function focusMap(shops) {
+      if (!maplibreMap) return;
+      const list = shops || lastFilteredShops || [];
+      const dur = state.page === "map" ? 700 : 0;
+      const area = AREA_LATLNG[state.hood];
+      if (area && list.length) {
+        const b = new maplibregl.LngLatBounds();
+        list.forEach((s) => {
+          const [lat, lng] = shopLatLng(s);
+          b.extend([lng, lat]);
+        });
+        maplibreMap.fitBounds(b, { padding: 70, maxZoom: 14.2, duration: dur });
+        return;
+      }
+      if (area) {
+        maplibreMap.easeTo({ center: [area[1], area[0]], zoom: 14, duration: dur });
+        return;
+      }
+      if (list.length) {
+        const b = new maplibregl.LngLatBounds();
+        list.forEach((s) => {
+          const [lat, lng] = shopLatLng(s);
+          b.extend([lng, lat]);
+        });
+        maplibreMap.fitBounds(b, { padding: 40, maxZoom: 13.6, duration: dur });
+        return;
+      }
+      const downtown = AREA_LATLNG.Downtown;
+      maplibreMap.easeTo({ center: [downtown[1], downtown[0]], zoom: 12.6, duration: dur });
+    }
+
+    function showPage(name) {
+      state.page = name;
+      document.querySelectorAll(".page-btn[data-page]").forEach((b) => {
+        b.classList.toggle("on", b.dataset.page === name);
+      });
+      document.querySelectorAll(".page").forEach((p) => {
+        p.classList.toggle("on", p.id === "page-" + name);
+      });
+      if (name === "map" && maplibreMap) {
+        setTimeout(() => {
+          maplibreMap.resize();
+          focusMap(lastFilteredShops);
+        }, 80);
+      }
+    }
+
+    function escapeHtml(str) {
+      return String(str ?? "")
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;");
+    }
+
+    function setStatus(msg, kind) {
+      const el = $("status");
+      if (!el) return;
+      el.textContent = msg || "";
+      el.className = "status" + (kind ? " " + kind : "");
+      el.hidden = kind !== "err";
+    }
+
+    async function fetchJson(url) {
+      const res = await fetch(url, { headers: { Accept: "application/json" } });
+      if (!res.ok) throw new Error(res.status + " " + res.statusText + " for " + url);
+      return res.json();
+    }
+
+    function unwrapList(payload) {
+      if (Array.isArray(payload)) return payload;
+      if (!payload || typeof payload !== "object") return [];
+      for (const key of ["restaurants", "data", "items", "results", "shops"]) {
+        if (Array.isArray(payload[key])) return payload[key];
+      }
+      return [];
+    }
+
+    async function loadMenusFor(base, shop) {
+      const id = shop.id;
+      const paths = [
+        `/restaurants/${encodeURIComponent(id)}/menus`,
+        `/restaurants/${encodeURIComponent(id)}/menu`,
+        `/menus?restaurant_id=${encodeURIComponent(id)}`,
+        `/menu?restaurant_id=${encodeURIComponent(id)}`
+      ];
+      for (const path of paths) {
+        try {
+          const data = await fetchJson(base + path);
+          const list = Array.isArray(data) ? data : unwrapList(data);
+          const menus = normalizeMenus(list.length ? list : data);
+          if (menus.length) return menus;
+        } catch (_) { /* try next shape */ }
+      }
+      return shop.menus || [];
+    }
+
+    function defaultApiBase() {
+      if (location.protocol === "http:" || location.protocol === "https:") {
+        if (location.hostname === "localhost" || location.hostname === "127.0.0.1") {
+          return location.protocol + "//" + location.hostname + ":8000";
+        }
+        return location.origin;
+      }
+      return "http://localhost:8000";
+    }
+
+    async function loadBuildInfo(base) {
+      const el = $("buildInfo");
+      if (!el) return;
+      try {
+        const info = await fetchJson(base + "/version");
+        el.textContent =
+          "v" + (info.app_version || "?") +
+          " · started " + (info.started_at ? new Date(info.started_at).toLocaleString() : "?") +
+          " · db: " + (info.supabase_project_ref || "?");
+      } catch (_) {
+        el.textContent = "";
+      }
+    }
+
+    async function loadFromApi() {
+      if (!$("apiBase").value) $("apiBase").value = defaultApiBase();
+      const base = $("apiBase").value.replace(/\/$/, "");
+      setStatus("Calling " + base + " …");
+      loadBuildInfo(base);
+      try {
+        let rawList = [];
+        const restaurantPaths = ["/menus/restaurants"];
+        let lastErr = null;
+        for (const path of restaurantPaths) {
+          try {
+            const data = await fetchJson(base + path);
+            rawList = unwrapList(data);
+            if (rawList.length || Array.isArray(data)) break;
+          } catch (e) {
+            lastErr = e;
+          }
+        }
+        if (!rawList.length && lastErr) throw lastErr;
+
+        const shops = rawList.map(normShop).filter(Boolean);
+        const withMenus = await Promise.all(
+          shops.map(async (s) => {
+            if (s.menus && s.menus.length) return s;
+            return { ...s, menus: await loadMenusFor(base, s) };
+          })
+        );
+        state.shops = withMenus;
+        state.source = "api";
+        setStatus(
+          "Loaded " + withMenus.length + " restaurant" + (withMenus.length === 1 ? "" : "s") + " from " + base,
+          "ok"
+        );
+        render();
+      } catch (err) {
+        setStatus(
+          "API error: " + err.message,
+          "err"
+        );
+      }
+    }
+
+    function loadDemo() {
+      state.shops = SAMPLE.map(normShop);
+      state.source = "demo";
+      setStatus("Showing bundled Encinitas sample (API not used).", "ok");
+      render();
+    }
+
+    $("summaryToggle").addEventListener("click", () => {
+      const box = $("summary");
+      box.classList.toggle("collapsed");
+      $("summaryBtn").textContent = box.classList.contains("collapsed") ? "Show" : "Hide";
+    });
+    $("reload").addEventListener("click", loadFromApi);
+    $("demo").addEventListener("click", loadDemo);
+    (function initMapKey() {
+      const el = $("mapKey");
+      if (!el) return;
+      const q = new URLSearchParams(location.search).get("maptiler");
+      el.value = q || localStorage.getItem(MAP_KEY_STORE) || "";
+      el.addEventListener("change", () => {
+        rememberMapKey();
+        applyMapStyle();
+      });
+    })();
+    document.querySelectorAll(".page-btn[data-page]").forEach((btn) => {
+      btn.addEventListener("click", () => showPage(btn.dataset.page));
+    });
+    document.querySelectorAll("[data-sort]").forEach((btn) => {
+      btn.addEventListener("click", () => { state.sort = btn.dataset.sort; state.sortDir = 1; render(); });
+    });
+    document.querySelectorAll(".th-sort").forEach((btn) => {
+      btn.addEventListener("click", () => {
+        const col = btn.dataset.sortCol;
+        state.sortDir = (state.sort === col) ? -state.sortDir : 1;
+        state.sort = col;
+        render();
+      });
+    });
+    function placeHoverTip(ev) {
+      const tip = $("hoverTip");
+      if (!tip || tip.style.display === "none") return;
+      const pad = 12;
+      const w = tip.offsetWidth;
+      const h = tip.offsetHeight;
+      let x = ev.clientX - w - 16;
+      let y = ev.clientY - h - 14;
+      if (x < pad) x = ev.clientX + 18;
+      if (y < pad) y = ev.clientY + 20;
+      if (x + w + pad > window.innerWidth) x = window.innerWidth - w - pad;
+      if (y + h + pad > window.innerHeight) y = window.innerHeight - h - pad;
+      tip.style.left = Math.max(8, x) + "px";
+      tip.style.top = Math.max(8, y) + "px";
+    }
+
+    document.addEventListener("pointerover", (ev) => {
+      const el = ev.target.closest("[data-tip]");
+      if (!el) return;
+      const tip = $("hoverTip");
+      if (!tip) return;
+      tip.textContent = el.getAttribute("data-tip") || "";
+      tip.style.display = "block";
+      placeHoverTip(ev);
+    });
+    document.addEventListener("pointermove", placeHoverTip);
+    document.addEventListener("pointerout", (ev) => {
+      const el = ev.target.closest("[data-tip]");
+      if (!el) return;
+      if (el.contains(ev.relatedTarget)) return;
+      const tip = $("hoverTip");
+      if (tip) tip.style.display = "none";
+    });
+
+    document.addEventListener("click", (ev) => {
+      const link = ev.target.closest("[data-jump-sheet]");
+      if (!link) return;
+      ev.preventDefault();
+      showPage("sheet");
+      const row = document.getElementById("sheet-row-" + link.dataset.jumpSheet);
+      if (row) {
+        row.scrollIntoView({ behavior: "smooth", block: "center" });
+        row.classList.add("row-highlight");
+        setTimeout(() => row.classList.remove("row-highlight"), 1600);
+      }
+    });
+    $("q").addEventListener("input", (e) => { state.q = e.target.value; render(); });
+    document.querySelectorAll(".chip").forEach((btn) => {
+      btn.addEventListener("click", () => {
+        document.querySelectorAll(".chip").forEach((b) => b.classList.remove("on"));
+        btn.classList.add("on");
+        state.hood = btn.dataset.hood;
+        render();
+      });
+    });
+
+    loadFromApi().then(() => {
+      if (!state.shops.length) loadDemo();
+    });
+  </script>
+</body>
+</html>

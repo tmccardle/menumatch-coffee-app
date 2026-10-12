@@ -1,0 +1,2345 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>MenuMatch · Encinitas Coffee Guide</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,700&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --sand: #f4efe6;
+      --foam: #fffaf3;
+      --ink: #1c1914;
+      --mute: #6b6358;
+      --line: #e4d9c8;
+      --sea: #1d5f96;
+      --sea-2: #2b74b3;
+      --roast: #8b4518;
+      --ok: #2d6a4f;
+      --warn: #9a3412;
+      --header-a: #122844;
+      --header-b: #1d4e7f;
+      --header-c: #0d1e33;
+      --label-blue: #163d68;
+      --dither-gold: #cca038;
+      --card-a: #faf6ef;
+      --card-b: #f4eee2;
+      --drinks: #e4e9eb;
+      --food: #f4e2d8;
+      --coffee: #f3ebe0;
+      --setting: #e6ebe7;
+      --mode: #e4e9eb;
+      --badge: #efe4d4;
+    }
+    * { box-sizing: border-box; }
+    html, body { margin: 0; background: var(--sand); color: var(--ink); font-family: "IBM Plex Sans", system-ui, sans-serif; }
+    header {
+      background: linear-gradient(160deg, var(--header-a) 0%, var(--header-b) 55%, var(--header-c) 140%);
+      color: #f1f5f9;
+      padding: 1.45rem 1.25rem 1.55rem;
+      position: relative;
+      overflow: hidden;
+    }
+    header::after {
+      content: "";
+      position: absolute;
+      top: -30%;
+      right: -10%;
+      width: 420px;
+      height: 420px;
+      background: radial-gradient(circle, rgba(255, 255, 255, 0.16) 0%, rgba(255, 255, 255, 0) 70%);
+      pointer-events: none;
+    }
+    .header-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      font-size: 0.72rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      font-weight: 700;
+      color: #e2e8f0;
+      background: rgba(255, 255, 255, 0.12);
+      border: 1px solid rgba(255, 255, 255, 0.28);
+      padding: 0.26rem 0.72rem;
+      border-radius: 9999px;
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
+      margin-bottom: 0.65rem;
+    }
+    .badge-dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: #f1c40f;
+      box-shadow: 0 0 8px #f1c40f;
+    }
+    .header-badge .rev {
+      text-transform: none;
+      letter-spacing: 0.02em;
+      font-weight: 500;
+      opacity: 0.9;
+      color: #cbd5e1;
+      margin-left: 2px;
+    }
+    .wrap { max-width: 1080px; margin: 0 auto; }
+    header h1 {
+      font-family: Fraunces, Georgia, serif;
+      font-size: clamp(1.8rem, 4vw, 2.6rem);
+      margin: 0 0 .35rem;
+      letter-spacing: -0.02em;
+      color: #ffffff;
+    }
+    header p { margin: 0; opacity: .92; max-width: 42rem; line-height: 1.5; color: #cbd5e1; }
+    .dev-tools {
+      margin-top: .85rem; font-size: .78rem; color: var(--mute); text-align: left;
+    }
+    .dev-tools summary { cursor: pointer; list-style: none; opacity: .7; }
+    .dev-tools summary::-webkit-details-marker { display: none; }
+    .toolbar {
+      display: flex; flex-wrap: wrap; gap: .5rem; align-items: center;
+      margin-top: .55rem;
+    }
+    .toolbar label { font-size: .78rem; color: var(--mute); }
+    .toolbar input, .toolbar select, .toolbar button {
+      font: inherit; border-radius: 8px; border: 1px solid var(--line);
+    }
+    .toolbar input {
+      padding: .35rem .55rem; min-width: 12rem; background: var(--foam); color: var(--ink);
+    }
+    .toolbar button {
+      padding: .35rem .7rem; background: var(--foam); color: var(--ink); font-weight: 600; cursor: pointer;
+    }
+    .toolbar button.ghost { background: transparent; }
+    .status { font-size: .8rem; margin-top: .45rem; color: var(--mute); }
+    .status.err { color: var(--warn); }
+    main { padding: 1.25rem; }
+    .search-row, .filters {
+      display: flex; gap: .4rem; flex-wrap: wrap; align-items: center; margin-bottom: .5rem;
+    }
+    .search-row input[type="search"] {
+      flex: 0 1 14rem; width: 14rem; min-width: 9rem; font: inherit;
+      font-size: .8rem; padding: .32rem .55rem;
+      border: 1px solid var(--line); border-radius: 8px; background: var(--foam);
+    }
+    .rule-label {
+      display: flex; align-items: center; gap: .55rem;
+      margin: .38rem 0 .42rem;
+      font-family: "IBM Plex Sans", system-ui, sans-serif;
+      font-size: .72rem; font-weight: 600; letter-spacing: .08em;
+      text-transform: uppercase; color: var(--mute);
+    }
+    .rule-label::before, .rule-label::after {
+      content: ""; flex: 1; border-top: 1px solid var(--line);
+    }
+    .rule-label > span {
+      position: relative;
+      background: var(--label-blue, #163d68);
+      color: #f1f5f9;
+      padding: .12rem .62rem .14rem;
+      border-radius: 999px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 1px 4px rgba(18, 40, 68, 0.16);
+    }
+    .rule-label > span::before {
+      content: "";
+      position: absolute; inset: -2px;
+      border-radius: 999px;
+      pointer-events: none;
+      padding: 2px;
+      background: repeating-conic-gradient(var(--dither-gold, #cca038) 0% 25%, transparent 0% 50%) 0 0 / 2px 2px;
+      -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+      -webkit-mask-composite: xor;
+      mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+      mask-composite: exclude;
+    }
+    .chip-gap { width: 1px; height: 1.15rem; background: var(--line); margin: 0 .15rem; flex: none; }
+    .chip-set { display: inline-flex; flex-wrap: wrap; gap: .4rem; align-items: center; }
+    .chip, .page-btn {
+      font: inherit; font-weight: 600; cursor: pointer;
+      border: 1px solid var(--line); background: var(--foam); color: var(--mute);
+      border-radius: 999px; padding: .28rem .55rem; font-size: .78rem; line-height: 1.2;
+      transition: background 0.15s ease, color 0.15s ease, border-color 0.15s ease;
+    }
+    .chip:hover, .page-btn:hover { border-color: #cbd5e1; color: var(--ink); }
+    .chip.on, .page-btn.on {
+      background: var(--sea); color: #f8fafc; border-color: var(--sea);
+      box-shadow: 0 1px 4px rgba(29, 95, 150, 0.25);
+    }
+    .grid {
+      display: grid; gap: .7rem; padding: .32rem .65rem .65rem;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+    article {
+      background: var(--foam); border: 1px solid var(--line); border-radius: 16px;
+      padding: 1rem 1.05rem 1.1rem; display: flex; flex-direction: column; gap: .45rem;
+      backdrop-filter: blur(6px);
+      -webkit-backdrop-filter: blur(6px);
+      box-shadow: 0 2px 8px rgba(28, 25, 20, 0.03);
+    }
+    .grid article:nth-child(4n + 1),
+    .grid article:nth-child(4n + 4) {
+      background: rgba(250, 246, 239, 0.65);
+      background: color-mix(in srgb, var(--card-a) 65%, transparent);
+    }
+    .grid article:nth-child(4n + 2),
+    .grid article:nth-child(4n + 3) {
+      background: rgba(244, 238, 226, 0.55);
+      background: color-mix(in srgb, var(--card-b) 55%, transparent);
+    }
+    @media (max-width: 640px) {
+      .grid { grid-template-columns: 1fr; }
+      .grid article:nth-child(odd) {
+        background: rgba(250, 246, 239, 0.65);
+        background: color-mix(in srgb, var(--card-a) 65%, transparent);
+      }
+      .grid article:nth-child(even) {
+        background: rgba(244, 238, 226, 0.55);
+        background: color-mix(in srgb, var(--card-b) 55%, transparent);
+      }
+    }
+    article h2 {
+      font-family: "IBM Plex Sans", system-ui, sans-serif;
+      font-size: .78rem; font-weight: 600; margin: 0;
+    }
+    .meta { color: var(--mute); font-size: .82rem; }
+    article .meta { font-size: .64rem; }
+    .badge {
+      display: inline-block; font-size: .7rem; letter-spacing: .04em; text-transform: uppercase;
+      background: var(--badge); color: var(--roast); padding: .15rem .45rem; border-radius: 6px; font-weight: 600;
+    }
+    .badge .rev { text-transform: none; letter-spacing: .01em; font-weight: 500; }
+    .card-head { display: flex; align-items: center; gap: .45rem; flex-wrap: wrap; }
+    .card-head h2 {
+      position: relative;
+      background: var(--label-blue, #163d68);
+      color: #f1f5f9;
+      font-family: "IBM Plex Sans", system-ui, sans-serif;
+      font-size: .78rem;
+      font-weight: 600;
+      margin: 0;
+      padding: .12rem .58rem .14rem;
+      border-radius: 999px;
+      display: inline-flex;
+      align-items: center;
+      flex: none;
+      white-space: nowrap;
+      box-shadow: 0 1px 4px rgba(18, 40, 68, 0.16);
+    }
+    .card-head h2::before {
+      content: "";
+      position: absolute; inset: -2px;
+      border-radius: 999px;
+      pointer-events: none;
+      padding: 2px;
+      background: repeating-conic-gradient(var(--dither-gold, #cca038) 0% 25%, transparent 0% 50%) 0 0 / 2px 2px;
+      -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+      -webkit-mask-composite: xor;
+      mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+      mask-composite: exclude;
+    }
+    .card-head .card-tags { flex: 1 1 auto; min-width: 0; }
+    .card-head .badge { display: block; min-width: 0; white-space: normal; }
+    .card-tags { display: flex; flex-direction: column; gap: .16rem; }
+    .badge-dist {
+      margin-left: auto;
+      flex: none;
+      font-size: .68rem;
+      font-weight: 700;
+      color: var(--ink);
+      background: rgba(239, 228, 212, 0.65);
+      background: color-mix(in srgb, var(--badge) 65%, transparent);
+      border: 1px solid var(--line);
+      padding: .12rem .5rem;
+      border-radius: 999px;
+      font-variant-numeric: tabular-nums;
+      white-space: nowrap;
+      letter-spacing: .02em;
+    }
+    @media (max-width: 640px) {
+      .badge-dist {
+        font-size: .62rem;
+        padding: .08rem .42rem;
+      }
+    }
+    article .badge {
+      font-size: .58rem; letter-spacing: .05em; padding: .05rem .38rem; border-radius: 5px;
+      text-transform: none; background: none;
+    }
+    .menus {
+      display: grid; grid-template-columns: 1fr 1fr; gap: .55rem; margin-top: .1rem;
+    }
+    .menus:has(.menu:only-child) { grid-template-columns: 1fr; }
+    .menu {
+      margin: 0; border: 1px solid var(--line); border-radius: 8px;
+      padding: .32rem .45rem .38rem;
+      backdrop-filter: blur(3px);
+      -webkit-backdrop-filter: blur(3px);
+    }
+    .menu.drinks {
+      background: rgba(228, 233, 235, 0.55);
+      background: color-mix(in srgb, var(--drinks) 55%, transparent);
+    }
+    .menu.food {
+      background: rgba(244, 226, 216, 0.55);
+      background: color-mix(in srgb, var(--food) 55%, transparent);
+    }
+    .menu h3 {
+      margin: 0 0 .2rem; font-size: .68rem; text-transform: uppercase; letter-spacing: .08em;
+      color: var(--mute); font-weight: 600;
+    }
+    article h2[data-tip] {
+      cursor: default;
+      text-decoration: underline dotted var(--dither-gold, #cca038);
+      text-decoration-thickness: 1px;
+      text-underline-offset: 3px;
+    }
+    .item {
+      font-size: .8rem; line-height: 1.28; padding: .02rem 0;
+    }
+    .item[data-tip] {
+      cursor: default;
+      text-decoration: underline dotted #c4b8a8;
+      text-decoration-thickness: 1px;
+      text-underline-offset: 3px;
+    }
+    .summary {
+      background: rgba(255, 250, 243, 0.55);
+      background: color-mix(in srgb, var(--foam) 55%, transparent);
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
+      border: 1px solid var(--line);
+      border-radius: 16px;
+      padding: 1rem 1.1rem 1.2rem;
+      margin-bottom: 1.1rem;
+    }
+    .summary h2 { font-family: Fraunces, Georgia, serif; font-size: 1.2rem; margin: 0 0 .3rem; }
+    .summary > p { margin: 0 0 .85rem; color: var(--mute); font-size: .88rem; }
+    .groups {
+      display: grid; grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: .5rem .65rem; margin-top: 0;
+    }
+    .group {
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      padding: .45rem .55rem .5rem;
+      overflow: hidden;
+      backdrop-filter: blur(4px);
+      -webkit-backdrop-filter: blur(4px);
+    }
+    .group[data-group="Coffee"] {
+      background: rgba(243, 235, 224, 0.55);
+      background: color-mix(in srgb, var(--coffee) 55%, transparent);
+    }
+    .group[data-group="Setting"] {
+      background: rgba(230, 235, 231, 0.55);
+      background: color-mix(in srgb, var(--setting) 55%, transparent);
+    }
+    .group[data-group="Mode"] {
+      background: rgba(228, 233, 235, 0.55);
+      background: color-mix(in srgb, var(--mode) 55%, transparent);
+    }
+    .group[data-group="Food"] {
+      background: rgba(244, 226, 216, 0.55);
+      background: color-mix(in srgb, var(--food) 55%, transparent);
+    }
+    .group h3 {
+      margin: 0 0 .2rem; font-size: .68rem; letter-spacing: .08em;
+      text-transform: uppercase; font-weight: 600; color: var(--mute);
+    }
+    .group ul { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: .02rem; }
+    .group li { margin: 0; }
+    label.cat-check {
+      display: flex; align-items: center; gap: .35rem;
+      cursor: pointer; font-size: .78rem; color: var(--ink); padding: .1rem 0; line-height: 1.25;
+    }
+    label.cat-check input { width: .85rem; height: .85rem; margin: 0; accent-color: var(--sea); flex: none; }
+    label.cat-check .n { color: var(--mute); font-size: .7rem; margin-left: auto; padding-left: .35rem; }
+    label.cat-check.zero { color: var(--mute); }
+    .summary.collapsed { display: none; }
+    .summary-bar { position: relative; cursor: pointer; margin: .15rem 0 .55rem; }
+    .summary-bar h2.rule-label {
+      margin: 0;
+      font-family: "IBM Plex Sans", system-ui, sans-serif;
+      font-size: .72rem; font-weight: 600; letter-spacing: .08em;
+    }
+    .summary-bar h2.rule-label span[data-tip] {
+      cursor: default;
+      text-decoration: underline dotted var(--dither-gold, #cca038);
+      text-decoration-thickness: 1px;
+      text-underline-offset: 3px;
+    }
+    .summary-bar button {
+      position: absolute; right: 0; top: 50%; transform: translateY(-50%); z-index: 1;
+      font: inherit; border: 1px solid var(--line); background: var(--sand); border-radius: 8px;
+      padding: .25rem .55rem; cursor: pointer; font-size: .8rem;
+    }
+    button.cat-pick {
+      font: inherit; border: 1px solid var(--line); background: #fff; color: var(--ink);
+      font-weight: 500; cursor: pointer; padding: .28rem .55rem; border-radius: 8px; font-size: .78rem;
+      text-align: left;
+    }
+    button.cat-pick.on { background: var(--sea); color: #f8fafc; border-color: var(--sea); }
+    button.cat-pick.zero { opacity: .45; }
+    .active-row {
+      display: flex; flex-wrap: wrap; gap: .35rem; align-items: center;
+      margin: 0 0 .75rem; min-height: 0;
+    }
+    .active-row[hidden] { display: none; }
+    .active-row .label { font-size: .75rem; color: var(--mute); margin-right: .15rem; }
+    .active-row button {
+      font: inherit; font-size: .75rem; border: 1px solid var(--sea); background: #e8f1f8;
+      color: var(--sea); border-radius: 999px; padding: .22rem .55rem; cursor: pointer;
+    }
+    .active-row button.clear { border-color: var(--line); background: var(--foam); color: var(--mute); }
+    @media (max-width: 640px) {
+      header { padding: 1.15rem 1rem 1.25rem; }
+      header h1 { font-size: 1.45rem; }
+      header p { font-size: .82rem; }
+      .toolbar input { min-width: 0; width: 100%; }
+      main { padding: 0.85rem 0.9rem; }
+      .summary { padding: .7rem .75rem; border-radius: 12px; margin-bottom: .75rem; }
+      .search-row, .filters { gap: .25rem; margin-bottom: .35rem; }
+      .search-row input[type="search"] { width: 9.5rem; flex-basis: 9.5rem; font-size: .75rem; padding: .22rem .4rem; }
+      .rule-label, .summary-bar h2.rule-label { font-size: .62rem; }
+      .rule-label { margin: .2rem 0 .28rem; }
+      .rule-label > span { padding: .1rem .48rem .12rem; }
+      .chip, .page-btn { padding: .16rem .4rem; font-size: .68rem; }
+      .chip-set { gap: .25rem; }
+      .pages-row { margin-bottom: .45rem; }
+      .pages { flex-wrap: nowrap; }
+      .list-block { border-radius: 12px; }
+      .list-toolbar { padding: .12rem .45rem; }
+      .sort-btn { padding: .06rem .28rem; font-size: .56rem; }
+      .grid { gap: .5rem; padding: .22rem .45rem .45rem; }
+      .summary-bar button { padding: .15rem .4rem; font-size: .7rem; }
+      .groups { grid-template-columns: 1fr 1fr; gap: .45rem; }
+      article { padding: .7rem .75rem .75rem; gap: .28rem; border-radius: 12px; }
+      article h2 { font-size: .7rem; padding: .1rem .48rem .12rem; }
+      article .meta { font-size: .58rem; }
+      article .badge { font-size: .52rem; padding: .04rem .3rem; background: none; }
+      .card-tags { gap: .12rem; }
+      article .to-top { display: none; }
+      .item { font-size: .75rem; }
+      .menus { gap: .45rem; }
+      .menu { padding: .28rem .35rem .3rem; }
+    }
+    article { scroll-margin-top: 1rem; }
+    article:target { outline: 2px solid var(--sea); }
+    .empty { color: var(--mute); padding: 2rem 0; text-align: center; }
+    footer { padding: 1.5rem 1.25rem 2.5rem; color: var(--mute); font-size: .8rem; text-align: center; }
+    code { background: var(--badge); padding: .05rem .3rem; border-radius: 4px; font-size: .85em; }
+    .pages-row { margin: 0 0 .7rem; }
+    .pages { display: flex; gap: .4rem; flex-wrap: wrap; align-items: center; margin: 0; }
+    .list-block {
+      border: 1px solid var(--line); border-radius: 16px; overflow: hidden;
+      background: var(--sand);
+    }
+    .list-toolbar {
+      display: flex; gap: .28rem; flex-wrap: wrap; align-items: center;
+      margin: 0; padding: .14rem .55rem;
+      background: var(--foam); border-bottom: 1px solid var(--line);
+    }
+    .sort-btn {
+      font: inherit; font-weight: 600; cursor: pointer;
+      border: 1px solid transparent; background: transparent; color: var(--mute);
+      border-radius: 999px; padding: .08rem .38rem; font-size: .62rem; line-height: 1.2;
+    }
+    .sort-btn:hover { border-color: var(--line); background: var(--foam); }
+    .sort-btn.on { background: var(--sea); color: #f8fafc; border-color: var(--sea); }
+    .page { display: none; }
+    .page.on { display: block; }
+    .sheet-wrap { overflow: auto; border: 1px solid var(--line); border-radius: 12px; background: var(--foam); }
+    table.sheet { width: 100%; border-collapse: collapse; font-size: .85rem; }
+    table.sheet th, table.sheet td { text-align: left; padding: .45rem .55rem; border-bottom: 1px solid var(--line); vertical-align: top; }
+    table.sheet th { position: sticky; top: 0; background: var(--badge); font-size: .72rem; letter-spacing: .06em; text-transform: uppercase; }
+    table.sheet td.sheet-shop { font-size: .72rem; max-width: 8.5rem; }
+    table.sheet td.sheet-mi,
+    table.sheet td.sheet-place,
+    table.sheet td.sheet-date { white-space: nowrap; }
+    table.sheet td.sheet-mi,
+    table.sheet td.sheet-items { font-variant-numeric: tabular-nums; }
+    table.sheet td.sheet-date { white-space: nowrap; }
+    table.sheet td.sheet-date[data-tip] { cursor: default; }
+    table.sheet td.sheet-items { text-align: right; width: 4.2rem; white-space: nowrap; }
+    table.sheet td.sheet-items[data-tip] { cursor: default; text-decoration: underline dotted #c4b8a8; text-decoration-thickness: 1px; text-underline-offset: 3px; }
+    .th-sort {
+      font: inherit; letter-spacing: inherit; text-transform: inherit; color: var(--ink);
+      background: none; border: none; padding: 0; cursor: pointer; display: inline-flex; align-items: center; gap: .25rem;
+    }
+    .th-sort::after { content: "↕"; opacity: .35; font-size: .8em; }
+    .th-sort.active::after { content: "↑"; opacity: 1; color: var(--sea); }
+    .th-sort.active.desc::after { content: "↓"; }
+    tr.row-highlight td { background: #e8f1f8; transition: background 1.4s ease; }
+    table.sheet tr:hover td { background: var(--card-a); }
+    table.sheet a { color: var(--sea); font-weight: 600; text-decoration: none; }
+    table.sheet a[data-tip] { text-decoration: underline dotted #c4b8a8; text-decoration-thickness: 1px; text-underline-offset: 3px; }
+    #hoverTip {
+      position: fixed; z-index: 40; max-width: 24rem; pointer-events: none;
+      background: #1c1914; color: #fffaf3; font-size: 18px; line-height: 1.4;
+      font-family: "IBM Plex Sans", system-ui, sans-serif;
+      padding: .7rem .85rem; border-radius: 10px;
+      box-shadow: 0 8px 24px rgba(28, 25, 20, .28);
+      white-space: pre-line; display: none;
+    }
+    #map { height: 420px; border-radius: 12px; border: 1px solid var(--line); background: #d7e4e6; }
+    .shop-pin {
+      width: 28px; height: 28px; cursor: pointer;
+      filter: drop-shadow(0 0 1px rgba(255, 250, 243, .9));
+    }
+    .shop-pin .pin-fill { fill: #1a3d8f; stroke: #e8c547; }
+    .shop-pin text {
+      fill: #fff; font-size: 11px; font-weight: 700;
+      font-family: "IBM Plex Sans", system-ui, sans-serif;
+    }
+    .shop-pin:hover { transform: scale(1.12); }
+    .popup-links { margin-top: .35rem; padding-top: .35rem; border-top: 1px dashed var(--line); }
+    .popup-links a { font-size: .8rem; }
+    .maplibregl-popup-content {
+      font-family: inherit; padding: .65rem .75rem; border-radius: 10px;
+      box-shadow: 0 2px 10px rgba(0,0,0,.18);
+    }
+    .maplibregl-popup-content strong { color: var(--roast); }
+    .color-toggle {
+      position: fixed; right: .8rem; bottom: .8rem; z-index: 50;
+      font: inherit; font-size: .78rem; font-weight: 600; cursor: pointer;
+      border: 1px solid #1c1914; background: #1c1914; color: #fffaf3;
+      border-radius: 999px; padding: .42rem .8rem;
+      box-shadow: 0 4px 16px rgba(28, 25, 20, .25);
+    }
+    .color-panel {
+      position: fixed; right: .8rem; bottom: 3.2rem; z-index: 50;
+      width: min(22rem, calc(100vw - 1.6rem));
+      max-height: min(72vh, 36rem); overflow: auto;
+      display: flex; flex-direction: column; gap: .55rem;
+      background: #fff; color: #1c1914;
+      border: 1px solid #d9d0c4; border-radius: 14px;
+      box-shadow: 0 12px 32px rgba(28, 25, 20, .22);
+      padding: .75rem .85rem .85rem;
+    }
+    .color-panel[hidden] { display: none; }
+    .color-panel-head { display: flex; justify-content: space-between; align-items: center; }
+    .color-panel-head strong { font-size: .85rem; }
+    .color-panel-head button, .color-actions button {
+      font: inherit; font-size: .75rem; font-weight: 600; cursor: pointer;
+      border: 1px solid #d9d0c4; background: #fff; color: #1c1914;
+      border-radius: 8px; padding: .28rem .55rem;
+    }
+    .color-grid { display: grid; grid-template-columns: 1fr 1fr; gap: .4rem .7rem; }
+    .color-field { display: flex; align-items: center; gap: .4rem; font-size: .75rem; }
+    .color-field input[type="color"] {
+      width: 1.8rem; height: 1.45rem; padding: 0; border: 1px solid #d9d0c4;
+      background: none; cursor: pointer; flex: none;
+    }
+    .color-actions { display: flex; gap: .4rem; }
+    .color-note { margin: 0; font-size: .72rem; color: #6b6358; line-height: 1.35; }
+  </style>
+  <link rel="stylesheet" href="https://unpkg.com/maplibre-gl@4/dist/maplibre-gl.css" />
+  <script>
+    try {
+      var savedColors = JSON.parse(localStorage.getItem("encinitas-colors") || "{}");
+      Object.keys(savedColors).forEach(function (name) {
+        if (name.indexOf("--") === 0 && /^#[0-9a-fA-F]{6}$/.test(savedColors[name])) {
+          document.documentElement.style.setProperty(name, savedColors[name]);
+        }
+      });
+    } catch (e) {}
+  </script>
+</head>
+<body>
+  <header>
+    <div class="wrap">
+      <div class="header-badge" data-rev="1">
+        <span class="badge-dot"></span> MenuMatch · North County · <span class="rev">rev 1</span>
+      </div>
+      <h1>Encinitas coffee guide</h1>
+      <p>Coffee shops in Encinitas, Leucadia, and Cardiff — menus, a list, a spreadsheet, and a map.</p>
+    </div>
+  </header>
+  <main class="wrap">
+    <div class="summary-bar" id="summaryToggle">
+      <h2 class="rule-label"><span data-tip="Coffee, setting, mode, food — same row is either/or; different rows together is both.">Browse by category</span></h2>
+      <button type="button" id="summaryBtn">Hide</button>
+    </div>
+    <section class="summary" id="summary">
+      <div class="groups" id="groups"></div>
+    </section>
+    <div class="active-row" id="activeRow" hidden></div>
+    <div class="rule-label"><span>Search</span></div>
+    <div class="search-row">
+      <input type="search" id="q" placeholder="Shop or drink" aria-label="Search shop or drink" />
+    </div>
+    <div class="rule-label"><span>Filter</span></div>
+    <div class="filters" aria-label="Filter">
+      <button type="button" class="chip on" data-hood="all">All</button>
+      <button type="button" class="chip" data-hood="food">Food</button>
+      <button type="button" class="chip" data-hood="drinks">Drinks only</button>
+      <span class="chip-gap" aria-hidden="true"></span>
+      <span class="chip-set">
+        <button type="button" class="chip" data-hood="Leucadia">Leucadia</button>
+        <button type="button" class="chip" data-hood="Downtown">Downtown</button>
+        <button type="button" class="chip" data-hood="Cardiff">Cardiff</button>
+      </span>
+    </div>
+    <div class="rule-label"><span>View</span></div>
+    <div class="pages-row">
+      <div class="pages" role="tablist" aria-label="View">
+        <button type="button" class="page-btn on" data-page="search">List</button>
+        <button type="button" class="page-btn" data-page="sheet">Spreadsheet</button>
+        <button type="button" class="page-btn" data-page="map">Map</button>
+      </div>
+    </div>
+    <section class="page on" id="page-search">
+      <div class="rule-label"><span>Cards</span></div>
+      <div class="list-block">
+        <div class="list-toolbar" aria-label="Sort results">
+          <button type="button" class="sort-btn on" data-sort="distance">Distance</button>
+          <button type="button" class="sort-btn" data-sort="az">Name</button>
+          <button type="button" class="sort-btn" data-sort="region">Neighborhood</button>
+        </div>
+        <div class="grid" id="grid"></div>
+      </div>
+      <p class="empty" id="empty" hidden>No shops match that filter.</p>
+    </section>
+    <section class="page" id="page-sheet">
+      <div class="sheet-wrap">
+        <table class="sheet">
+          <thead>
+            <tr>
+              <th>#</th>
+              <th><button type="button" class="th-sort" data-sort-col="az">Shop</button></th>
+              <th title="Approximate, from a demo anchor point — same caveat as the map pins">
+                <button type="button" class="th-sort" data-sort-col="distance">Mi</button>
+              </th>
+              <th><button type="button" class="th-sort" data-sort-col="hooks">Hooks</button></th>
+              <th><button type="button" class="th-sort" data-sort-col="items">Items</button></th>
+              <th><button type="button" class="th-sort" data-sort-col="region">Place</button></th>
+              <th><button type="button" class="th-sort" data-sort-col="updated">Updated</button></th>
+            </tr>
+          </thead>
+          <tbody id="sheetBody"></tbody>
+        </table>
+      </div>
+    </section>
+    <section class="page" id="page-map">
+      <div id="map"></div>
+      <p class="meta" id="mapNote" style="margin:.5rem 0 0;">Pins are approximate from neighborhood, not surveyed GPS.</p>
+    </section>
+  </main>
+  <footer>
+    MenuMatch · Encinitas
+    <details class="dev-tools">
+      <summary>Developer</summary>
+      <div class="toolbar">
+        <label>
+          API base
+          <input id="apiBase" value="" spellcheck="false" placeholder="http://localhost:8000" />
+        </label>
+        <button type="button" id="reload">Reload API</button>
+        <button type="button" class="ghost" id="demo">Sample data</button>
+        <label>
+          MapTiler key
+          <input id="mapKey" value="" spellcheck="false" autocomplete="off" placeholder="optional" />
+        </label>
+      </div>
+      <div class="status" id="status" hidden></div>
+      <div class="status" id="buildInfo"></div>
+    </details>
+  </footer>
+  <button type="button" class="color-toggle" id="colorToggle">Colors</button>
+  <aside class="color-panel" id="colorPanel" hidden>
+    <div class="color-panel-head">
+      <strong>Colors</strong>
+      <button type="button" id="colorClose">Close</button>
+    </div>
+    <div class="color-grid" id="colorFields"></div>
+    <div class="color-actions">
+      <button type="button" id="colorReset">Reset</button>
+      <button type="button" id="colorCopy">Copy CSS</button>
+    </div>
+    <p class="color-note" id="colorNote">Changes stay in this browser. Copy CSS when you want them kept in the file.</p>
+  </aside>
+  <div id="hoverTip" role="tooltip"></div>
+
+  <script src="https://unpkg.com/maplibre-gl@4/dist/maplibre-gl.js"></script>
+  <script>
+    const SAMPLE = [
+  {
+    "id": "77949bd8-9333-48f4-bd52-536ee8b76003",
+    "name": "Better Buzz Coffee",
+    "neighborhood": "Downtown",
+    "address": "578 S Coast Hwy 101, Encinitas",
+    "note": "Drinks",
+    "characterization": {},
+    "latitude": 33.0450065,
+    "longitude": -117.2938096,
+    "menus": [
+      {
+        "name": "Drinks",
+        "items": [
+          {
+            "name": "Cortado"
+          },
+          {
+            "name": "Best Drink Ever (R)"
+          },
+          {
+            "name": "Pour Over"
+          },
+          {
+            "name": "Nitro Cold Brew"
+          },
+          {
+            "name": "Matcha Tea Latte"
+          },
+          {
+            "name": "Better Breakfast",
+            "kind": "food"
+          },
+          {
+            "name": "Feta Avocado Toast",
+            "kind": "food"
+          },
+          {
+            "name": "OG A\u00e7a\u00ed Bowl",
+            "kind": "food"
+          },
+          {
+            "name": "Veggie Egg Bites",
+            "kind": "food"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "e810fe4c-c361-45dc-9633-26c53d9559a1",
+    "name": "California Bean",
+    "neighborhood": "Downtown",
+    "address": "552 Santa Fe Dr, Encinitas",
+    "note": "Drinks",
+    "characterization": {
+      "setting": "drive-thru"
+    },
+    "latitude": 33.0363142,
+    "longitude": -117.2799031,
+    "menus": [
+      {
+        "name": "Drinks",
+        "items": [
+          {
+            "name": "Nutella Cold Brew",
+            "price": 6.5
+          },
+          {
+            "name": "Carrot Cake Latte",
+            "price": 6.25
+          },
+          {
+            "name": "Mexican Mocha, Oat Milk",
+            "price": 6.5
+          },
+          {
+            "name": "Zucchini Bread",
+            "price": 4.5,
+            "kind": "food"
+          },
+          {
+            "name": "Butter Pecan Cold Brew",
+            "price": 6.5
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "b75d6e14-69db-4644-a5f9-2fd05924fc76",
+    "name": "Coffee Dose",
+    "neighborhood": "Olivenhain",
+    "address": "162 S Rancho Santa Fe Rd, Encinitas",
+    "note": "Drinks",
+    "characterization": {},
+    "latitude": 33.0369617,
+    "longitude": -117.2383509,
+    "menus": [
+      {
+        "name": "Drinks",
+        "items": [
+          {
+            "name": "Bananarama Latte",
+            "price": 6.5
+          },
+          {
+            "name": "Brown Sugar Latte",
+            "price": 6.0
+          },
+          {
+            "name": "Caliray Latte",
+            "price": 6.5
+          },
+          {
+            "name": "Ricotta Toast",
+            "price": 9.5,
+            "kind": "food"
+          },
+          {
+            "name": "Avocado Toast",
+            "price": 9.0,
+            "kind": "food"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "c8833ba5-6ae9-45c6-bead-a33b1e520d2d",
+    "name": "Lil Jungle Java",
+    "neighborhood": "Olivenhain",
+    "address": "1500 Encinitas Blvd, Encinitas",
+    "note": "Drinks",
+    "characterization": {
+      "setting": "drive-thru"
+    },
+    "latitude": 33.046438,
+    "longitude": -117.256004,
+    "menus": [
+      {
+        "name": "Drinks",
+        "items": [
+          {
+            "name": "Latte / Cappuccino",
+            "price": 5.0
+          },
+          {
+            "name": "Mocha / Flavored Latte",
+            "price": 5.4
+          },
+          {
+            "name": "Organic Cold Brew",
+            "price": 5.25
+          },
+          {
+            "name": "Organic Matcha Latte",
+            "price": 5.5
+          },
+          {
+            "name": "Organic Drip Coffee",
+            "price": 4.0
+          },
+          {
+            "name": "Small Pastries",
+            "price": 3.35,
+            "kind": "food"
+          },
+          {
+            "name": "Yogurt Parfait",
+            "price": 5.0,
+            "kind": "food"
+          },
+          {
+            "name": "Fruit Smoothie",
+            "price": 5.75,
+            "kind": "food"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "6df94630-fbad-4bc9-9ae2-d2dbc51a395f",
+    "name": "Lofty Coffee Co. (Ste 214)",
+    "neighborhood": "Downtown",
+    "address": "90 N Coast Hwy 101 Ste 214, Encinitas",
+    "note": "Drinks",
+    "characterization": {},
+    "latitude": 33.0497285,
+    "longitude": -117.294236,
+    "menus": [
+      {
+        "name": "Drinks",
+        "items": [
+          {
+            "name": "Cortado"
+          },
+          {
+            "name": "Turkish Latte"
+          },
+          {
+            "name": "Manual Brew Filter Coffee"
+          },
+          {
+            "name": "Cloudy with a Chance of Cold Brew"
+          },
+          {
+            "name": "Matcha, Mint & Milk"
+          },
+          {
+            "name": "Turkey & Avocado Croissant",
+            "kind": "food"
+          },
+          {
+            "name": "Toasted Quickie",
+            "kind": "food"
+          },
+          {
+            "name": "Salted Chocolate Chunk Cookie",
+            "kind": "food"
+          },
+          {
+            "name": "Organic A\u00e7a\u00ed Bowl",
+            "kind": "food"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "fda6ea17-27bf-4e4c-ae43-5da62f784c57",
+    "name": "Philz Coffee",
+    "neighborhood": "Downtown",
+    "address": "1060 S Coast Hwy 101, Encinitas",
+    "note": "Drinks",
+    "characterization": {},
+    "latitude": 33.0384152,
+    "longitude": -117.2931251,
+    "menus": [
+      {
+        "name": "Drinks",
+        "items": [
+          {
+            "name": "Tesora",
+            "price": 4.95
+          },
+          {
+            "name": "Mint Mojito Iced Coffee",
+            "price": 4.95
+          },
+          {
+            "name": "Ecstatic",
+            "price": 4.95
+          },
+          {
+            "name": "Philtered Soul Cold Brew",
+            "price": 4.95
+          },
+          {
+            "name": "Bacon & Egg Burrito",
+            "kind": "food"
+          },
+          {
+            "name": "Spinach & Feta Croissant",
+            "kind": "food"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "f3776806-ee43-40d6-a8e0-2f3a12faa3c1",
+    "name": "Seven Seas Roasting Co.",
+    "neighborhood": "Leucadia",
+    "address": "2100 N Coast Hwy 101, Encinitas",
+    "note": "Drinks",
+    "characterization": {},
+    "latitude": 33.0821109,
+    "longitude": -117.3097196,
+    "menus": [
+      {
+        "name": "Drinks",
+        "items": [
+          {
+            "name": "Lavender Honey Latte",
+            "price": 6.0
+          },
+          {
+            "name": "Mushroom Coffee",
+            "price": 5.5
+          },
+          {
+            "name": "Salmon Avocado Toast",
+            "price": 12.0,
+            "kind": "food"
+          },
+          {
+            "name": "Prosciutto Balsamic Toast",
+            "price": 12.0,
+            "kind": "food"
+          },
+          {
+            "name": "Pour-Over, rotating single origin",
+            "price": 6.0
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "c47fe01d-25e7-4d18-bf02-b6a36f7f4287",
+    "name": "Surfdog's Java Hut",
+    "neighborhood": "Downtown",
+    "address": "1126 S Coast Hwy 101, Encinitas",
+    "note": "Cafe menu",
+    "characterization": {
+      "roast": "medium",
+      "style": "surf cafe",
+      "setting": "101 shack"
+    },
+    "latitude": 33.037498,
+    "longitude": -117.292964,
+    "menus": [
+      {
+        "name": "Cafe menu",
+        "items": [
+          {
+            "name": "Drip coffee",
+            "price": 3.5
+          },
+          {
+            "name": "Latte",
+            "price": 5.25
+          },
+          {
+            "name": "Espresso",
+            "price": 3.25
+          },
+          {
+            "name": "Bacon egg cheese bagel",
+            "price": 10.0,
+            "kind": "food"
+          },
+          {
+            "name": "Quesadilla",
+            "price": 8.0,
+            "kind": "food"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "59b7eb88-32a2-49de-8dd8-da5ad91f014f",
+    "name": "Sip-N-Sea",
+    "neighborhood": "Leucadia",
+    "address": "1488 N Coast Hwy 101, Encinitas",
+    "note": "Coffee and bowls",
+    "characterization": {
+      "roast": "medium",
+      "style": "beach cafe",
+      "setting": "Coast Highway"
+    },
+    "latitude": 33.073494,
+    "longitude": -117.305721,
+    "menus": [
+      {
+        "name": "Coffee and bowls",
+        "items": [
+          {
+            "name": "Espresso",
+            "price": 3.5
+          },
+          {
+            "name": "Hazelnut fudge latte",
+            "price": 5.75
+          },
+          {
+            "name": "Vanilla gold brew",
+            "price": 5.0
+          },
+          {
+            "name": "Acai bowl",
+            "price": 12.0,
+            "kind": "food"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "177df601-28a2-4e30-a7b2-98caf843683a",
+    "name": "Fourtillfour Cafe",
+    "neighborhood": "Leucadia",
+    "address": "1114 N Coast Hwy 101, Encinitas",
+    "note": "Drinks",
+    "characterization": {
+      "roast": "medium",
+      "style": "roaster cafe",
+      "setting": "patio"
+    },
+    "latitude": 33.068491,
+    "longitude": -117.303921,
+    "menus": [
+      {
+        "name": "Drinks",
+        "items": [
+          {
+            "name": "Espresso",
+            "price": 3.75
+          },
+          {
+            "name": "Latte",
+            "price": 5.5
+          },
+          {
+            "name": "Pour over",
+            "price": 5.5
+          },
+          {
+            "name": "Pastry",
+            "price": 4.5,
+            "kind": "food"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "29b513af-175d-429f-9b6a-f697ba7b050b",
+    "name": "Para Cafe",
+    "neighborhood": "Downtown",
+    "address": "949 2nd St, Encinitas",
+    "note": "Cafe menu",
+    "characterization": {
+      "roast": "medium",
+      "style": "neighborhood cafe",
+      "setting": "walk-up"
+    },
+    "latitude": 33.0406478,
+    "longitude": -117.2940832,
+    "menus": [
+      {
+        "name": "Cafe menu",
+        "items": [
+          {
+            "name": "Espresso",
+            "price": 3.5
+          },
+          {
+            "name": "Oat latte",
+            "price": 5.5
+          },
+          {
+            "name": "Iced latte",
+            "price": 5.75
+          },
+          {
+            "name": "Breakfast sandwich",
+            "price": 9.5,
+            "kind": "food"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "37f5afcc-92ed-4725-b275-7bd48102c85e",
+    "name": "Bird Rock Coffee Roasters",
+    "neighborhood": "Downtown",
+    "address": "947 S Coast Hwy 101, Ste D-101, Encinitas, CA 92024",
+    "note": "Drinks",
+    "characterization": {
+      "roast": "light-medium",
+      "style": "third wave",
+      "setting": "roaster cafe"
+    },
+    "latitude": 33.040212,
+    "longitude": -117.292778,
+    "menus": [
+      {
+        "name": "Drinks",
+        "items": [
+          {
+            "name": "Espresso",
+            "price": 3.75
+          },
+          {
+            "name": "Filter",
+            "price": 5.0
+          },
+          {
+            "name": "Cardamom bun",
+            "price": 4.5,
+            "kind": "food"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "d701564b-a6e5-4996-8d90-8a459ba6ed30",
+    "name": "Lofty Coffee Encinitas",
+    "neighborhood": "Downtown",
+    "address": "97 N Coast Hwy 101, Encinitas",
+    "note": "Drinks",
+    "characterization": {
+      "roast": "light",
+      "style": "roaster",
+      "setting": "roasting works"
+    },
+    "latitude": 33.0495138,
+    "longitude": -117.2939756,
+    "menus": [
+      {
+        "name": "Drinks",
+        "items": [
+          {
+            "name": "Drip",
+            "price": 3.5
+          },
+          {
+            "name": "Cappuccino",
+            "price": 5.0
+          },
+          {
+            "name": "Almond croissant",
+            "price": 5.5,
+            "kind": "food"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "1c0f9ce0-5507-40cf-b3d3-784aa8a3c0bc",
+    "name": "Coffee Coffee",
+    "neighborhood": "Leucadia",
+    "address": "970 N Coast Hwy 101, Encinitas",
+    "note": "Drinks",
+    "characterization": {
+      "roast": "medium",
+      "style": "cafe",
+      "setting": "patio"
+    },
+    "latitude": 33.065762,
+    "longitude": -117.303028,
+    "menus": [
+      {
+        "name": "Drinks",
+        "items": [
+          {
+            "name": "Americano",
+            "price": 4.0
+          },
+          {
+            "name": "Oat latte",
+            "price": 5.75
+          },
+          {
+            "name": "Granola bowl",
+            "price": 9.0,
+            "kind": "food"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "041e8b1c-d104-476d-814b-9615196eaf8b",
+    "name": "Bump Coffee",
+    "neighborhood": "Leucadia",
+    "address": "1302 N Coast Hwy 101, Encinitas",
+    "note": "Drinks",
+    "characterization": {
+      "roast": "medium",
+      "style": "espresso bar",
+      "setting": "patio"
+    },
+    "latitude": 33.0708066,
+    "longitude": -117.3044632,
+    "menus": [
+      {
+        "name": "Drinks",
+        "items": [
+          {
+            "name": "Latte",
+            "price": 5.5
+          },
+          {
+            "name": "Cold brew",
+            "price": 5.0
+          },
+          {
+            "name": "Matcha",
+            "price": 5.75
+          },
+          {
+            "name": "Breakfast burrito",
+            "price": 10.5,
+            "kind": "food"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "c5dd6229-1ea4-4adf-89f0-b3e9bdca67fc",
+    "name": "Necessity Coffee",
+    "neighborhood": "Downtown",
+    "address": "687 2nd St, Encinitas",
+    "note": "Drinks",
+    "characterization": {
+      "roast": "light-medium",
+      "style": "specialty",
+      "setting": "hidden studio"
+    },
+    "latitude": 33.043485,
+    "longitude": -117.294164,
+    "menus": [
+      {
+        "name": "Drinks",
+        "items": [
+          {
+            "name": "House drip",
+            "price": 3.75
+          },
+          {
+            "name": "Cortado",
+            "price": 4.5
+          },
+          {
+            "name": "Batch brew",
+            "price": 4.0
+          },
+          {
+            "name": "Seasonal pastry",
+            "price": 4.25,
+            "kind": "food"
+          },
+          {
+            "name": "Cardamom latte",
+            "price": 5.75
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "97035d0c-4169-4aa9-8fa6-68ff04baaa17",
+    "name": "Ironsmith Coffee Roasters",
+    "neighborhood": "Downtown",
+    "address": "458 S Coast Hwy 101, Encinitas",
+    "note": "Drinks",
+    "characterization": {
+      "roast": "medium",
+      "style": "single-origin",
+      "setting": "roaster cafe"
+    },
+    "latitude": 33.046548,
+    "longitude": -117.294217,
+    "menus": [
+      {
+        "name": "Drinks",
+        "items": [
+          {
+            "name": "Espresso",
+            "price": 3.5
+          },
+          {
+            "name": "Flat white",
+            "price": 5.25
+          },
+          {
+            "name": "Pour over",
+            "price": 5.5
+          },
+          {
+            "name": "New wave bagel",
+            "price": 8.0,
+            "kind": "food"
+          }
+        ]
+      }
+    ]
+  }
+];
+
+    const state = { shops: [], hood: "all", q: "", source: "idle", cats: {}, openGroups: {}, page: "search", sort: "distance", sortDir: 1 };
+    const AREA_LATLNG = {
+      Leucadia: [33.0668, -117.2945],
+      Downtown: [33.0370, -117.2920],
+      Cardiff: [33.0208, -117.2830]
+    };
+    // Demo-only anchor point (downtown Encinitas / Coast Hwy 101 & E). Distance below is
+    // measured from here using the same jittered/neighborhood-centroid coordinates the map
+    // already uses for shops without real lat/lng — approximate, not surveyed, same caveat
+    // as the map pins.
+    const DEMO_ANCHOR = [33.0370, -117.2920];
+    function milesBetween(a, b) {
+      const toRad = (d) => (d * Math.PI) / 180;
+      const R = 3958.8;
+      const dLat = toRad(b[0] - a[0]);
+      const dLng = toRad(b[1] - a[1]);
+      const lat1 = toRad(a[0]);
+      const lat2 = toRad(b[0]);
+      const h = Math.sin(dLat / 2) ** 2 + Math.cos(lat1) * Math.cos(lat2) * Math.sin(dLng / 2) ** 2;
+      return R * 2 * Math.asin(Math.sqrt(h));
+    }
+    function shopDistanceMi(s) {
+      return milesBetween(DEMO_ANCHOR, shopLatLng(s));
+    }
+    function sortShops(list) {
+      const dir = state.sortDir === -1 ? -1 : 1;
+      const comparators = {
+        distance: (a, b) => shopDistanceMi(a) - shopDistanceMi(b),
+        az: (a, b) => a.name.localeCompare(b.name),
+        region: (a, b) => (a.neighborhood || "").localeCompare(b.neighborhood || "") || a.name.localeCompare(b.name),
+        updated: (a, b) => shopUpdatedTs(a) - shopUpdatedTs(b),
+        items: (a, b) => shopItemCount(a) - shopItemCount(b),
+        hooks: (a, b) => shopHookCount(a) - shopHookCount(b)
+      };
+      const cmp = comparators[state.sort] || comparators.distance;
+      const sorted = list.slice();
+      sorted.sort((a, b) => dir * cmp(a, b));
+      return sorted;
+    }
+    let maplibreMap = null;
+    let mapMarkers = [];
+    let lastFilteredShops = [];
+    const MAP_KEY_STORE = "menumatch.maptilerKey";
+    const PUBLIC_MAP_STYLE = "https://tiles.openfreemap.org/styles/bright";
+
+    function mapTilerKey() {
+      const q = new URLSearchParams(location.search).get("maptiler");
+      const typed = $("mapKey") ? $("mapKey").value : "";
+      return String(q || typed || localStorage.getItem(MAP_KEY_STORE) || "").trim();
+    }
+    function mapStyleUrl() {
+      const key = mapTilerKey();
+      if (key) return "https://api.maptiler.com/maps/streets-v2/style.json?key=" + encodeURIComponent(key);
+      return PUBLIC_MAP_STYLE;
+    }
+    function rememberMapKey() {
+      const el = $("mapKey");
+      if (!el) return;
+      const v = el.value.trim();
+      if (v) localStorage.setItem(MAP_KEY_STORE, v);
+      else localStorage.removeItem(MAP_KEY_STORE);
+    }
+    function applyMapStyle() {
+      if (!maplibreMap) return;
+      const url = mapStyleUrl();
+      if (maplibreMap._mmStyle === url) return;
+      maplibreMap._mmStyle = url;
+      maplibreMap.setStyle(url);
+      maplibreMap.once("style.load", () => renderMap(lastFilteredShops));
+    }
+
+    const $ = (id) => document.getElementById(id);
+
+    function money(n) {
+      if (n == null || n === "") return "";
+      const num = Number(n);
+      if (Number.isNaN(num)) return String(n);
+      return "$" + num.toFixed(2).replace(/\.00$/, "");
+    }
+
+    function normShop(raw) {
+      if (!raw || typeof raw !== "object") return null;
+      const id = raw.id || raw.restaurant_id || raw.slug || raw.name;
+      const menus = raw.menus || raw.menu || raw.current_menu || [];
+      return {
+        id,
+        name: raw.name || raw.title || "Untitled shop",
+        neighborhood: raw.neighborhood || raw.area || raw.city || raw.hood || "",
+        address: raw.address || raw.street || raw.location || "",
+        note: raw.note || raw.description || raw.about || raw.tagline || "",
+        url: raw.url || raw.website || "",
+        lat: raw.lat != null ? Number(raw.lat) : (raw.latitude != null ? Number(raw.latitude) : null),
+        lng: raw.lng != null ? Number(raw.lng) : (raw.longitude != null ? Number(raw.longitude) : null),
+        coordinates_verified: raw.coordinates_verified === true,
+        characterization: raw.characterization || raw.characteristics || {},
+        menus: normalizeMenus(menus),
+        menu_updated_at: raw.menu_updated_at || raw.updated_at || raw.created_at || ""
+      };
+    }
+
+    function normalizeMenus(menus) {
+      if (!menus) return [];
+      if (Array.isArray(menus)) {
+        return menus.map(normalizeMenu).filter((m) => m && m.items && m.items.length);
+      }
+      if (typeof menus === "object") {
+        if (Array.isArray(menus.items)) return [normalizeMenu(menus)].filter(Boolean);
+        return Object.entries(menus).map(([name, items]) =>
+          normalizeMenu({ name, items })
+        ).filter(Boolean);
+      }
+      return [];
+    }
+
+    function normalizeMenu(menu) {
+      if (!menu) return null;
+      if (Array.isArray(menu)) {
+        return { name: "Menu", items: menu.map(normalizeItem).filter(Boolean) };
+      }
+      const items = menu.items || menu.menu_items || menu.entries || [];
+      return {
+        name: menu.name || menu.title || menu.version_label || "Menu",
+        items: (Array.isArray(items) ? items : []).map(normalizeItem).filter(Boolean),
+        characterization: menu.characterization || {},
+        updated_at: menu.updated_at || menu.created_at || ""
+      };
+    }
+
+    function formatWhen(iso) {
+      if (!iso) return "";
+      const d = new Date(iso);
+      if (isNaN(d.getTime())) return String(iso);
+      return d.toLocaleString(undefined, { dateStyle: "medium", timeStyle: "short" });
+    }
+
+    function formatSheetDate(iso) {
+      if (!iso) return { short: "", full: "" };
+      const d = new Date(iso);
+      if (isNaN(d.getTime())) return { short: String(iso), full: String(iso) };
+      const mm = String(d.getMonth() + 1).padStart(2, "0");
+      const dd = String(d.getDate()).padStart(2, "0");
+      const yy = String(d.getFullYear()).slice(-2);
+      return { short: mm + "/" + dd + "/" + yy, full: formatWhen(iso) };
+    }
+
+    function normalizeItem(item) {
+      if (!item) return null;
+      if (typeof item === "string") return { name: item, price: null, description: "" };
+      return {
+        name: item.name || item.title || item.item || "Item",
+        price: item.price ?? item.cost ?? item.amount ?? null,
+        description: item.description || item.notes || item.detail || "",
+        kind: item.kind || item.category || ""
+      };
+    }
+
+    function isFoodItem(item) {
+      if (!item) return false;
+      if (String(item.kind || "").toLowerCase() === "food") return true;
+      const n = (item.name || "").toLowerCase();
+      return /toast|muffin|pastry|bagel|donut|doughnut|bowl|salad|soup|quiche|croissant|burrito|sandwich|bread|scone|cookie|cake|tart|granola/.test(n);
+    }
+
+    function drinkCategory(name) {
+      const n = (name || "").toLowerCase();
+      if (/drip|batch|filter|pour/.test(n)) return "Drip / filter";
+      if (/espresso|cortado|macchiato/.test(n)) return "Espresso";
+      if (/latte|cappuccino|flat white|mocha|au lait/.test(n)) return "Milk drinks";
+      if (/cold brew|iced/.test(n)) return "Iced / cold brew";
+      if (/matcha|tea/.test(n)) return "Tea / matcha";
+      return "Other drinks";
+    }
+
+    function foodCategory(name) {
+      const n = (name || "").toLowerCase();
+      if (/smoothie|juice|lemonade/.test(n)) return null;
+      if (/toast|bagel|burrito|sandwich|quesadilla|scramble|soup|quiche|egg|breakfast/.test(n)) return "Savory";
+      if (/pastry|pastries|croissant|muffin|scone|bread|bun|cookie|cake|tart|donut/.test(n)) return "Pastry";
+      if (/bowl|granola|salad|parfait|yogurt/.test(n)) return "Bowls";
+      return "Other";
+    }
+
+    function shopHasFood(s) {
+      return (s.menus || []).some((m) => (m.items || []).some(isFoodItem));
+    }
+
+    function shopChars(s) {
+      const chars = Object.assign({}, s.characterization);
+      (s.menus || []).forEach((m) => Object.assign(chars, m.characterization || {}));
+      return chars;
+    }
+
+    function shopTags(s) {
+      const chars = shopChars(s);
+      const style = (chars.style || "").toLowerCase();
+      const setting = (chars.setting || "").toLowerCase();
+      const names = (s.menus || []).flatMap((m) => (m.items || []).map((i) => i.name || "")).join(" ").toLowerCase();
+      const coffee = [];
+      const place = [];
+      const mode = [];
+      const food = [];
+      if (/roaster/.test(style + " " + setting)) coffee.push("Roasts in house");
+      if (/cardamom|hazelnut|gold brew|açaí|acai|matcha/.test(names)) coffee.push("Unusual drinks");
+      if (/patio/.test(setting)) place.push("Patio");
+      if (/beach|surf/.test(style + " " + setting)) place.push("Near the beach");
+      if (/railroad|station/.test(setting)) place.push("Railroad station");
+      if (/hidden|studio/.test(setting)) place.push("Hidden / studio");
+      if (/walk-up|walk up/.test(setting + " " + style)) mode.push("Walk-up");
+      if (/cyclist/.test(style)) mode.push("Cyclist cafe");
+      (s.menus || []).forEach((m) => {
+        (m.items || []).forEach((i) => {
+          if (isFoodItem(i)) {
+            const cat = foodCategory(i.name);
+            if (cat && food.indexOf(cat) === -1) food.push(cat);
+          }
+        });
+      });
+      return { Coffee: coffee, Setting: place, Mode: mode, Food: food };
+    }
+
+    function unusualHooks(s) {
+      const t = shopTags(s);
+      return [].concat(t.Coffee, t.Setting, t.Mode);
+    }
+
+    function shopInCategory(s, group, trait) {
+      if (group === "Place" || group === "Area") return (s.neighborhood || "") === trait;
+      const tags = shopTags(s);
+      if (tags[group]) return tags[group].indexOf(trait) !== -1;
+      if (group === "What's unusual") return unusualHooks(s).indexOf(trait) !== -1;
+      return false;
+    }
+
+    function selectedTraits(group) {
+      return (state.cats && state.cats[group]) || [];
+    }
+
+    function shopMatchesGroup(s, group, traits) {
+      if (!traits || !traits.length) return true;
+      return traits.some((t) => shopInCategory(s, group, t));
+    }
+
+    function shopMatchesCats(s, cats) {
+      const used = cats || state.cats || {};
+      return Object.keys(used).every((group) => shopMatchesGroup(s, group, used[group]));
+    }
+
+    function matchesHoodAndQuery(s) {
+      if (state.hood === "food") {
+        if (!shopHasFood(s)) return false;
+      } else if (state.hood === "drinks") {
+        /* keep every shop; food lines are hidden on the card */
+      } else if (state.hood !== "all") {
+        const h = (s.neighborhood || "").toLowerCase();
+        if (!h.includes(state.hood.toLowerCase())) return false;
+      }
+      const q = state.q.trim().toLowerCase();
+      if (!q) return true;
+      const blob = [s.name, s.address, s.note, s.neighborhood]
+        .concat(s.menus.flatMap((m) => m.items.map((i) => i.name + " " + (i.description || ""))))
+        .join(" ")
+        .toLowerCase();
+      return blob.includes(q);
+    }
+
+    function toggleTrait(group, trait) {
+      const cur = selectedTraits(group).slice();
+      const i = cur.indexOf(trait);
+      if (i >= 0) cur.splice(i, 1);
+      else cur.push(trait);
+      if (cur.length) state.cats[group] = cur;
+      else delete state.cats[group];
+    }
+
+    function clearCats() {
+      state.cats = {};
+    }
+
+    function activeCatList() {
+      const out = [];
+      Object.keys(state.cats || {}).forEach((group) => {
+        (state.cats[group] || []).forEach((trait) => out.push({ group, trait }));
+      });
+      return out;
+    }
+
+    function countForTrait(group, trait) {
+      const others = {};
+      Object.keys(state.cats || {}).forEach((g) => {
+        if (g !== group) others[g] = state.cats[g].slice();
+      });
+      return state.shops.filter((s) =>
+        matchesHoodAndQuery(s) && shopMatchesCats(s, others) && shopInCategory(s, group, trait)
+      ).length;
+    }
+
+    function renderActiveRow() {
+      const row = $("activeRow");
+      if (!row) return;
+      const picks = activeCatList();
+      if (!picks.length) {
+        row.hidden = true;
+        row.innerHTML = "";
+        return;
+      }
+      row.hidden = false;
+      row.innerHTML =
+        "<span class=\"label\">Filters</span>" +
+        picks.map((p) =>
+          "<button type=\"button\" data-group=\"" + escapeHtml(p.group) +
+          "\" data-trait=\"" + escapeHtml(p.trait) + "\">" +
+          escapeHtml(p.trait) + " ×</button>"
+        ).join("") +
+        "<button type=\"button\" class=\"clear\" data-clear=\"1\">Clear</button>";
+      row.querySelectorAll("button").forEach((btn) => {
+        btn.addEventListener("click", () => {
+          if (btn.dataset.clear) clearCats();
+          else toggleTrait(btn.dataset.group, btn.dataset.trait);
+          render();
+        });
+      });
+    }
+
+    function renderSummary(shops) {
+      const buckets = { Coffee: {}, Setting: {}, Mode: {}, Food: {} };
+      const push = (group, key, shop) => {
+        if (!key) return;
+        buckets[group] = buckets[group] || {};
+        buckets[group][key] = buckets[group][key] || [];
+        if (!buckets[group][key].some((s) => s.id === shop.id)) buckets[group][key].push(shop);
+      };
+      for (const s of shops) {
+        const tags = shopTags(s);
+        Object.keys(tags).forEach((group) => {
+          tags[group].forEach((trait) => push(group, trait, s));
+        });
+      }
+      const root = $("groups");
+      if (!root) return;
+      root.innerHTML = "";
+      const order = ["Coffee", "Setting", "Mode", "Food"];
+      for (const groupName of order) {
+        const entries = Object.entries(buckets[groupName] || {});
+        if (!entries.length) continue;
+        if (groupName === "Food") {
+          const orderFood = ["Savory", "Bowls", "Pastry", "Other"];
+          entries.sort((a, b) => {
+            const ia = orderFood.indexOf(a[0]);
+            const ib = orderFood.indexOf(b[0]);
+            return (ia < 0 ? 99 : ia) - (ib < 0 ? 99 : ib);
+          });
+        }
+        const div = document.createElement("div");
+        div.className = "group";
+        div.dataset.group = groupName;
+        div.innerHTML =
+          "<h3>" + escapeHtml(groupName) + "</h3><ul>" +
+          entries.map(([trait]) => {
+            const n = countForTrait(groupName, trait);
+            const checked = selectedTraits(groupName).indexOf(trait) !== -1 ? " checked" : "";
+            const zero = n === 0 ? " zero" : "";
+            return "<li><label class=\"cat-check" + zero + "\"><input type=\"checkbox\" data-group=\"" +
+              escapeHtml(groupName) + "\" data-trait=\"" + escapeHtml(trait) + "\"" + checked +
+              "> <span>" + escapeHtml(trait) + "</span> <span class=\"n\">" + n + "</span></label></li>";
+          }).join("") + "</ul>";
+        root.appendChild(div);
+      }
+      if (!root.children.length) {
+        root.innerHTML = "<p class='meta'>No categories yet.</p>";
+      }
+      root.querySelectorAll("input[type=checkbox]").forEach((box) => {
+        box.addEventListener("change", () => {
+          toggleTrait(box.dataset.group, box.dataset.trait);
+          render();
+        });
+      });
+      renderActiveRow();
+    }
+
+    function render() {
+      const q = state.q.trim().toLowerCase();
+      const filtered = sortShops(state.shops.filter((s) => {
+        if (!matchesHoodAndQuery(s)) return false;
+        return shopMatchesCats(s);
+      }));
+      lastFilteredShops = filtered;
+
+      const grid = $("grid");
+      grid.innerHTML = "";
+      $("empty").hidden = filtered.length > 0;
+      if (!filtered.length) {
+        $("empty").textContent = activeCatList().length || state.hood !== "all" || q
+          ? "No shops match those filters. Clear one to widen the list."
+          : "No shops match that filter.";
+      }
+      renderSummary(state.shops);
+
+      for (const s of filtered) {
+        const el = document.createElement("article");
+        el.id = "shop-" + s.id;
+        const items = uniqueMenuItems(s);
+        const drinks = items.filter((i) => !isFoodItem(i));
+        const foods = items.filter(isFoodItem);
+        const row = (i) => {
+          const bits = [];
+          const p = money(i.price);
+          if (p) bits.push(p);
+          if (i.description) bits.push(i.description);
+          const tip = bits.length ? " data-tip=\"" + escapeHtml(bits.join(" · ")) + "\"" : "";
+          return `<div class="item"${tip}>${escapeHtml(i.name)}</div>`;
+        };
+        const cols = [];
+        if (drinks.length) cols.push(`<div class="menu drinks"><h3>Drinks</h3>${drinks.map(row).join("")}</div>`);
+        if (foods.length && state.hood !== "drinks") cols.push(`<div class="menu food"><h3>Food</h3>${foods.map(row).join("")}</div>`);
+        const menusHtml = cols.length ? `<div class="menus">${cols.join("")}</div>` : "";
+        const shopWhen = formatWhen(s.menu_updated_at || (s.menus[0] && s.menus[0].updated_at));
+        const tipBits = [];
+        const dist = shopDistanceMi(s).toFixed(1) + " mi";
+        if (s.address) tipBits.push(s.address);
+        tipBits.push(dist);
+        if (shopWhen) tipBits.push("Updated " + shopWhen);
+        const nameTip = " data-tip=\"" + escapeHtml(tipBits.join("\n")) + "\"";
+
+        const hooks = unusualHooks(s);
+        const extra = hooks.length ? hooks.join(", ").toLowerCase() : "";
+        let tagHtml = "";
+        if (s.neighborhood && extra) {
+          tagHtml = `<span class="badge"><span class="hood">${escapeHtml(s.neighborhood)}</span> - ${escapeHtml(extra)}</span>`;
+        } else if (s.neighborhood) {
+          tagHtml = `<span class="badge"><span class="hood">${escapeHtml(s.neighborhood)}</span></span>`;
+        } else if (extra) {
+          tagHtml = `<span class="badge">${escapeHtml(extra)}</span>`;
+        }
+        el.innerHTML = `
+          <div class="card-head">
+            <h2${nameTip}>${escapeHtml(s.name)}</h2>
+            <div class="card-tags">${tagHtml}</div>
+            <span class="badge-dist">${dist}</span>
+          </div>
+          ${s.note ? `<div class="meta">${escapeHtml(s.note)}</div>` : ""}
+          ${menusHtml || "<div class='menu'><h3>Menu</h3><div class='meta'>No menu loaded</div></div>"}
+          <button type="button" class="ghost to-top" data-shop="${escapeHtml(s.id)}">↑ Back to top</button>
+        `;
+        grid.appendChild(el);
+      }
+
+      grid.querySelectorAll(".to-top").forEach((btn) => {
+        btn.addEventListener("click", () => window.scrollTo({ top: 0, behavior: "smooth" }));
+      });
+
+      renderSheet(filtered);
+      renderMap(filtered);
+      document.querySelectorAll("[data-sort]").forEach((b) => b.classList.toggle("on", b.dataset.sort === state.sort));
+      document.querySelectorAll(".th-sort").forEach((b) => {
+        const isActive = b.dataset.sortCol === state.sort;
+        b.classList.toggle("active", isActive);
+        b.classList.toggle("desc", isActive && state.sortDir === -1);
+      });
+      showPage(state.page);
+    }
+
+    function shopLatLng(s) {
+      if (s.lat != null && s.lng != null) return [Number(s.lat), Number(s.lng)];
+      const base = AREA_LATLNG[s.neighborhood] || AREA_LATLNG.Downtown;
+      let h = 0;
+      const key = String(s.id || s.name || "");
+      for (let i = 0; i < key.length; i++) h = (h * 31 + key.charCodeAt(i)) >>> 0;
+      const jitterLat = ((h % 17) - 8) * 0.0012;
+      const jitterLng = ((h >>> 4) % 17) * 0.0009;
+      // Hard floor, independent of the jitter math above: the coastline here runs
+      // diagonally (not a straight north-south line), so "move east of my own
+      // neighborhood's centroid" doesn't guarantee "east of the coastline at whatever
+      // latitude the (separate) lat jitter happened to land on" — a combination of the
+      // two jitters can still slide a point out past the coast. Rather than model the
+      // real coastline's geometry for placeholder demo data, just refuse to ever place
+      // a point west of a line comfortably inland of every neighborhood's coast.
+      const lng = Math.max(base[1] + jitterLng, -117.27);
+      return [base[0] + jitterLat, lng];
+    }
+
+    function uniqueMenuItems(s) {
+      const seen = new Set();
+      const items = [];
+      (s.menus || []).forEach((m) => {
+        (m.items || []).forEach((item) => {
+          const n = (item && item.name) ? String(item.name).trim() : "";
+          if (!n) return;
+          const key = n.toLowerCase();
+          if (seen.has(key)) return;
+          seen.add(key);
+          items.push(item);
+        });
+      });
+      return items;
+    }
+    function shopItemCount(s) {
+      return uniqueMenuItems(s).length;
+    }
+    function shopItemNames(s) {
+      return uniqueMenuItems(s).map((item) => item.name);
+    }
+    function shopHookCount(s) {
+      return (typeof unusualHooks === "function" ? unusualHooks(s) : []).length;
+    }
+    function shopUpdatedTs(s) {
+      return Date.parse(s.menu_updated_at || (s.menus[0] && s.menus[0].updated_at) || 0) || 0;
+    }
+
+    function renderSheet(shops) {
+      const body = $("sheetBody");
+      if (!body) return;
+      body.innerHTML = shops.map((s, i) => {
+        const hooks = (typeof unusualHooks === "function" ? unusualHooks(s) : []).join(", ");
+        const when = formatSheetDate(s.menu_updated_at || (s.menus[0] && s.menus[0].updated_at));
+        const addr = (s.address || "").trim();
+        const names = shopItemNames(s);
+        const nItems = names.length;
+        const itemTip = names.join("\n");
+        const nameLink = "<a href=\"#shop-" + encodeURIComponent(s.id) + "\" data-jump=\"" +
+          escapeHtml(String(s.id)) + "\"" +
+          (addr ? " data-tip=\"" + escapeHtml(addr) + "\"" : "") +
+          ">" + escapeHtml(s.name) + "</a>";
+        const whenCell = when.short
+          ? "<td class=\"sheet-date\"" + (when.full ? " data-tip=\"" + escapeHtml(when.full) + "\"" : "") + ">" + escapeHtml(when.short) + "</td>"
+          : "<td class=\"sheet-date\"></td>";
+        const itemsCell = "<td class=\"sheet-items\"" +
+          (itemTip ? " data-tip=\"" + escapeHtml(itemTip) + "\"" : "") +
+          ">" + nItems + "</td>";
+        return "<tr id=\"sheet-row-" + escapeHtml(String(s.id)) + "\"><td>" + (i + 1) +
+          "</td><td class=\"sheet-shop\">" + nameLink +
+          "</td><td class=\"sheet-mi\">" + shopDistanceMi(s).toFixed(1) +
+          "</td><td>" + escapeHtml(hooks) +
+          "</td>" + itemsCell +
+          "<td class=\"sheet-place\">" + escapeHtml(s.neighborhood || "") + "</td>" +
+          whenCell + "</tr>";
+      }).join("") || "<tr><td colspan=\"7\">No shops match those filters.</td></tr>";
+      body.querySelectorAll("a[data-jump]").forEach((a) => {
+        a.addEventListener("click", (ev) => {
+          ev.preventDefault();
+          state.page = "search";
+          showPage("search");
+          const card = document.getElementById("shop-" + a.dataset.jump);
+          if (card) card.scrollIntoView({ behavior: "smooth", block: "start" });
+        });
+      });
+    }
+
+    function renderMap(shops) {
+      const note = $("mapNote");
+      if (!window.maplibregl) {
+        if (note) note.textContent = "Map library did not load. Check network / map tiles.";
+        return;
+      }
+      const styleUrl = mapStyleUrl();
+      if (!maplibreMap) {
+        maplibreMap = new maplibregl.Map({
+          container: "map",
+          style: styleUrl,
+          center: [AREA_LATLNG.Downtown[1], AREA_LATLNG.Downtown[0]],
+          zoom: 13,
+          attributionControl: { compact: true }
+        });
+        maplibreMap._mmStyle = styleUrl;
+        maplibreMap.addControl(new maplibregl.NavigationControl({ showCompass: false }), "top-left");
+      } else if (maplibreMap._mmStyle !== styleUrl) {
+        applyMapStyle();
+        return;
+      }
+      mapMarkers.forEach((m) => m.remove());
+      mapMarkers = [];
+      shops.forEach((s, i) => {
+        const [lat, lng] = shopLatLng(s);
+        const hooks = (typeof unusualHooks === "function" ? unusualHooks(s) : []).join(" · ");
+        const el = document.createElement("div");
+        el.className = "shop-pin";
+        el.innerHTML =
+          '<svg viewBox="0 0 28 28" xmlns="http://www.w3.org/2000/svg">' +
+          '<circle class="pin-fill" cx="14" cy="14" r="11.25" stroke-width="2.25"/>' +
+          '<text x="14" y="18" text-anchor="middle">' + (i + 1) + "</text></svg>";
+        const popup = new maplibregl.Popup({ offset: 16, closeButton: false }).setHTML(
+          "<strong>" + (i + 1) + ". " + escapeHtml(s.name) + "</strong><br>" +
+          escapeHtml(s.address || s.neighborhood || "") +
+          (hooks ? "<br>" + escapeHtml(hooks) : "") +
+          "<div class='popup-links'><a href='#' data-jump-sheet='" + escapeHtml(String(s.id)) + "'>View in spreadsheet →</a></div>"
+        );
+        const marker = new maplibregl.Marker({ element: el, anchor: "center" })
+          .setLngLat([lng, lat])
+          .setPopup(popup)
+          .addTo(maplibreMap);
+        mapMarkers.push(marker);
+      });
+      focusMap(shops);
+      if (note) {
+        note.textContent = shops.length
+          ? shops.length + " pin" + (shops.length === 1 ? "" : "s") + " · neighborhood-approximate, not surveyed GPS."
+          : "No shops match those filters.";
+      }
+    }
+
+    function focusMap(shops) {
+      if (!maplibreMap) return;
+      const list = shops || lastFilteredShops || [];
+      const dur = state.page === "map" ? 700 : 0;
+      const area = AREA_LATLNG[state.hood];
+      if (area && list.length) {
+        const b = new maplibregl.LngLatBounds();
+        list.forEach((s) => {
+          const [lat, lng] = shopLatLng(s);
+          b.extend([lng, lat]);
+        });
+        maplibreMap.fitBounds(b, { padding: 70, maxZoom: 14.2, duration: dur });
+        return;
+      }
+      if (area) {
+        maplibreMap.easeTo({ center: [area[1], area[0]], zoom: 14, duration: dur });
+        return;
+      }
+      if (list.length) {
+        const b = new maplibregl.LngLatBounds();
+        list.forEach((s) => {
+          const [lat, lng] = shopLatLng(s);
+          b.extend([lng, lat]);
+        });
+        maplibreMap.fitBounds(b, { padding: 40, maxZoom: 13.6, duration: dur });
+        return;
+      }
+      const downtown = AREA_LATLNG.Downtown;
+      maplibreMap.easeTo({ center: [downtown[1], downtown[0]], zoom: 12.6, duration: dur });
+    }
+
+    function showPage(name) {
+      state.page = name;
+      document.querySelectorAll(".page-btn[data-page]").forEach((b) => {
+        b.classList.toggle("on", b.dataset.page === name);
+      });
+      document.querySelectorAll(".page").forEach((p) => {
+        p.classList.toggle("on", p.id === "page-" + name);
+      });
+      if (name === "map" && maplibreMap) {
+        setTimeout(() => {
+          maplibreMap.resize();
+          focusMap(lastFilteredShops);
+        }, 80);
+      }
+    }
+
+    function escapeHtml(str) {
+      return String(str ?? "")
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;");
+    }
+
+    function setStatus(msg, kind) {
+      const el = $("status");
+      if (!el) return;
+      el.textContent = msg || "";
+      el.className = "status" + (kind ? " " + kind : "");
+      el.hidden = kind !== "err";
+    }
+
+    async function fetchJson(url) {
+      const res = await fetch(url, { headers: { Accept: "application/json" } });
+      if (!res.ok) throw new Error(res.status + " " + res.statusText + " for " + url);
+      return res.json();
+    }
+
+    function unwrapList(payload) {
+      if (Array.isArray(payload)) return payload;
+      if (!payload || typeof payload !== "object") return [];
+      for (const key of ["restaurants", "data", "items", "results", "shops"]) {
+        if (Array.isArray(payload[key])) return payload[key];
+      }
+      return [];
+    }
+
+    async function loadMenusFor(base, shop) {
+      const id = shop.id;
+      const paths = [
+        `/restaurants/${encodeURIComponent(id)}/menus`,
+        `/restaurants/${encodeURIComponent(id)}/menu`,
+        `/menus?restaurant_id=${encodeURIComponent(id)}`,
+        `/menu?restaurant_id=${encodeURIComponent(id)}`
+      ];
+      for (const path of paths) {
+        try {
+          const data = await fetchJson(base + path);
+          const list = Array.isArray(data) ? data : unwrapList(data);
+          const menus = normalizeMenus(list.length ? list : data);
+          if (menus.length) return menus;
+        } catch (_) { /* try next shape */ }
+      }
+      return shop.menus || [];
+    }
+
+    function defaultApiBase() {
+      if (location.protocol === "http:" || location.protocol === "https:") {
+        return location.protocol + "//" + location.hostname + ":8000";
+      }
+      return "http://localhost:8000";
+    }
+
+    async function loadBuildInfo(base) {
+      const el = $("buildInfo");
+      if (!el) return;
+      try {
+        const info = await fetchJson(base + "/version");
+        el.textContent =
+          "v" + (info.app_version || "?") +
+          " · started " + (info.started_at ? new Date(info.started_at).toLocaleString() : "?") +
+          " · db: " + (info.supabase_project_ref || "?");
+      } catch (_) {
+        el.textContent = "";
+      }
+    }
+
+    async function loadFromApi() {
+      if (!$("apiBase").value) $("apiBase").value = defaultApiBase();
+      const base = $("apiBase").value.replace(/\/$/, "");
+      setStatus("Calling " + base + " …");
+      loadBuildInfo(base);
+      try {
+        let rawList = [];
+        const restaurantPaths = ["/menus/restaurants"];
+        let lastErr = null;
+        for (const path of restaurantPaths) {
+          try {
+            const data = await fetchJson(base + path);
+            rawList = unwrapList(data);
+            if (rawList.length || Array.isArray(data)) break;
+          } catch (e) {
+            lastErr = e;
+          }
+        }
+        if (!rawList.length && lastErr) throw lastErr;
+
+        const shops = rawList.map(normShop).filter(Boolean);
+        const withMenus = await Promise.all(
+          shops.map(async (s) => {
+            if (s.menus && s.menus.length) return s;
+            return { ...s, menus: await loadMenusFor(base, s) };
+          })
+        );
+        state.shops = withMenus;
+        state.source = "api";
+        setStatus(
+          "Loaded " + withMenus.length + " restaurant" + (withMenus.length === 1 ? "" : "s") + " from " + base,
+          "ok"
+        );
+        render();
+      } catch (err) {
+        setStatus(
+          "API error: " + err.message,
+          "err"
+        );
+      }
+    }
+
+    function loadDemo() {
+      state.shops = SAMPLE.map(normShop);
+      state.source = "demo";
+      setStatus("Showing bundled Encinitas sample (API not used).", "ok");
+      render();
+    }
+
+    $("summaryToggle").addEventListener("click", () => {
+      const box = $("summary");
+      box.classList.toggle("collapsed");
+      $("summaryBtn").textContent = box.classList.contains("collapsed") ? "Show" : "Hide";
+    });
+    $("reload").addEventListener("click", loadFromApi);
+    $("demo").addEventListener("click", loadDemo);
+    (function initMapKey() {
+      const el = $("mapKey");
+      if (!el) return;
+      const q = new URLSearchParams(location.search).get("maptiler");
+      el.value = q || localStorage.getItem(MAP_KEY_STORE) || "";
+      el.addEventListener("change", () => {
+        rememberMapKey();
+        applyMapStyle();
+      });
+    })();
+    document.querySelectorAll(".page-btn[data-page]").forEach((btn) => {
+      btn.addEventListener("click", () => showPage(btn.dataset.page));
+    });
+    document.querySelectorAll("[data-sort]").forEach((btn) => {
+      btn.addEventListener("click", () => { state.sort = btn.dataset.sort; state.sortDir = 1; render(); });
+    });
+    document.querySelectorAll(".th-sort").forEach((btn) => {
+      btn.addEventListener("click", () => {
+        const col = btn.dataset.sortCol;
+        state.sortDir = (state.sort === col) ? -state.sortDir : 1;
+        state.sort = col;
+        render();
+      });
+    });
+    function placeHoverTip(ev) {
+      const tip = $("hoverTip");
+      if (!tip || tip.style.display === "none" || tip.dataset.pin) return;
+      const pad = 12;
+      const w = tip.offsetWidth;
+      const h = tip.offsetHeight;
+      let x = ev.clientX - w - 16;
+      let y = ev.clientY - h - 14;
+      if (x < pad) x = ev.clientX + 18;
+      if (y < pad) y = ev.clientY + 20;
+      if (x + w + pad > window.innerWidth) x = window.innerWidth - w - pad;
+      if (y + h + pad > window.innerHeight) y = window.innerHeight - h - pad;
+      tip.style.left = Math.max(8, x) + "px";
+      tip.style.top = Math.max(8, y) + "px";
+    }
+
+    function pinBrowseTip() {
+      const label = document.querySelector("#summaryToggle span[data-tip]");
+      const tip = $("hoverTip");
+      if (!label || !tip) return;
+      tip.textContent = label.getAttribute("data-tip") || "";
+      tip.dataset.pin = "browse";
+      tip.style.display = "block";
+      const rect = label.getBoundingClientRect();
+      const pad = 8;
+      let x = rect.left + rect.width / 2 - tip.offsetWidth / 2;
+      let y = rect.bottom + 10;
+      x = Math.max(pad, Math.min(x, window.innerWidth - tip.offsetWidth - pad));
+      if (y + tip.offsetHeight > window.innerHeight - pad) y = rect.top - tip.offsetHeight - 10;
+      tip.style.left = x + "px";
+      tip.style.top = Math.max(pad, y) + "px";
+    }
+
+    function clearPinnedTip() {
+      const tip = $("hoverTip");
+      if (!tip || !tip.dataset.pin) return;
+      tip.style.display = "none";
+      tip.dataset.pin = "";
+    }
+
+    const browseLabel = document.querySelector("#summaryToggle span[data-tip]");
+    if (browseLabel) {
+      browseLabel.addEventListener("click", (ev) => {
+        ev.stopPropagation();
+        const tip = $("hoverTip");
+        if (tip && tip.dataset.pin === "browse" && tip.style.display === "block") clearPinnedTip();
+        else pinBrowseTip();
+      });
+    }
+
+    document.addEventListener("pointerover", (ev) => {
+      const el = ev.target.closest("[data-tip]");
+      if (!el) return;
+      if (el === browseLabel && ev.pointerType && ev.pointerType !== "mouse") return;
+      const tip = $("hoverTip");
+      if (!tip) return;
+      tip.dataset.pin = "";
+      tip.textContent = el.getAttribute("data-tip") || "";
+      tip.style.display = "block";
+      placeHoverTip(ev);
+    });
+    document.addEventListener("pointermove", placeHoverTip);
+    document.addEventListener("pointerout", (ev) => {
+      const el = ev.target.closest("[data-tip]");
+      if (!el) return;
+      if (el.contains(ev.relatedTarget)) return;
+      const tip = $("hoverTip");
+      if (!tip || tip.dataset.pin) return;
+      tip.style.display = "none";
+    });
+    document.addEventListener("click", (ev) => {
+      if (!browseLabel || ev.target.closest("#summaryToggle span[data-tip]")) return;
+      clearPinnedTip();
+    });
+
+    document.addEventListener("click", (ev) => {
+      const link = ev.target.closest("[data-jump-sheet]");
+      if (!link) return;
+      ev.preventDefault();
+      showPage("sheet");
+      const row = document.getElementById("sheet-row-" + link.dataset.jumpSheet);
+      if (row) {
+        row.scrollIntoView({ behavior: "smooth", block: "center" });
+        row.classList.add("row-highlight");
+        setTimeout(() => row.classList.remove("row-highlight"), 1600);
+      }
+    });
+    $("q").addEventListener("input", (e) => { state.q = e.target.value; render(); });
+    document.querySelectorAll(".chip").forEach((btn) => {
+      btn.addEventListener("click", () => {
+        document.querySelectorAll(".chip").forEach((b) => b.classList.remove("on"));
+        btn.classList.add("on");
+        state.hood = btn.dataset.hood;
+        render();
+      });
+    });
+
+    const COLOR_STORE = "encinitas-colors";
+    const COLOR_FIELDS = [
+      ["--sand", "Page", "#f4efe6"],
+      ["--foam", "Surface", "#fffaf3"],
+      ["--line", "Lines", "#e4d9c8"],
+      ["--ink", "Text", "#1c1914"],
+      ["--mute", "Muted text", "#6b6358"],
+      ["--sea", "Selected", "#1d5f96"],
+      ["--header-a", "Header start", "#122844"],
+      ["--header-b", "Header mid", "#1d4e7f"],
+      ["--header-c", "Header end", "#0d1e33"],
+      ["--label-blue", "Label Blue", "#163d68"],
+      ["--dither-gold", "Dither Gold", "#cca038"],
+      ["--card-a", "Card light", "#faf6ef"],
+      ["--card-b", "Card warm", "#f4eee2"],
+      ["--drinks", "Drinks", "#e4e9eb"],
+      ["--food", "Food", "#f4e2d8"],
+      ["--coffee", "Coffee", "#f3ebe0"],
+      ["--setting", "Setting", "#e6ebe7"],
+      ["--mode", "Mode", "#e4e9eb"],
+      ["--badge", "Label", "#efe4d4"]
+    ];
+
+    function cssColorToHex(value) {
+      const v = String(value || "").trim();
+      if (/^#[0-9a-fA-F]{6}$/.test(v)) return v.toLowerCase();
+      const m = v.match(/^rgba?\(\s*(\d+)\s*,\s*(\d+)\s*,\s*(\d+)/);
+      if (!m) return "";
+      return "#" + [m[1], m[2], m[3]].map((n) => Number(n).toString(16).padStart(2, "0")).join("");
+    }
+
+    function paintColorInputs() {
+      COLOR_FIELDS.forEach(([name, , fallback]) => {
+        const input = document.querySelector('[data-color="' + name + '"]');
+        if (!input) return;
+        const current = cssColorToHex(getComputedStyle(document.documentElement).getPropertyValue(name));
+        input.value = current || fallback;
+      });
+    }
+
+    function saveColorsFromInputs() {
+      const data = {};
+      COLOR_FIELDS.forEach(([name, , fallback]) => {
+        const input = document.querySelector('[data-color="' + name + '"]');
+        data[name] = input && input.value ? input.value : fallback;
+      });
+      localStorage.setItem(COLOR_STORE, JSON.stringify(data));
+    }
+
+    (function initColorPanel() {
+      const grid = $("colorFields");
+      const panel = $("colorPanel");
+      if (!grid || !panel) return;
+      grid.innerHTML = COLOR_FIELDS.map(([name, label]) =>
+        '<label class="color-field"><input type="color" data-color="' + name + '" aria-label="' + label + '"><span>' + label + "</span></label>"
+      ).join("");
+      paintColorInputs();
+      grid.addEventListener("input", (ev) => {
+        const input = ev.target.closest("[data-color]");
+        if (!input) return;
+        document.documentElement.style.setProperty(input.dataset.color, input.value);
+        saveColorsFromInputs();
+        $("colorNote").textContent = "Saved in this browser. Copy CSS when you want these kept in the file.";
+      });
+      $("colorToggle").addEventListener("click", () => { panel.hidden = !panel.hidden; });
+      $("colorClose").addEventListener("click", () => { panel.hidden = true; });
+      $("colorReset").addEventListener("click", () => {
+        localStorage.removeItem(COLOR_STORE);
+        COLOR_FIELDS.forEach(([name]) => document.documentElement.style.removeProperty(name));
+        paintColorInputs();
+        $("colorNote").textContent = "Back to the colors in the file.";
+      });
+      $("colorCopy").addEventListener("click", async () => {
+        const lines = COLOR_FIELDS.map(([name]) => {
+          const input = document.querySelector('[data-color="' + name + '"]');
+          return name + ": " + (input ? input.value : "") + ";";
+        });
+        const text = lines.join("\n");
+        try {
+          await navigator.clipboard.writeText(text);
+          $("colorNote").textContent = "Copied. These can go into the :root block at the top of the file.";
+        } catch (_) {
+          $("colorNote").textContent = text;
+        }
+      });
+    })();
+
+    loadFromApi().then(() => {
+      if (!state.shops.length) loadDemo();
+    });
+  </script>
+</body>
+</html>
