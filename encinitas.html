@@ -1021,11 +1021,17 @@
       } catch (e) {}
     }
 
-    function themeApiBase() {
-      if (location.protocol === "http:" || location.protocol === "https:") {
+    function defaultApiBase() {
+      if (location.protocol === "file:") return "http://localhost:8000";
+      // Local static server (8085) talks to FastAPI on 8000. Render/HTTPS uses this same origin.
+      if (location.port === "8085" || location.port === "5500" || location.port === "5501") {
         return location.protocol + "//" + location.hostname + ":8000";
       }
-      return "http://localhost:8000";
+      return location.origin;
+    }
+
+    function themeApiBase() {
+      return defaultApiBase();
     }
 
     var lastServerTheme = "";
@@ -2802,13 +2808,6 @@
         } catch (_) { /* try next shape */ }
       }
       return shop.menus || [];
-    }
-
-    function defaultApiBase() {
-      if (location.protocol === "http:" || location.protocol === "https:") {
-        return location.protocol + "//" + location.hostname + ":8000";
-      }
-      return "http://localhost:8000";
     }
 
     async function loadBuildInfo(base) {
