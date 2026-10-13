@@ -2776,10 +2776,16 @@
       el.hidden = kind !== "err";
     }
 
-    async function fetchJson(url) {
-      const res = await fetch(url, { headers: { Accept: "application/json" } });
-      if (!res.ok) throw new Error(res.status + " " + res.statusText + " for " + url);
-      return res.json();
+    async function fetchJson(url, timeoutMs) {
+      const ctrl = new AbortController();
+      const timer = setTimeout(function () { ctrl.abort(); }, timeoutMs || 8000);
+      try {
+        const res = await fetch(url, { headers: { Accept: "application/json" }, signal: ctrl.signal });
+        if (!res.ok) throw new Error(res.status + " " + res.statusText + " for " + url);
+        return await res.json();
+      } finally {
+        clearTimeout(timer);
+      }
     }
 
     function unwrapList(payload) {
@@ -2826,22 +2832,30 @@
 
     async function loadFromApi() {
       if (!$("apiBase").value) $("apiBase").value = defaultApiBase();
-      const base = $("apiBase").value.replace(/\/$/, "");
-      setStatus("Calling " + base + " …");
-      loadBuildInfo(base);
+      const typed = $("apiBase").value.replace(/\/$/, "");
+      const bases = [typed];
+      if (location.origin && bases.indexOf(location.origin) === -1) bases.push(location.origin);
+      let lastErr = null;
+      let rawList = [];
+      let base = typed;
+      setStatus("Calling " + typed + " …");
       try {
-        let rawList = [];
-        const restaurantPaths = ["/menus/restaurants"];
-        let lastErr = null;
-        for (const path of restaurantPaths) {
+        for (let i = 0; i < bases.length; i++) {
+          base = bases[i];
           try {
-            const data = await fetchJson(base + path);
+            const data = await fetchJson(base + "/menus/restaurants", 6000);
             rawList = unwrapList(data);
-            if (rawList.length || Array.isArray(data)) break;
+            if (rawList.length || Array.isArray(data)) {
+              $("apiBase").value = base;
+              lastErr = null;
+              break;
+            }
           } catch (e) {
             lastErr = e;
+            rawList = [];
           }
         }
+        loadBuildInfo(base);
         if (!rawList.length && lastErr) throw lastErr;
 
         const shops = rawList.map(normShop).filter(Boolean);
@@ -2863,6 +2877,7 @@
           "API error: " + err.message,
           "err"
         );
+        if (!state.shops.length) loadDemo();
       }
     }
 
