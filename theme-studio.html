@@ -94,8 +94,9 @@
       display: flex;
       align-items: center;
       gap: .5rem;
+      flex-wrap: wrap;
     }
-    button.btn {
+    button.btn, a.btn {
       font: inherit;
       font-size: .78rem;
       font-weight: 600;
@@ -108,35 +109,194 @@
       border: 1px solid var(--surface-border);
       background: var(--surface-card);
       color: var(--text);
+      text-decoration: none;
       transition: all 0.15s ease;
     }
-    button.btn:hover {
+    button.btn:hover, a.btn:hover {
       background: #2d4160;
       border-color: #475569;
     }
-    button.btn.primary {
+    button.btn.primary, a.btn.primary {
       background: var(--accent);
       color: #041727;
       border-color: var(--accent);
     }
-    button.btn.primary:hover {
+    button.btn.primary:hover, a.btn.primary:hover {
       background: var(--accent-hover);
     }
     main {
       flex: 1;
-      max-width: 1200px;
       width: 100%;
       margin: 0 auto;
-      padding: 1.25rem 1.4rem 2.5rem;
+      padding: 1rem 1.4rem 2.5rem;
       display: flex;
       flex-direction: column;
       gap: 1.25rem;
+    }
+    .workspace-split {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) 420px;
+      gap: 1.25rem;
+      align-items: start;
+      width: 100%;
+    }
+    @media (max-width: 1100px) {
+      .workspace-split {
+        grid-template-columns: 1fr;
+      }
+      .preview-column {
+        position: relative;
+        top: 0;
+      }
+    }
+    .controls-column {
+      display: flex;
+      flex-direction: column;
+      gap: 1.1rem;
+      min-width: 0;
+      width: 100%;
+    }
+    .preview-column {
+      position: sticky;
+      top: 4.5rem;
+      background: var(--surface);
+      border: 1px solid var(--surface-border);
+      border-radius: 12px;
+      padding: .75rem .85rem 1rem;
+      display: flex;
+      flex-direction: column;
+      gap: .55rem;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.35);
+    }
+    .preview-topbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: .5rem;
+    }
+    .preview-title {
+      font-weight: 700;
+      font-size: .82rem;
+    }
+    .preview-note {
+      font-size: .68rem;
+      color: var(--text-muted);
+      line-height: 1.35;
+      margin: .15rem 0 0;
+    }
+    .phone-stage {
+      background: #0b1220;
+      border: 1px solid var(--surface-border);
+      border-radius: 12px;
+      min-height: 480px;
+      height: calc(100vh - 9.5rem);
+      display: flex;
+      align-items: flex-start;
+      justify-content: center;
+      overflow: hidden;
+      padding: 12px 8px;
+    }
+    .phone-slot {
+      flex: none;
+    }
+    .phone-scale {
+      width: 390px;
+      height: 844px;
+      transform-origin: top center;
+    }
+    .phone-scale iframe {
+      width: 390px;
+      height: 844px;
+      border: 0;
+      border-radius: 28px;
+      background: #e9e3d6;
+      display: block;
+      box-shadow: 0 0 0 10px #111827, 0 16px 36px rgba(0, 0, 0, 0.45);
     }
     .presets-card {
       background: var(--surface);
       border: 1px solid var(--surface-border);
       border-radius: 12px;
       padding: 1rem 1.2rem;
+    }
+    .sync-card {
+      background: rgba(56, 189, 248, 0.07);
+      border: 1px solid rgba(56, 189, 248, 0.28);
+      border-radius: 12px;
+      padding: .9rem 1.15rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1.25rem;
+      flex-wrap: wrap;
+    }
+    .sync-left {
+      flex: 1;
+      min-width: 280px;
+      display: flex;
+      flex-direction: column;
+      gap: .45rem;
+    }
+    .sync-title-row {
+      display: flex;
+      align-items: center;
+      gap: .6rem;
+      flex-wrap: wrap;
+    }
+    .sync-badge {
+      font-size: .68rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: .06em;
+      background: rgba(56, 189, 248, 0.2);
+      color: #38bdf8;
+      padding: .2rem .55rem;
+      border-radius: 999px;
+    }
+    .sync-preset-name {
+      font-size: .95rem;
+      font-weight: 700;
+      color: #ffffff;
+    }
+    .sync-desc {
+      font-size: .78rem;
+      color: var(--text-muted);
+      margin: 0;
+      line-height: 1.4;
+    }
+    .sync-actions-row {
+      display: flex;
+      align-items: center;
+      gap: .6rem;
+      margin-top: .3rem;
+      flex-wrap: wrap;
+    }
+    .sync-qr-block {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: .35rem;
+      background: rgba(0, 0, 0, 0.35);
+      padding: .6rem .75rem;
+      border-radius: 10px;
+      border: 1px solid var(--surface-border);
+    }
+    .qr-box {
+      background: #ffffff;
+      padding: 4px;
+      border-radius: 6px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .qr-box img {
+      display: block;
+      border-radius: 4px;
+    }
+    .qr-label {
+      font-size: .68rem;
+      color: var(--text-muted);
+      font-weight: 600;
     }
     .section-title {
       font-size: .78rem;
@@ -173,6 +333,30 @@
       background: #2a3d5b;
       transform: translateY(-1px);
     }
+    .preset-btn.active {
+      border-color: #38bdf8;
+      background: rgba(56, 189, 248, 0.16);
+      box-shadow: 0 0 0 2px rgba(56, 189, 248, 0.45);
+    }
+    .preset-header-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      width: 100%;
+    }
+    .preset-active-tag {
+      display: none;
+      font-size: .62rem;
+      font-weight: 700;
+      color: #38bdf8;
+      background: rgba(56, 189, 248, 0.2);
+      padding: 1px 5px;
+      border-radius: 4px;
+      letter-spacing: .04em;
+    }
+    .preset-btn.active .preset-active-tag {
+      display: inline-block;
+    }
     .preset-name {
       font-weight: 700;
       font-size: .84rem;
@@ -191,6 +375,49 @@
       height: 14px;
       border-radius: 50%;
       border: 1px solid rgba(255,255,255,0.2);
+    }
+    .surface-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+      gap: .55rem;
+    }
+    .surface-btn {
+      font: inherit;
+      background: var(--surface-card);
+      border: 1px solid var(--surface-border);
+      border-radius: 8px;
+      padding: .55rem .7rem;
+      cursor: pointer;
+      text-align: left;
+      color: var(--text);
+      display: flex;
+      flex-direction: column;
+      gap: .2rem;
+    }
+    .surface-btn:hover {
+      border-color: #c4b59a;
+      background: #2a3d5b;
+    }
+    .surface-btn.active {
+      border-color: #d6c4a3;
+      background: rgba(214, 196, 163, 0.14);
+      box-shadow: 0 0 0 2px rgba(214, 196, 163, 0.35);
+    }
+    .surface-btn.active .preset-active-tag {
+      display: inline-block;
+      color: #e8d7b0;
+      background: rgba(214, 196, 163, 0.2);
+    }
+    .surface-pair {
+      display: flex;
+      height: 22px;
+      border-radius: 5px;
+      overflow: hidden;
+      border: 1px solid rgba(255,255,255,0.12);
+      margin-top: .2rem;
+    }
+    .surface-pair span {
+      flex: 1;
     }
     .studio-tabs {
       display: flex;
@@ -381,29 +608,33 @@
       </div>
     </div>
     <div class="header-actions">
-      <button type="button" class="btn" id="btnLaunchApp" title="Open encinitas.html in a side window">
-        ↗ Open Coffee Guide
-      </button>
+      <a href="encinitas.html" target="_blank" rel="noopener" class="btn" id="btnLaunchApp" title="Open the full-page coffee guide">
+        ↗ Full-page guide
+      </a>
       <button type="button" class="btn" id="btnCopyCss" title="Copy full :root CSS block to clipboard">
-        📋 Copy :root CSS
+        Copy CSS
       </button>
       <button type="button" class="btn" id="btnReset" title="Reset all properties to factory defaults">
-        ↺ Factory Defaults
+        Reset
       </button>
     </div>
   </header>
 
   <main>
-    <!-- PRESETS ROW -->
+    <div class="workspace-split" id="workspaceSplit">
+      <div class="controls-column">
     <div class="presets-card">
       <div class="section-title">
         <span>Instant Mood Presets</span>
-        <span style="font-size:.7rem; color:var(--text-muted); font-weight:normal;">1-Click theme & lighting presets</span>
+        <span style="font-size:.7rem; color:var(--text-muted); font-weight:normal;">Light, sky, and glass — not card color</span>
       </div>
       <div class="preset-grid">
         <button type="button" class="preset-btn" data-preset="golden-hour">
-          <div class="preset-name">Encinitas Golden Hour</div>
-          <div class="preset-desc">Amber sunlight, coastal turquoise, warm sand & silky 14px frosted glass</div>
+          <div class="preset-header-row">
+            <span class="preset-name">Encinitas Golden Hour</span>
+            <span class="preset-active-tag">ACTIVE</span>
+          </div>
+          <div class="preset-desc">Amber late-afternoon light and a coastal navy header</div>
           <div class="preset-palette">
             <span class="preset-swatch" style="background:#f59e0b;"></span>
             <span class="preset-swatch" style="background:#0284c7;"></span>
@@ -413,8 +644,11 @@
         </button>
 
         <button type="button" class="preset-btn" data-preset="pacific-marine">
-          <div class="preset-name">Pacific Marine</div>
-          <div class="preset-desc">Deep ocean blue, crisp ice crystal glass, vivid cyan water reflections</div>
+          <div class="preset-header-row">
+            <span class="preset-name">Pacific Marine</span>
+            <span class="preset-active-tag">ACTIVE</span>
+          </div>
+          <div class="preset-desc">Midday ocean light and a deep water header</div>
           <div class="preset-palette">
             <span class="preset-swatch" style="background:#0284c7;"></span>
             <span class="preset-swatch" style="background:#0ea5e9;"></span>
@@ -424,8 +658,11 @@
         </button>
 
         <button type="button" class="preset-btn" data-preset="beach-mist">
-          <div class="preset-name">Morning Beach Mist</div>
-          <div class="preset-desc">Soft sage-teal, muted warm cream, diffuse high-frosted matte slabs</div>
+          <div class="preset-header-row">
+            <span class="preset-name">Morning Beach Mist</span>
+            <span class="preset-active-tag">ACTIVE</span>
+          </div>
+          <div class="preset-desc">Overcast marine layer, softer frost, quieter light</div>
           <div class="preset-palette">
             <span class="preset-swatch" style="background:#0d9488;"></span>
             <span class="preset-swatch" style="background:#d97706;"></span>
@@ -435,8 +672,11 @@
         </button>
 
         <button type="button" class="preset-btn" data-preset="sunset-glow">
-          <div class="preset-name">Sunset Glow</div>
-          <div class="preset-desc">Vibrant coral amber, deep dusk navy header, rich warm catch-lights</div>
+          <div class="preset-header-row">
+            <span class="preset-name">Sunset Glow</span>
+            <span class="preset-active-tag">ACTIVE</span>
+          </div>
+          <div class="preset-desc">Dusk plum header and warm coral catch-lights</div>
           <div class="preset-palette">
             <span class="preset-swatch" style="background:#f97316;"></span>
             <span class="preset-swatch" style="background:#db2777;"></span>
@@ -447,27 +687,84 @@
       </div>
     </div>
 
-    <!-- IPHONE PREVIEW LINK BAR -->
-    <div style="background:rgba(56, 189, 248, 0.08); border:1px solid rgba(56, 189, 248, 0.25); border-radius:10px; padding:.65rem 1rem; display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:.6rem;">
-      <div style="font-size:.78rem; display:flex; align-items:center; gap:.5rem; flex-wrap:wrap;">
-        <span>📱 <strong>Open on iPhone:</strong></span>
-        <a id="iphoneLink" href="http://192.168.0.54:8085/encinitas.html?preset=golden-hour" target="_blank" style="color:var(--accent); font-family:monospace; text-decoration:underline; word-break:break-all;">
-          http://192.168.0.54:8085/encinitas.html?preset=golden-hour
-        </a>
+    <div class="presets-card">
+      <div class="section-title">
+        <span>Card glass tint</span>
+        <span style="font-size:.7rem; color:var(--text-muted); font-weight:normal;">Only the pane color. Moods still change frost and blur.</span>
       </div>
-      <button type="button" class="btn" id="btnCopyIphoneLink" style="font-size:.72rem; padding:.25rem .6rem;">📋 Copy Phone Link</button>
+      <p class="sync-desc" style="margin:0 0 .65rem;">
+        This is the color inside each shop card. It does not change the header or the sky. Sunlit glass is a faint yellow light in the pane.
+      </p>
+      <div class="surface-grid">
+        <button type="button" class="surface-btn" data-surface="sunlit">
+          <div class="preset-header-row">
+            <span class="preset-name">Sunlit glass</span>
+            <span class="preset-active-tag">ACTIVE</span>
+          </div>
+          <div class="preset-desc">Faint yellow light in the glass. The default.</div>
+          <div class="surface-pair">
+            <span style="background:#fff8d6;"></span>
+            <span style="background:#fff1ba;"></span>
+          </div>
+        </button>
+        <button type="button" class="surface-btn" data-surface="clear">
+          <div class="preset-header-row">
+            <span class="preset-name">Clear frost</span>
+            <span class="preset-active-tag">ACTIVE</span>
+          </div>
+          <div class="preset-desc">Almost no color — just frosted glass.</div>
+          <div class="surface-pair">
+            <span style="background:#ffffff;"></span>
+            <span style="background:#f4f1ea;"></span>
+          </div>
+        </button>
+        <button type="button" class="surface-btn" data-surface="amber">
+          <div class="preset-header-row">
+            <span class="preset-name">Warm amber</span>
+            <span class="preset-active-tag">ACTIVE</span>
+          </div>
+          <div class="preset-desc">A little more gold in the pane.</div>
+          <div class="surface-pair">
+            <span style="background:#ffe9a8;"></span>
+            <span style="background:#f5d78a;"></span>
+          </div>
+        </button>
+      </div>
     </div>
 
-    <!-- TABS NAVIGATION -->
-    <div class="studio-tabs">
-      <button type="button" class="tab-btn active" data-tab="panel-atmosphere">1. Background Atmosphere</button>
-      <button type="button" class="tab-btn" data-tab="panel-glass">2. Cards & Glassmorphism</button>
-      <button type="button" class="tab-btn" data-tab="panel-header-buttons">3. Header & 3D Buttons</button>
-      <button type="button" class="tab-btn" data-tab="panel-menus">4. Menus & Category Tray</button>
+    <div class="sync-card">
+      <div class="sync-left">
+        <div class="sync-title-row">
+          <span class="sync-badge">iPhone</span>
+          <span class="sync-preset-name" id="syncActivePresetName">Encinitas Golden Hour</span>
+        </div>
+        <p class="sync-desc">
+          The pane on the right is a real 390×844 iPhone viewport of the same page.
+          Scan the QR code (use <strong>http://</strong>, not https) and the phone will pick up this theme within a couple of seconds.
+        </p>
+        <div class="sync-actions-row">
+          <button type="button" class="btn" id="btnCopyIphoneLink">
+            Copy phone URL
+          </button>
+        </div>
+      </div>
+      <div class="sync-qr-block">
+        <div class="qr-box">
+          <img id="qrCodeImg" src="https://api.qrserver.com/v1/create-qr-code/?size=110x110&margin=4&data=http%3A%2F%2F192.168.0.54%3A8085%2Fencinitas.html" alt="iPhone QR code" width="110" height="110">
+        </div>
+        <span class="qr-label">Scan with iPhone Camera</span>
+      </div>
     </div>
 
-    <!-- TAB 1: BACKGROUND ATMOSPHERE -->
-    <div class="tab-panel" id="panel-atmosphere">
+        <div class="studio-tabs">
+          <button type="button" class="tab-btn active" data-tab="panel-atmosphere">1. Background Atmosphere</button>
+          <button type="button" class="tab-btn" data-tab="panel-glass">2. Cards & Glassmorphism</button>
+          <button type="button" class="tab-btn" data-tab="panel-header-buttons">3. Header & 3D Buttons</button>
+          <button type="button" class="tab-btn" data-tab="panel-menus">4. Menus & Category Tray</button>
+        </div>
+
+        <!-- TAB 1: BACKGROUND ATMOSPHERE -->
+        <div class="tab-panel" id="panel-atmosphere">
       <div class="param-group">
         <div class="group-header">
           <h2 class="group-title">Ambient Coastal Light Pools</h2>
@@ -524,7 +821,7 @@
           <span class="slider-val" id="pageAmbientVal">45%</span>
         </div>
         <p class="help-note">
-          <strong>Tip for Laptop vs. iPhone:</strong> On iPhone 13 OLED screens, higher saturation pops intensely. On laptops, lowering saturation slightly creates a soft, misty look.
+          The right-hand preview uses the same 390×844 viewport as iPhone Safari, so the wash and glass should match. The phone screen may still look a bit punchier because of OLED / Display P3.
         </p>
       </div>
     </div>
@@ -552,11 +849,16 @@
         </div>
         <div class="ctrl-row">
           <span class="ctrl-label">Backdrop Blur</span>
-          <input type="range" class="ctrl-slider" id="cardBlur" min="0" max="30" step="1" value="14">
-          <span class="slider-val" id="cardBlurVal">14px</span>
+          <input type="range" class="ctrl-slider" id="cardBlur" min="0" max="30" step="1" value="16">
+          <span class="slider-val" id="cardBlurVal">16px</span>
+        </div>
+        <div class="ctrl-row">
+          <span class="ctrl-label">Glass Saturation</span>
+          <input type="range" class="ctrl-slider" id="cardGlassSat" min="80" max="200" step="5" value="140">
+          <span class="slider-val" id="cardGlassSatVal">140%</span>
         </div>
         <p class="help-note">
-          <strong>Sweet Spot for Text Legibility:</strong> 45%–60% opacity provides great frosted glass refraction while ensuring all black coffee menu items remain easy to read.
+          Moods change how frosty the glass is. Card glass tint only changes the color inside the pane — Sunlit is a faint yellow light.
         </p>
       </div>
 
@@ -677,8 +979,8 @@
         </div>
         <div class="ctrl-row">
           <span class="ctrl-label">Label Navy Blue</span>
-          <input type="color" class="ctrl-input-color" id="labelBlue" value="#163d68">
-          <span class="hex-val" id="labelBlueHex">#163d68</span>
+          <input type="color" class="ctrl-input-color" id="labelBlue" value="#467bb4">
+          <span class="hex-val" id="labelBlueHex">#467bb4</span>
         </div>
         <div class="ctrl-row">
           <span class="ctrl-label">Dither Gold Border</span>
@@ -688,15 +990,33 @@
       </div>
     </div>
 
-    <!-- CODE PREVIEW DRAWER -->
-    <div class="code-preview-drawer">
-      <div class="section-title">
-        <span>Production Ready CSS Token Output</span>
-        <button type="button" class="btn" id="btnCopyCssDrawer" style="font-size:.7rem; padding:.2rem .5rem;">📋 Copy</button>
-      </div>
+    <details class="code-preview-drawer">
+      <summary class="section-title" style="cursor:pointer;">
+        <span>CSS tokens</span>
+        <button type="button" class="btn" id="btnCopyCssDrawer" style="font-size:.7rem; padding:.2rem .5rem;">Copy</button>
+      </summary>
       <pre class="code-box" id="cssOutput">/* Live CSS Tokens will appear here */</pre>
+    </details>
+  </div>
+
+  <aside class="preview-column" id="previewColumn">
+    <div class="preview-topbar">
+      <div>
+        <div class="preview-title">iPhone preview</div>
+        <p class="preview-note">True 390×844 viewport of encinitas.html — not a restyled mock.</p>
+      </div>
+      <button type="button" class="btn" id="btnReloadPreview" style="font-size:.7rem; padding:.2rem .45rem;" title="Reload preview">↻</button>
     </div>
-  </main>
+    <div class="phone-stage" id="phoneStage">
+      <div class="phone-slot" id="phoneSlot">
+        <div class="phone-scale" id="phoneScale">
+          <iframe id="previewFrame" src="encinitas.html?studio-preview=1" title="iPhone-sized Encinitas preview"></iframe>
+        </div>
+      </div>
+    </div>
+  </aside>
+</div>
+</main>
 
   <div class="toast" id="toast">Copied to clipboard!</div>
 
@@ -748,17 +1068,48 @@
       return `rgba(${r}, ${g}, ${b}, ${a})`;
     }
 
+    function themeApiBase() {
+      const host = location.hostname === "localhost" || location.hostname === "127.0.0.1"
+        ? "localhost"
+        : location.hostname;
+      return `${location.protocol}//${host}:8000`;
+    }
+
+    let persistTimer = null;
+    function persistThemeToServer() {
+      clearTimeout(persistTimer);
+      persistTimer = setTimeout(() => {
+        fetch(themeApiBase() + "/api/theme", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(currentTheme)
+        }).catch(() => {});
+      }, 250);
+    }
+
+    function pushToPreview(payload) {
+      const pFrame = document.getElementById("previewFrame");
+      if (pFrame && pFrame.contentWindow) {
+        pFrame.contentWindow.postMessage(payload, "*");
+      }
+    }
+
     function dispatchProperty(prop, value) {
       currentTheme[prop] = value;
       if (bridge) {
         bridge.postMessage({ type: "set-property", property: prop, value: value });
       }
+      pushToPreview({ type: "set-property", property: prop, value: value });
       try {
         const stored = JSON.parse(localStorage.getItem(STORE_KEY) || "{}");
         stored[prop] = value;
         localStorage.setItem(STORE_KEY, JSON.stringify(stored));
       } catch (_) {}
+      persistThemeToServer();
       updateCssPreview();
+      if (prop === "--card-a" || prop === "--card-b") {
+        highlightCardSurface(matchingSurfaceKey());
+      }
     }
 
     function dispatchFullTheme(themeObj) {
@@ -766,11 +1117,13 @@
       if (bridge) {
         bridge.postMessage({ type: "set-theme", theme: themeObj });
       }
+      pushToPreview({ type: "set-theme", theme: themeObj });
       try {
         const stored = JSON.parse(localStorage.getItem(STORE_KEY) || "{}");
         Object.assign(stored, themeObj);
         localStorage.setItem(STORE_KEY, JSON.stringify(stored));
       } catch (_) {}
+      persistThemeToServer();
       updateControlsFromState();
       updateCssPreview();
     }
@@ -836,6 +1189,7 @@
     setupColorAlphaBinding("cardAColor", "cardAOpacity", "--card-a");
     setupColorAlphaBinding("cardBColor", "cardBOpacity", "--card-b");
     setupSliderBinding("cardBlur", "--card-blur", "px", 1, 0);
+    setupSliderBinding("cardGlassSat", "--card-glass-sat", "%", 1, 0);
     setupSliderBinding("cardShadowBlur", "--card-shadow-blur", "px", 1, 0);
     setupSliderBinding("cardShadowOpacity", "--card-shadow-opacity", "", 0.01, 2);
 
@@ -866,11 +1220,11 @@
         "--mesh-pool-teal": "rgba(13, 148, 136, 0.28)",
         "--mesh-pool-amber": "rgba(217, 119, 6, 0.28)",
         "--mesh-intensity": "1.00",
-        "--card-a": "rgba(255, 253, 248, 0.55)",
-        "--card-b": "rgba(248, 244, 236, 0.48)",
-        "--card-blur": "14px",
+        "--card-blur": "16px",
+        "--card-glass-sat": "130%",
         "--card-shadow-blur": "18px",
         "--card-shadow-opacity": "0.06",
+        "--label-blue": "#467bb4",
         "--header-a": "#122844",
         "--header-b": "#1d4e7f",
         "--header-c": "#0d1e33",
@@ -889,11 +1243,11 @@
         "--mesh-pool-teal": "rgba(6, 182, 212, 0.30)",
         "--mesh-pool-amber": "rgba(59, 130, 246, 0.25)",
         "--mesh-intensity": "1.15",
-        "--card-a": "rgba(255, 255, 255, 0.50)",
-        "--card-b": "rgba(240, 249, 255, 0.42)",
-        "--card-blur": "18px",
+        "--card-blur": "22px",
+        "--card-glass-sat": "160%",
         "--card-shadow-blur": "22px",
         "--card-shadow-opacity": "0.08",
+        "--label-blue": "#467bb4",
         "--header-a": "#082f49",
         "--header-b": "#0369a1",
         "--header-c": "#0c4a6e",
@@ -912,11 +1266,11 @@
         "--mesh-pool-teal": "rgba(15, 118, 110, 0.22)",
         "--mesh-pool-amber": "rgba(180, 83, 9, 0.20)",
         "--mesh-intensity": "0.85",
-        "--card-a": "rgba(255, 253, 248, 0.62)",
-        "--card-b": "rgba(247, 243, 235, 0.56)",
-        "--card-blur": "12px",
+        "--card-blur": "10px",
+        "--card-glass-sat": "112%",
         "--card-shadow-blur": "14px",
         "--card-shadow-opacity": "0.05",
+        "--label-blue": "#5a7fa8",
         "--header-a": "#1a365d",
         "--header-b": "#2b4c7e",
         "--header-c": "#0f233f",
@@ -935,11 +1289,11 @@
         "--mesh-pool-teal": "rgba(245, 158, 11, 0.35)",
         "--mesh-pool-amber": "rgba(194, 65, 12, 0.32)",
         "--mesh-intensity": "1.25",
-        "--card-a": "rgba(255, 250, 246, 0.52)",
-        "--card-b": "rgba(254, 242, 238, 0.45)",
-        "--card-blur": "16px",
+        "--card-blur": "18px",
+        "--card-glass-sat": "145%",
         "--card-shadow-blur": "20px",
         "--card-shadow-opacity": "0.08",
+        "--label-blue": "#467bb4",
         "--header-a": "#31104b",
         "--header-b": "#701a75",
         "--header-c": "#4a044e",
@@ -953,26 +1307,87 @@
       }
     };
 
-    document.querySelectorAll(".preset-btn").forEach(btn => {
+    const CARD_SURFACES = {
+      sunlit: {
+        "--card-a": "rgba(255, 248, 214, 0.36)",
+        "--card-b": "rgba(255, 241, 186, 0.28)"
+      },
+      clear: {
+        "--card-a": "rgba(255, 255, 255, 0.32)",
+        "--card-b": "rgba(244, 241, 234, 0.24)"
+      },
+      amber: {
+        "--card-a": "rgba(255, 233, 168, 0.40)",
+        "--card-b": "rgba(245, 215, 138, 0.32)"
+      }
+    };
+    const CARD_SURFACE_KEY = "encinitas-card-surface";
+
+    function matchingSurfaceKey() {
+      return Object.keys(CARD_SURFACES).find((key) => {
+        const surface = CARD_SURFACES[key];
+        return Object.keys(surface).every((prop) => currentTheme[prop] === surface[prop]);
+      }) || "";
+    }
+
+    function highlightCardSurface(surfaceKey) {
+      document.querySelectorAll(".surface-btn").forEach((btn) => {
+        btn.classList.toggle("active", btn.dataset.surface === surfaceKey);
+      });
+      try {
+        if (surfaceKey) localStorage.setItem(CARD_SURFACE_KEY, surfaceKey);
+      } catch (_) {}
+    }
+
+    function applyCardSurface(surfaceKey) {
+      const surface = CARD_SURFACES[surfaceKey];
+      if (!surface) return;
+      Object.keys(surface).forEach((prop) => dispatchProperty(prop, surface[prop]));
+      updateControlsFromState();
+      highlightCardSurface(surfaceKey);
+    }
+
+    document.querySelectorAll(".preset-btn[data-preset]").forEach(btn => {
       btn.addEventListener("click", () => {
         const pKey = btn.dataset.preset;
         if (PRESETS[pKey]) {
           dispatchFullTheme(PRESETS[pKey]);
-          updateIphoneLink(pKey);
-          showToast(`Applied preset: ${pKey}`);
+          updateDeviceLinks(pKey);
+          highlightCardSurface(matchingSurfaceKey());
+          showToast(`Applied mood: ${PRESET_LABELS[pKey] || pKey}`);
         }
       });
     });
 
-    function updateIphoneLink(presetKey) {
-      const host = location.hostname === "localhost" || location.hostname === "127.0.0.1" ? "192.168.0.54" : location.hostname;
+    document.querySelectorAll(".surface-btn").forEach((btn) => {
+      btn.addEventListener("click", () => {
+        applyCardSurface(btn.dataset.surface);
+        showToast(`Card surface: ${btn.querySelector(".preset-name").textContent}`);
+      });
+    });
+
+    const PRESET_LABELS = {
+      "golden-hour": "Encinitas Golden Hour",
+      "pacific-marine": "Pacific Marine",
+      "beach-mist": "Morning Beach Mist",
+      "sunset-glow": "Sunset Glow"
+    };
+    let phoneUrl = "http://192.168.0.54:8085/encinitas.html";
+
+    function updateDeviceLinks(presetKey) {
       const port = location.port || "8085";
-      const url = `http://${host}:${port}/encinitas.html?preset=${presetKey}`;
-      const linkEl = document.getElementById("iphoneLink");
-      if (linkEl) {
-        linkEl.href = url;
-        linkEl.textContent = url;
+      phoneUrl = `http://192.168.0.54:${port}/encinitas.html`;
+      const qr = document.getElementById("qrCodeImg");
+      if (qr) {
+        qr.src = "https://api.qrserver.com/v1/create-qr-code/?size=110x110&margin=4&data=" + encodeURIComponent(phoneUrl);
       }
+      const nameEl = document.getElementById("syncActivePresetName");
+      if (nameEl) {
+        nameEl.textContent = PRESET_LABELS[presetKey] || "Custom mix";
+      }
+      document.querySelectorAll(".preset-btn[data-preset]").forEach((btn) => {
+        btn.classList.toggle("active", btn.dataset.preset === presetKey);
+      });
     }
 
     // UPDATE UI CONTROLS FROM STORED/ACTIVE STATE
@@ -1031,6 +1446,7 @@
       syncPair("cardAColor", "cardAOpacity", currentTheme["--card-a"]);
       syncPair("cardBColor", "cardBOpacity", currentTheme["--card-b"]);
       syncSlider("cardBlur", currentTheme["--card-blur"], "px");
+      syncSlider("cardGlassSat", currentTheme["--card-glass-sat"], "%");
       syncSlider("cardShadowBlur", currentTheme["--card-shadow-blur"], "px");
       syncSlider("cardShadowOpacity", currentTheme["--card-shadow-opacity"], "%", 0.01);
 
@@ -1070,19 +1486,31 @@
       setTimeout(() => t.classList.remove("show"), 2200);
     }
 
-    // BUTTON HANDLERS
     document.getElementById("btnCopyIphoneLink").addEventListener("click", () => {
-      const linkEl = document.getElementById("iphoneLink");
-      if (linkEl) {
-        navigator.clipboard.writeText(linkEl.href).then(() => {
-          showToast("Copied iPhone URL!");
-        });
+      navigator.clipboard.writeText(phoneUrl).then(() => showToast("Copied iPhone URL"));
+    });
+
+    const pFrame = document.getElementById("previewFrame");
+    document.getElementById("btnReloadPreview").addEventListener("click", () => {
+      if (pFrame) {
+        pFrame.src = "encinitas.html?studio-preview=1";
+        showToast("Reloaded iPhone preview");
       }
     });
 
-    document.getElementById("btnLaunchApp").addEventListener("click", () => {
-      window.open("encinitas.html", "coffeeAppWindow", "width=850,height=900,left=800,top=50");
-    });
+    function fitPhonePreview() {
+      const stage = document.getElementById("phoneStage");
+      const slot = document.getElementById("phoneSlot");
+      const scaleEl = document.getElementById("phoneScale");
+      if (!stage || !slot || !scaleEl) return;
+      const availH = Math.max(320, stage.clientHeight - 8);
+      const availW = Math.max(200, stage.clientWidth - 8);
+      const s = Math.min(1, availH / 844, availW / 390);
+      scaleEl.style.transform = `scale(${s})`;
+      slot.style.width = `${Math.round(390 * s)}px`;
+      slot.style.height = `${Math.round(844 * s)}px`;
+    }
+    window.addEventListener("resize", fitPhonePreview);
 
     document.getElementById("btnCopyCss").addEventListener("click", () => {
       const cssText = document.getElementById("cssOutput").textContent;
@@ -1091,7 +1519,9 @@
       });
     });
 
-    document.getElementById("btnCopyCssDrawer").addEventListener("click", () => {
+    document.getElementById("btnCopyCssDrawer").addEventListener("click", (ev) => {
+      ev.preventDefault();
+      ev.stopPropagation();
       document.getElementById("btnCopyCss").click();
     });
 
@@ -1104,10 +1534,11 @@
         });
       }
       dispatchFullTheme(PRESETS["golden-hour"]);
+      applyCardSurface("sunlit");
+      updateDeviceLinks("golden-hour");
       showToast("Reset to Factory Defaults");
     });
 
-    // INITIAL LOAD: Read from localStorage or Golden Hour default
     try {
       const saved = JSON.parse(localStorage.getItem(STORE_KEY) || "{}");
       if (Object.keys(saved).length > 0) {
@@ -1118,8 +1549,30 @@
     } catch (_) {
       Object.assign(currentTheme, PRESETS["golden-hour"]);
     }
+
+    function matchingPresetKey() {
+      const keys = Object.keys(PRESETS);
+      return keys.find((key) => {
+        const preset = PRESETS[key];
+        return Object.keys(preset).every((prop) => currentTheme[prop] === preset[prop]);
+      }) || "";
+    }
+
     updateControlsFromState();
     updateCssPreview();
+    updateDeviceLinks(matchingPresetKey());
+    highlightCardSurface(matchingSurfaceKey() || (() => {
+      try { return localStorage.getItem(CARD_SURFACE_KEY) || ""; } catch (_) { return ""; }
+    })());
+    persistThemeToServer();
+    fitPhonePreview();
+    requestAnimationFrame(fitPhonePreview);
+    if (pFrame) {
+      pFrame.addEventListener("load", () => {
+        pushToPreview({ type: "set-theme", theme: currentTheme });
+        fitPhonePreview();
+      });
+    }
   </script>
 </body>
 </html>

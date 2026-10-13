@@ -1,8 +1,9 @@
+import json
 from pathlib import Path
 
-from fastapi import FastAPI
+from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.responses import FileResponse
+from fastapi.responses import FileResponse, JSONResponse
 
 try:
     from routers.menus import router
@@ -20,6 +21,30 @@ app.add_middleware(
 )
 
 app.include_router(router)
+
+THEME_FILE = Path(__file__).parent / "active_theme.json"
+
+
+@app.get("/api/theme")
+def get_active_theme():
+    if THEME_FILE.exists():
+        try:
+            return json.loads(THEME_FILE.read_text(encoding="utf-8"))
+        except Exception:
+            pass
+    return {}
+
+
+@app.post("/api/theme")
+async def set_active_theme(request: Request):
+    try:
+        data = await request.json()
+        if isinstance(data, dict):
+            THEME_FILE.write_text(json.dumps(data, indent=2), encoding="utf-8")
+            return {"status": "ok", "saved_keys": len(data)}
+    except Exception as e:
+        return JSONResponse(status_code=400, content={"status": "error", "message": str(e)})
+    return JSONResponse(status_code=400, content={"status": "bad_request"})
 
 
 @app.get("/encinitas.html")

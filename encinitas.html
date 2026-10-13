@@ -3,6 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="color-scheme" content="light" />
   <title>MenuMatch · Encinitas Coffee Guide</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -14,18 +15,18 @@
       --ink: #1c1914;
       --mute: #6b6358;
       --line: #e4d9c8;
-      --sea: #1d5f96;
-      --sea-2: #2b74b3;
+      --sea: #467bb4;
+      --sea-2: #5b8ec2;
       --roast: #8b4518;
       --ok: #2d6a4f;
       --warn: #9a3412;
       --header-a: #122844;
       --header-b: #1d4e7f;
       --header-c: #0d1e33;
-      --label-blue: #163d68;
+      --label-blue: #467bb4;
       --dither-gold: #cca038;
-      --card-a: rgba(255, 253, 248, 0.55);
-      --card-b: rgba(248, 244, 236, 0.48);
+      --card-a: rgba(255, 248, 214, 0.36);
+      --card-b: rgba(255, 241, 186, 0.28);
       --drinks: rgba(228, 233, 235, 0.55);
       --food: rgba(244, 226, 216, 0.55);
       --coffee: rgba(243, 235, 224, 0.55);
@@ -37,7 +38,8 @@
       --header-glow: rgba(255, 255, 255, 0.16);
       --header-glow-size: 70%;
       --page-ambient: 0.45;
-      --card-blur: 14px;
+      --card-blur: 16px;
+      --card-glass-sat: 140%;
       --card-shadow-blur: 18px;
       --card-shadow-opacity: 0.06;
       --rim-light: 0.95;
@@ -55,28 +57,35 @@
       --mesh-intensity: 1;
     }
     * { box-sizing: border-box; }
+    html {
+      color-scheme: light;
+    }
     html, body {
       margin: 0;
-      background: transparent;
+      background: var(--mesh-bg-base, #e9e3d6);
       color: var(--ink);
       font-family: "IBM Plex Sans", system-ui, sans-serif;
       min-height: 100vh;
+    }
+    html.studio-preview .color-toggle,
+    html.studio-preview .color-panel,
+    html.studio-preview footer {
+      display: none !important;
     }
     .ambient-mesh-canvas {
       position: fixed;
       inset: 0;
       z-index: 0;
       pointer-events: none;
-      background: var(--mesh-bg-base, #e9e3d6);
-      background-image: 
+      background-color: var(--mesh-bg-base, #e9e3d6);
+      background-image:
         radial-gradient(circle at 10% 12%, var(--mesh-pool-gold, rgba(245, 158, 11, 0.32)) 0%, transparent 44%),
         radial-gradient(circle at 90% 16%, var(--mesh-pool-blue, rgba(2, 132, 199, 0.35)) 0%, transparent 48%),
         radial-gradient(circle at 15% 55%, var(--mesh-pool-teal, rgba(13, 148, 136, 0.28)) 0%, transparent 45%),
         radial-gradient(circle at 85% 65%, var(--mesh-pool-amber, rgba(217, 119, 6, 0.28)) 0%, transparent 45%),
         radial-gradient(circle at 45% 90%, var(--mesh-pool-indigo, rgba(37, 99, 235, 0.26)) 0%, transparent 48%),
         radial-gradient(circle at 88% 95%, rgba(249, 115, 22, 0.24) 0%, transparent 42%),
-        linear-gradient(180deg, #edf2f7 0%, #e8e1d5 50%, #dfd5c4 100%);
-      background-attachment: fixed;
+        linear-gradient(180deg, rgba(237, 242, 247, 0.55) 0%, rgba(232, 225, 213, 0.35) 50%, rgba(223, 213, 196, 0.45) 100%);
       filter: saturate(var(--mesh-intensity, 1));
     }
     header {
@@ -251,13 +260,13 @@
       transform: translateY(-0.5px);
     }
     .chip.on, .page-btn.on {
-      background: linear-gradient(165deg, var(--btn-active-top, #2b7bc4) 0%, var(--sea) 55%, var(--btn-active-bot, #123d64) 100%);
+      background: linear-gradient(165deg, #7aa3d0 0%, var(--label-blue, #467bb4) 52%, #2f5a86 100%);
       color: #f8fafc;
-      border: 1px solid #164670;
-      border-top-color: #439ce8;
-      border-bottom-color: #0b2238;
-      box-shadow: inset 0 1px 1px rgba(255, 255, 255, 0.45), inset 0 -1px 1px rgba(0, 0, 0, 0.3), 0 2px 7px rgba(18, 40, 68, 0.3);
-      text-shadow: 0 1px 2px rgba(10, 25, 45, 0.6);
+      border: 1px solid #3d6a96;
+      border-top-color: #9bbde0;
+      border-bottom-color: #2a4f78;
+      box-shadow: inset 0 1px 1px rgba(255, 255, 255, 0.4), inset 0 -1px 1px rgba(0, 0, 0, 0.2), 0 2px 6px rgba(70, 123, 180, 0.28);
+      text-shadow: 0 1px 2px rgba(20, 40, 70, 0.35);
     }
     .chip:active, .page-btn:active {
       transform: translateY(1px);
@@ -279,14 +288,56 @@
       display: flex;
       flex-direction: column;
       gap: .45rem;
-      backdrop-filter: blur(var(--card-blur, 14px)) saturate(120%);
-      -webkit-backdrop-filter: blur(var(--card-blur, 14px)) saturate(120%);
+      backdrop-filter: blur(var(--card-blur, 16px)) saturate(var(--card-glass-sat, 140%));
+      -webkit-backdrop-filter: blur(var(--card-blur, 16px)) saturate(var(--card-glass-sat, 140%));
       box-shadow:
-        inset 0 1px 1px 0 rgba(255, 255, 255, 0.8),
-        inset 0 0 0 1px rgba(255, 255, 255, 0.12),
-        0 4px var(--card-shadow-blur, 18px) rgba(28, 25, 20, var(--card-shadow-opacity, 0.06)),
-        0 1px 3px rgba(28, 25, 20, 0.03);
+        inset 0 1px 1px 0 rgba(255, 255, 255, 0.92),
+        inset 0 -12px 24px rgba(255, 255, 255, 0.08),
+        inset 0 0 0 1px rgba(255, 255, 255, 0.22),
+        0 8px var(--card-shadow-blur, 18px) rgba(28, 25, 20, var(--card-shadow-opacity, 0.08));
       position: relative;
+    }
+    article::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      border-radius: inherit;
+      pointer-events: none;
+      background:
+        radial-gradient(120% 80% at 12% 0%, rgba(255, 236, 150, 0.28) 0%, transparent 55%),
+        linear-gradient(145deg, rgba(255, 252, 220, 0.5) 0%, rgba(255, 244, 180, 0.12) 42%, transparent 70%);
+      z-index: 0;
+    }
+    .group::before,
+    .menu::before,
+    .summary::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      border-radius: inherit;
+      pointer-events: none;
+      background: repeating-conic-gradient(rgba(80, 64, 40, 0.08) 0% 25%, transparent 0% 50%) 0 0 / 3px 3px;
+      opacity: 0.28;
+      mix-blend-mode: multiply;
+      z-index: 0;
+    }
+    article::after,
+    .group::after,
+    .summary::after,
+    .list-block::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      border-radius: inherit;
+      pointer-events: none;
+      padding: 2px;
+      background: repeating-conic-gradient(var(--dither-gold, #cca038) 0% 25%, transparent 0% 50%) 0 0 / 2px 2px;
+      opacity: 0.78;
+      -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+      -webkit-mask-composite: xor;
+      mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+      mask-composite: exclude;
+      z-index: 2;
     }
     .grid article:nth-child(4n + 1),
     .grid article:nth-child(4n + 4) {
@@ -385,6 +436,7 @@
     }
     .menus:has(.menu:only-child) { grid-template-columns: 1fr; }
     .menu {
+      position: relative;
       margin: 0;
       border: 1px solid rgba(255, 255, 255, 0.5);
       border-top-color: rgba(255, 255, 255, 0.85);
@@ -401,9 +453,28 @@
     .menu.food {
       background: var(--food);
     }
+    .menu::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      border-radius: inherit;
+      pointer-events: none;
+      padding: 1px;
+      background: repeating-conic-gradient(var(--dither-gold, #cca038) 0% 25%, transparent 0% 50%) 0 0 / 2px 2px;
+      opacity: 0.7;
+      -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+      -webkit-mask-composite: xor;
+      mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+      mask-composite: exclude;
+      z-index: 2;
+    }
     .menu h3 {
-      margin: 0 0 .2rem; font-size: .68rem; text-transform: uppercase; letter-spacing: .08em;
-      color: var(--mute); font-weight: 600;
+      margin: 0 0 .2rem;
+      font-size: .68rem;
+      text-transform: uppercase;
+      letter-spacing: .08em;
+      color: var(--mute);
+      font-weight: 600;
     }
     article h2[data-tip] {
       cursor: default;
@@ -421,6 +492,7 @@
       text-underline-offset: 3px;
     }
     .summary {
+      position: relative;
       background:
         linear-gradient(135deg, rgba(255, 255, 255, 0.45) 0%, rgba(255, 255, 255, 0.1) 40%, transparent 80%),
         rgba(255, 250, 243, 0.6);
@@ -443,6 +515,7 @@
       gap: .5rem .65rem; margin-top: 0;
     }
     .group {
+      position: relative;
       border: 1px solid rgba(255, 255, 255, 0.55);
       border-top-color: rgba(255, 255, 255, 0.85);
       border-radius: 10px;
@@ -559,6 +632,7 @@
     .pages-row { margin: 0 0 .7rem; }
     .pages { display: flex; gap: .4rem; flex-wrap: wrap; align-items: center; margin: 0; }
     .list-block {
+      position: relative;
       border: 1px solid rgba(255, 255, 255, 0.65);
       border-top-color: rgba(255, 255, 255, 0.9);
       border-radius: 16px; overflow: hidden;
@@ -586,13 +660,13 @@
       background: linear-gradient(165deg, #ffffff 0%, var(--foam) 100%);
     }
     .sort-btn.on {
-      background: linear-gradient(165deg, var(--btn-active-top, #2b7bc4) 0%, var(--sea) 55%, var(--btn-active-bot, #123d64) 100%);
+      background: linear-gradient(165deg, #7aa3d0 0%, var(--label-blue, #467bb4) 52%, #2f5a86 100%);
       color: #f8fafc;
-      border: 1px solid #164670;
-      border-top-color: #439ce8;
-      border-bottom-color: #0b2238;
-      box-shadow: inset 0 1px 1px rgba(255, 255, 255, 0.45), inset 0 -1px 1px rgba(0, 0, 0, 0.3), 0 2px 7px rgba(18, 40, 68, 0.3);
-      text-shadow: 0 1px 2px rgba(10, 25, 45, 0.6);
+      border: 1px solid #3d6a96;
+      border-top-color: #9bbde0;
+      border-bottom-color: #2a4f78;
+      box-shadow: inset 0 1px 1px rgba(255, 255, 255, 0.4), inset 0 -1px 1px rgba(0, 0, 0, 0.2), 0 2px 6px rgba(70, 123, 180, 0.28);
+      text-shadow: 0 1px 2px rgba(20, 40, 70, 0.35);
     }
     .page { display: none; }
     .page.on { display: block; }
@@ -844,11 +918,11 @@
         "--mesh-pool-teal": "rgba(13, 148, 136, 0.28)",
         "--mesh-pool-amber": "rgba(217, 119, 6, 0.28)",
         "--mesh-intensity": "1.00",
-        "--card-a": "rgba(255, 253, 248, 0.55)",
-        "--card-b": "rgba(248, 244, 236, 0.48)",
-        "--card-blur": "14px",
+        "--card-blur": "16px",
+        "--card-glass-sat": "130%",
         "--card-shadow-blur": "18px",
         "--card-shadow-opacity": "0.06",
+        "--label-blue": "#467bb4",
         "--header-a": "#122844",
         "--header-b": "#1d4e7f",
         "--header-c": "#0d1e33",
@@ -867,11 +941,11 @@
         "--mesh-pool-teal": "rgba(6, 182, 212, 0.30)",
         "--mesh-pool-amber": "rgba(59, 130, 246, 0.25)",
         "--mesh-intensity": "1.15",
-        "--card-a": "rgba(255, 255, 255, 0.50)",
-        "--card-b": "rgba(240, 249, 255, 0.42)",
-        "--card-blur": "18px",
+        "--card-blur": "22px",
+        "--card-glass-sat": "160%",
         "--card-shadow-blur": "22px",
         "--card-shadow-opacity": "0.08",
+        "--label-blue": "#467bb4",
         "--header-a": "#082f49",
         "--header-b": "#0369a1",
         "--header-c": "#0c4a6e",
@@ -890,11 +964,11 @@
         "--mesh-pool-teal": "rgba(15, 118, 110, 0.22)",
         "--mesh-pool-amber": "rgba(180, 83, 9, 0.20)",
         "--mesh-intensity": "0.85",
-        "--card-a": "rgba(255, 253, 248, 0.62)",
-        "--card-b": "rgba(247, 243, 235, 0.56)",
-        "--card-blur": "12px",
+        "--card-blur": "10px",
+        "--card-glass-sat": "112%",
         "--card-shadow-blur": "14px",
         "--card-shadow-opacity": "0.05",
+        "--label-blue": "#5a7fa8",
         "--header-a": "#1a365d",
         "--header-b": "#2b4c7e",
         "--header-c": "#0f233f",
@@ -913,11 +987,11 @@
         "--mesh-pool-teal": "rgba(245, 158, 11, 0.35)",
         "--mesh-pool-amber": "rgba(194, 65, 12, 0.32)",
         "--mesh-intensity": "1.25",
-        "--card-a": "rgba(255, 250, 246, 0.52)",
-        "--card-b": "rgba(254, 242, 238, 0.45)",
-        "--card-blur": "16px",
+        "--card-blur": "18px",
+        "--card-glass-sat": "145%",
         "--card-shadow-blur": "20px",
         "--card-shadow-opacity": "0.08",
+        "--label-blue": "#467bb4",
         "--header-a": "#31104b",
         "--header-b": "#701a75",
         "--header-c": "#4a044e",
@@ -947,9 +1021,37 @@
       } catch (e) {}
     }
 
-    // 1. Check URL parameters for preset override (e.g. ?preset=sunset-glow)
+    function themeApiBase() {
+      if (location.protocol === "http:" || location.protocol === "https:") {
+        return location.protocol + "//" + location.hostname + ":8000";
+      }
+      return "http://localhost:8000";
+    }
+
+    var lastServerTheme = "";
+    function applyServerTheme(theme) {
+      if (!theme || typeof theme !== "object" || Object.keys(theme).length === 0) return;
+      var serialized = JSON.stringify(theme);
+      if (serialized === lastServerTheme) return;
+      lastServerTheme = serialized;
+      applyThemeDict(theme);
+      try {
+        localStorage.setItem("encinitas-colors", serialized);
+      } catch (_) {}
+    }
+
+    function syncThemeFromServer() {
+      fetch(themeApiBase() + "/api/theme", { cache: "no-store" })
+        .then(function (r) { return r.json(); })
+        .then(applyServerTheme)
+        .catch(function () {});
+    }
+
     try {
       var urlParams = new URLSearchParams(location.search);
+      if (urlParams.get("studio-preview") === "1") {
+        document.documentElement.classList.add("studio-preview");
+      }
       var reqPreset = urlParams.get("preset") || urlParams.get("theme");
       if (reqPreset && PRESETS[reqPreset]) {
         applyThemeDict(PRESETS[reqPreset]);
@@ -957,40 +1059,56 @@
       } else {
         reloadColorsFromStorage();
       }
+      syncThemeFromServer();
     } catch (_) {
       reloadColorsFromStorage();
+      syncThemeFromServer();
     }
 
-    // Listen for tab focus & page restores on mobile Safari
-    window.addEventListener("pageshow", reloadColorsFromStorage);
+    window.addEventListener("pageshow", syncThemeFromServer);
     document.addEventListener("visibilitychange", function () {
-      if (document.visibilityState === "visible") reloadColorsFromStorage();
+      if (document.visibilityState === "visible") syncThemeFromServer();
     });
+    setInterval(syncThemeFromServer, 2000);
 
     // Live Bridge: Receive real-time theme & lighting changes from Theme Studio
+    function handleThemeMessage(msg) {
+      if (!msg) return;
+      if (msg.type === "set-property" && msg.property && typeof msg.value === "string") {
+        document.documentElement.style.setProperty(msg.property, msg.value);
+      } else if (msg.type === "set-theme" && msg.theme) {
+        applyThemeDict(msg.theme);
+        try {
+          lastServerTheme = JSON.stringify(msg.theme);
+          localStorage.setItem("encinitas-colors", lastServerTheme);
+        } catch (_) {}
+      } else if (msg.type === "reset") {
+        localStorage.removeItem("encinitas-colors");
+        if (Array.isArray(msg.properties)) {
+          msg.properties.forEach(function (p) {
+            document.documentElement.style.removeProperty(p);
+          });
+        }
+      }
+    }
+
     if (typeof BroadcastChannel !== "undefined") {
       var themeBridge = new BroadcastChannel("menumatch_theme");
       themeBridge.onmessage = function (e) {
         if (!e || !e.data) return;
         var msg = e.data;
-        if (msg.type === "set-property" && msg.property && typeof msg.value === "string") {
-          document.documentElement.style.setProperty(msg.property, msg.value);
-        } else if (msg.type === "set-theme" && msg.theme) {
-          applyThemeDict(msg.theme);
-        } else if (msg.type === "reset") {
-          localStorage.removeItem("encinitas-colors");
-          if (Array.isArray(msg.properties)) {
-            msg.properties.forEach(function (p) {
-              document.documentElement.style.removeProperty(p);
-            });
-          }
-        } else if (msg.type === "ping") {
+        handleThemeMessage(msg);
+        if (msg.type === "ping") {
           themeBridge.postMessage({ type: "pong", url: location.href });
         }
       };
-      // Announce readiness on load
+      // Announce readiness on load and request current active theme
       themeBridge.postMessage({ type: "app-ready", url: location.href });
+      themeBridge.postMessage({ type: "ping" });
     }
+    window.addEventListener("message", function (e) {
+      handleThemeMessage(e.data);
+    });
     window.addEventListener("storage", function (e) {
       if (e.key === "encinitas-colors" && e.newValue) {
         try {
@@ -1105,7 +1223,10 @@
   <button type="button" class="color-toggle" id="colorToggle">Theme & Lighting</button>
   <aside class="color-panel" id="colorPanel" hidden>
     <div class="color-panel-head">
-      <strong>Theme & Lighting</strong>
+      <div style="display:flex; align-items:center; gap:.5rem;">
+        <strong>Theme & Lighting</strong>
+        <a href="theme-studio.html" target="_blank" rel="noopener" style="font-size:.68rem; color:#1d4ed8; text-decoration:none; font-weight:600; padding:2px 6px; border:1px solid #93c5fd; border-radius:4px; background:#eff6ff;">🎛 Full Studio ↗</a>
+      </div>
       <button type="button" id="colorClose">Close</button>
     </div>
 
@@ -2427,7 +2548,6 @@
             <div class="card-tags">${tagHtml}</div>
             <span class="badge-dist">${dist}</span>
           </div>
-          ${s.note ? `<div class="meta">${escapeHtml(s.note)}</div>` : ""}
           ${menusHtml || "<div class='menu'><h3>Menu</h3><div class='meta'>No menu loaded</div></div>"}
           <button type="button" class="ghost to-top" data-shop="${escapeHtml(s.id)}">↑ Back to top</button>
         `;
@@ -2887,7 +3007,7 @@
       ["--header-a", "Header start", "Header Banner", "header", "#122844", 100, "Top-left start of header banner gradient"],
       ["--header-b", "Header mid", "Header Banner", "header", "#1d4e7f", 100, "Middle tone of header banner gradient"],
       ["--header-c", "Header end", "Header Banner", "header", "#0d1e33", 100, "Bottom-right end of header banner gradient"],
-      ["--label-blue", "Label Blue", "Pill Badges", ".card-head h2, .summary-bar h2.rule-label, .section-rule span", "#163d68", 100, "Shop name pills & section divider tags"],
+      ["--label-blue", "Label Blue", "Pill Badges", ".card-head h2, .summary-bar h2.rule-label, .section-rule span", "#467bb4", 100, "Shop name pills & section divider tags"],
       ["--dither-gold", "Dither Gold", "Metallic Borders", "header, .card-head h2", "#cca038", 100, "Dithered gold border on header & shop badges"],
       ["--card-a", "Card light", "Shop Cards (1 & 4)", ".grid article:nth-child(4n + 1), .grid article:nth-child(4n + 4)", "#fffdf8", 55, "Alternating shop cards pattern A (Surfdog's, Necessity...)"],
       ["--card-b", "Card warm", "Shop Cards (2 & 3)", ".grid article:nth-child(4n + 2), .grid article:nth-child(4n + 3)", "#f8f4ec", 48, "Alternating shop cards pattern B (Philz, Bird Rock...)"],
@@ -2902,7 +3022,7 @@
       ["--line", "Lines / Borders", "Dividers & Borders", "article, .group, .menu, table.sheet td", "#e4d9c8", 100, "Subtle divider lines, table rows, and card borders"],
       ["--ink", "Main text", "Typography", "body, article h2, .item, header h1", "#1c1914", 100, "Primary text for shop titles, menu items, and headers"],
       ["--mute", "Muted text", "Typography", ".meta, .group h3, .menu h3, label.cat-check .n", "#6b6358", 100, "Secondary text for addresses, counts, and descriptions"],
-      ["--sea", "Active / Selected", "Buttons & Focus", ".chip.on, .page-btn.on, .sort-btn.on", "#1d5f96", 100, "Active filter buttons, selected view, and links"]
+      ["--sea", "Active / Selected", "Buttons & Focus", ".chip.on, .page-btn.on, .sort-btn.on", "#467bb4", 100, "Active filter buttons, selected view, and links"]
     ];
 
     let highlightTimer = null;
