@@ -47,14 +47,25 @@ async def set_active_theme(request: Request):
     return JSONResponse(status_code=400, content={"status": "bad_request"})
 
 
+ROOT = Path(__file__).parent
+NO_STORE = {"Cache-Control": "no-store, max-age=0"}
+
+
 @app.get("/encinitas.html")
 def encinitas_guide():
-    return FileResponse(
-        Path(__file__).parent / "encinitas.html",
-        headers={"Cache-Control": "no-store, max-age=0"},
-    )
+    return FileResponse(ROOT / "encinitas.html", headers=NO_STORE)
+
+
+@app.get("/theme-studio.html")
+def theme_studio():
+    return FileResponse(ROOT / "theme-studio.html", headers=NO_STORE)
 
 
 @app.get("/")
 def root():
+    return FileResponse(ROOT / "encinitas.html", headers=NO_STORE)
+
+
+@app.get("/api")
+def api_ready():
     return {"message": "Menumatch + Encinitas Coffee Guide API is ready"}
