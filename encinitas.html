@@ -194,6 +194,7 @@
     .search-row, .filters {
       display: flex; gap: .4rem; flex-wrap: wrap; align-items: center; margin-bottom: .5rem;
     }
+    .filters { flex-wrap: nowrap; overflow-x: auto; }
     .search-row input[type="search"] {
       flex: 0 1 14rem; width: 14rem; min-width: 9rem; font: inherit;
       font-size: .8rem; padding: .32rem .55rem;
@@ -214,6 +215,16 @@
     .rule-label::before, .rule-label::after {
       content: ""; flex: 1; border-top: 1px solid var(--line);
     }
+    .search-block {
+      display: flex; align-items: center; gap: .45rem;
+      width: auto; max-width: 100%; margin-bottom: .5rem;
+    }
+    .search-block .search-row { margin: 0; }
+    .search-block .search-row input[type="search"] { width: 14rem; flex: 0 1 14rem; }
+    .inline-label { margin: 0; flex: none; }
+    .inline-label::before,
+    .inline-label::after { content: none; flex: none; }
+    .hood-row { display: flex; flex-wrap: wrap; gap: .4rem; align-items: center; margin: 0 0 .5rem; }
     .rule-label > span {
       position: relative;
       background: var(--label-blue, #163d68);
@@ -267,6 +278,15 @@
       border-bottom-color: #2a4f78;
       box-shadow: inset 0 1px 1px rgba(255, 255, 255, 0.4), inset 0 -1px 1px rgba(0, 0, 0, 0.2), 0 2px 6px rgba(70, 123, 180, 0.28);
       text-shadow: 0 1px 2px rgba(20, 40, 70, 0.35);
+    }
+    .chip[data-hood="all"].on,
+    .page-btn[data-page="search"].on {
+      background: linear-gradient(165deg, #8fd4a8 0%, #2d8a4e 52%, #1e6b3a 100%);
+      border-color: #1e6b3a;
+      border-top-color: #b7e6c6;
+      border-bottom-color: #14532d;
+      box-shadow: inset 0 1px 1px rgba(255, 255, 255, 0.4), inset 0 -1px 1px rgba(0, 0, 0, 0.2), 0 2px 6px rgba(30, 107, 58, 0.28);
+      text-shadow: 0 1px 2px rgba(10, 40, 20, 0.35);
     }
     .chip:active, .page-btn:active {
       transform: translateY(1px);
@@ -607,7 +627,8 @@
       main { padding: 0.85rem 0.9rem; }
       .summary { padding: .7rem .75rem; border-radius: 12px; margin-bottom: .75rem; }
       .search-row, .filters { gap: .25rem; margin-bottom: .35rem; }
-      .search-row input[type="search"] { width: 9.5rem; flex-basis: 9.5rem; font-size: .75rem; padding: .22rem .4rem; }
+      .search-block { width: auto; }
+      .search-block .search-row input[type="search"] { width: 9.5rem; flex-basis: 9.5rem; font-size: .75rem; padding: .22rem .4rem; }
       .rule-label, .summary-bar h2.rule-label { font-size: .62rem; }
       .rule-label { margin: .2rem 0 .28rem; }
       .rule-label > span { padding: .1rem .48rem .12rem; }
@@ -676,6 +697,14 @@
       border-bottom-color: #2a4f78;
       box-shadow: inset 0 1px 1px rgba(255, 255, 255, 0.4), inset 0 -1px 1px rgba(0, 0, 0, 0.2), 0 2px 6px rgba(70, 123, 180, 0.28);
       text-shadow: 0 1px 2px rgba(20, 40, 70, 0.35);
+    }
+    .sort-btn[data-sort="distance"].on {
+      background: linear-gradient(165deg, #8fd4a8 0%, #2d8a4e 52%, #1e6b3a 100%);
+      border-color: #1e6b3a;
+      border-top-color: #b7e6c6;
+      border-bottom-color: #14532d;
+      box-shadow: inset 0 1px 1px rgba(255, 255, 255, 0.4), inset 0 -1px 1px rgba(0, 0, 0, 0.2), 0 2px 6px rgba(30, 107, 58, 0.28);
+      text-shadow: 0 1px 2px rgba(10, 40, 20, 0.35);
     }
     .page { display: none; }
     .page.on { display: block; }
@@ -1154,34 +1183,33 @@
       <div class="groups" id="groups"></div>
     </section>
     <div class="active-row" id="activeRow" hidden></div>
-    <div class="rule-label"><span>Search</span></div>
-    <div class="search-row">
-      <input type="search" id="q" placeholder="Shop or drink" aria-label="Search shop or drink" />
+    <div class="search-block">
+      <div class="rule-label inline-label"><span>Search</span></div>
+      <div class="search-row">
+        <input type="search" id="q" placeholder="Shop or drink" aria-label="Search shop or drink" />
+      </div>
     </div>
-    <div class="rule-label"><span>Filter</span></div>
     <div class="filters" aria-label="Filter">
+      <div class="rule-label inline-label"><span>Filter</span></div>
       <button type="button" class="chip on" data-hood="all">all</button>
       <button type="button" class="chip" data-hood="food">food</button>
       <button type="button" class="chip" data-hood="drinks">drinks only</button>
-      <span class="chip-gap" aria-hidden="true"></span>
-      <span class="chip-set">
-        <button type="button" class="chip" data-hood="Leucadia">leucadia</button>
-        <button type="button" class="chip" data-hood="Downtown">downtown</button>
-        <button type="button" class="chip" data-hood="Cardiff">cardiff</button>
-      </span>
+      <button type="button" class="chip" data-hood="Leucadia">leucadia</button>
+      <button type="button" class="chip" data-hood="Downtown">downtown</button>
+      <button type="button" class="chip" data-hood="Cardiff">cardiff</button>
     </div>
-    <div class="rule-label"><span>View</span></div>
     <div class="pages-row">
       <div class="pages" role="tablist" aria-label="View">
+        <div class="rule-label inline-label"><span>View</span></div>
         <button type="button" class="page-btn on" data-page="search">list</button>
         <button type="button" class="page-btn" data-page="sheet">spreadsheet</button>
         <button type="button" class="page-btn" data-page="map">map</button>
       </div>
     </div>
     <section class="page on" id="page-search">
-      <div class="rule-label"><span>Cards</span></div>
       <div class="list-block">
         <div class="list-toolbar" aria-label="Sort results">
+          <div class="rule-label inline-label"><span>Sort</span></div>
           <button type="button" class="sort-btn on" data-sort="distance">distance</button>
           <button type="button" class="sort-btn" data-sort="az">name</button>
           <button type="button" class="sort-btn" data-sort="region">neighborhood</button>
