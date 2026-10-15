@@ -208,8 +208,8 @@
       display: flex; align-items: center; gap: .55rem;
       margin: .38rem 0 .42rem;
       font-family: "IBM Plex Sans", system-ui, sans-serif;
-      font-size: .72rem; font-weight: 600; letter-spacing: .08em;
-      text-transform: uppercase; color: var(--mute);
+      font-size: .72rem; font-weight: 600; letter-spacing: .02em;
+      text-transform: none; color: var(--mute);
     }
     .rule-label::before, .rule-label::after {
       content: ""; flex: 1; border-top: 1px solid var(--line);
@@ -288,14 +288,13 @@
       display: flex;
       flex-direction: column;
       gap: .45rem;
-      backdrop-filter: blur(var(--card-blur, 16px)) saturate(var(--card-glass-sat, 140%));
-      -webkit-backdrop-filter: blur(var(--card-blur, 16px)) saturate(var(--card-glass-sat, 140%));
       box-shadow:
         inset 0 1px 1px 0 rgba(255, 255, 255, 0.92),
         inset 0 -12px 24px rgba(255, 255, 255, 0.08),
         inset 0 0 0 1px rgba(255, 255, 255, 0.22),
         0 8px var(--card-shadow-blur, 18px) rgba(28, 25, 20, var(--card-shadow-opacity, 0.08));
       position: relative;
+      overflow: hidden;
     }
     article::before {
       content: "";
@@ -303,13 +302,10 @@
       inset: 0;
       border-radius: inherit;
       pointer-events: none;
-      background:
-        radial-gradient(120% 80% at 12% 0%, rgba(255, 236, 150, 0.28) 0%, transparent 55%),
-        linear-gradient(145deg, rgba(255, 252, 220, 0.5) 0%, rgba(255, 244, 180, 0.12) 42%, transparent 70%);
+      background: linear-gradient(180deg, rgba(255, 255, 255, 0.18), transparent 28%);
       z-index: 0;
     }
     .group::before,
-    .menu::before,
     .summary::before {
       content: "";
       position: absolute;
@@ -339,30 +335,8 @@
       mask-composite: exclude;
       z-index: 2;
     }
-    .grid article:nth-child(4n + 1),
-    .grid article:nth-child(4n + 4) {
-      background:
-        linear-gradient(135deg, rgba(255, 255, 255, 0.48) 0%, rgba(255, 255, 255, 0.12) 36%, transparent 75%),
-        var(--card-a);
-    }
-    .grid article:nth-child(4n + 2),
-    .grid article:nth-child(4n + 3) {
-      background:
-        linear-gradient(135deg, rgba(255, 255, 255, 0.48) 0%, rgba(255, 255, 255, 0.12) 36%, transparent 75%),
-        var(--card-b);
-    }
     @media (max-width: 640px) {
       .grid { grid-template-columns: 1fr; }
-      .grid article:nth-child(odd) {
-        background:
-          linear-gradient(135deg, rgba(255, 255, 255, 0.48) 0%, rgba(255, 255, 255, 0.12) 36%, transparent 75%),
-          var(--card-a);
-      }
-      .grid article:nth-child(even) {
-        background:
-          linear-gradient(135deg, rgba(255, 255, 255, 0.48) 0%, rgba(255, 255, 255, 0.12) 36%, transparent 75%),
-          var(--card-b);
-      }
     }
     article h2 {
       font-family: "IBM Plex Sans", system-ui, sans-serif;
@@ -437,21 +411,29 @@
     .menus:has(.menu:only-child) { grid-template-columns: 1fr; }
     .menu {
       position: relative;
+      isolation: isolate;
+      overflow: hidden;
       margin: 0;
       border: 1px solid rgba(255, 255, 255, 0.5);
       border-top-color: rgba(255, 255, 255, 0.85);
       border-bottom-color: rgba(0, 0, 0, 0.05);
       border-radius: 9px;
-      padding: .35rem .48rem .4rem;
-      backdrop-filter: blur(6px);
-      -webkit-backdrop-filter: blur(6px);
+      padding: .4rem .48rem .42rem;
       box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.6), 0 1px 3px rgba(0, 0, 0, 0.02);
     }
+    .menu.drinks,
+    .menu.food {
+      background-color: #fff;
+      background-repeat: repeat;
+      background-position: center;
+    }
     .menu.drinks {
-      background: var(--drinks);
+      background-image: linear-gradient(var(--drinks), var(--drinks)), url("polka-dots.png");
+      background-size: auto, auto 100%;
     }
     .menu.food {
-      background: var(--food);
+      background-image: linear-gradient(var(--food), var(--food)), url("polka-dots.png");
+      background-size: auto, auto 100%;
     }
     .menu::after {
       content: "";
@@ -459,22 +441,46 @@
       inset: 0;
       border-radius: inherit;
       pointer-events: none;
-      padding: 1px;
+      padding: 2px;
       background: repeating-conic-gradient(var(--dither-gold, #cca038) 0% 25%, transparent 0% 50%) 0 0 / 2px 2px;
-      opacity: 0.7;
+      opacity: 0.82;
       -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
       -webkit-mask-composite: xor;
       mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
       mask-composite: exclude;
       z-index: 2;
     }
-    .menu h3 {
-      margin: 0 0 .2rem;
-      font-size: .68rem;
-      text-transform: uppercase;
-      letter-spacing: .08em;
-      color: var(--mute);
+    .menu .item { position: relative; z-index: 1; text-transform: lowercase; }
+    .menu h3,
+    .group h3 {
+      position: relative;
+      z-index: 1;
+      display: inline-flex;
+      align-items: center;
+      margin: 0 0 .28rem;
+      font-size: .58rem;
       font-weight: 600;
+      letter-spacing: .03em;
+      text-transform: lowercase;
+      color: #f1f5f9;
+      background: var(--label-blue, #467bb4);
+      padding: .07rem .4rem .08rem;
+      border-radius: 999px;
+      box-shadow: 0 1px 3px rgba(18, 40, 68, 0.14);
+    }
+    .menu h3::before,
+    .group h3::before {
+      content: "";
+      position: absolute;
+      inset: -2px;
+      border-radius: 999px;
+      pointer-events: none;
+      padding: 2px;
+      background: repeating-conic-gradient(var(--dither-gold, #cca038) 0% 25%, transparent 0% 50%) 0 0 / 2px 2px;
+      -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+      -webkit-mask-composite: xor;
+      mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+      mask-composite: exclude;
     }
     article h2[data-tip] {
       cursor: default;
@@ -484,6 +490,7 @@
     }
     .item {
       font-size: .8rem; line-height: 1.28; padding: .02rem 0;
+      text-transform: lowercase;
     }
     .item[data-tip] {
       cursor: default;
@@ -493,11 +500,11 @@
     }
     .summary {
       position: relative;
-      background:
-        linear-gradient(135deg, rgba(255, 255, 255, 0.45) 0%, rgba(255, 255, 255, 0.1) 40%, transparent 80%),
-        rgba(255, 250, 243, 0.6);
-      backdrop-filter: blur(14px) saturate(115%);
-      -webkit-backdrop-filter: blur(14px) saturate(115%);
+      background-color: #fff;
+      background-image: url("tessellation.png?v=thin");
+      background-repeat: repeat;
+      background-size: auto 100%;
+      background-position: center;
       border: 1px solid rgba(255, 255, 255, 0.6);
       border-top-color: rgba(255, 255, 255, 0.9);
       border-bottom-color: rgba(195, 185, 170, 0.45);
@@ -521,31 +528,30 @@
       border-radius: 10px;
       padding: .45rem .55rem .5rem;
       overflow: hidden;
-      backdrop-filter: blur(6px);
-      -webkit-backdrop-filter: blur(6px);
       box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.55);
+      background-color: #fff;
+      background-repeat: repeat;
+      background-size: auto, auto 100%;
+      background-position: center;
     }
     .group[data-group="Coffee"] {
-      background: var(--coffee);
+      background-image: linear-gradient(var(--coffee), var(--coffee)), url("polka-dots.png");
     }
     .group[data-group="Setting"] {
-      background: var(--setting);
+      background-image: linear-gradient(var(--setting), var(--setting)), url("polka-dots.png");
     }
     .group[data-group="Mode"] {
-      background: var(--mode);
+      background-image: linear-gradient(var(--mode), var(--mode)), url("polka-dots.png");
     }
     .group[data-group="Food"] {
-      background: var(--food);
-    }
-    .group h3 {
-      margin: 0 0 .2rem; font-size: .68rem; letter-spacing: .08em;
-      text-transform: uppercase; font-weight: 600; color: var(--mute);
+      background-image: linear-gradient(var(--food), var(--food)), url("polka-dots.png");
     }
     .group ul { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: .02rem; }
     .group li { margin: 0; }
     label.cat-check {
       display: flex; align-items: center; gap: .35rem;
       cursor: pointer; font-size: .78rem; color: var(--ink); padding: .1rem 0; line-height: 1.25;
+      text-transform: lowercase;
     }
     label.cat-check input { width: .85rem; height: .85rem; margin: 0; accent-color: var(--sea); flex: none; }
     label.cat-check .n { color: var(--mute); font-size: .7rem; margin-left: auto; padding-left: .35rem; }
@@ -555,7 +561,7 @@
     .summary-bar h2.rule-label {
       margin: 0;
       font-family: "IBM Plex Sans", system-ui, sans-serif;
-      font-size: .72rem; font-weight: 600; letter-spacing: .08em;
+      font-size: .72rem; font-weight: 600; letter-spacing: .02em;
     }
     .summary-bar h2.rule-label span[data-tip] {
       cursor: default;
@@ -584,6 +590,7 @@
     .active-row button {
       font: inherit; font-size: .75rem; border: 1px solid var(--sea); background: #e8f1f8;
       color: var(--sea); border-radius: 999px; padding: .22rem .55rem; cursor: pointer;
+      text-transform: lowercase;
     }
     .active-row button.clear { border-color: var(--line); background: var(--foam); color: var(--mute); }
     @media (max-width: 640px) {
@@ -623,6 +630,7 @@
       .item { font-size: .75rem; }
       .menus { gap: .45rem; }
       .menu { padding: .28rem .35rem .3rem; }
+      .menu h3, .group h3 { font-size: .52rem; padding: .05rem .34rem .06rem; }
     }
     article { scroll-margin-top: 1rem; }
     article:target { outline: 2px solid var(--sea); }
@@ -636,9 +644,10 @@
       border: 1px solid rgba(255, 255, 255, 0.65);
       border-top-color: rgba(255, 255, 255, 0.9);
       border-radius: 16px; overflow: hidden;
-      background: rgba(255, 255, 255, 0.28);
-      backdrop-filter: blur(16px) saturate(125%);
-      -webkit-backdrop-filter: blur(16px) saturate(125%);
+      background-color: #fff;
+      background-image: url("tessellation.png?v=thin");
+      background-repeat: repeat;
+      background-size: 400px 400px;
       box-shadow: inset 0 1px 1px rgba(255, 255, 255, 0.7), 0 8px 30px rgba(15, 30, 50, 0.08);
     }
     .list-toolbar {
@@ -1151,31 +1160,31 @@
     </div>
     <div class="rule-label"><span>Filter</span></div>
     <div class="filters" aria-label="Filter">
-      <button type="button" class="chip on" data-hood="all">All</button>
-      <button type="button" class="chip" data-hood="food">Food</button>
-      <button type="button" class="chip" data-hood="drinks">Drinks only</button>
+      <button type="button" class="chip on" data-hood="all">all</button>
+      <button type="button" class="chip" data-hood="food">food</button>
+      <button type="button" class="chip" data-hood="drinks">drinks only</button>
       <span class="chip-gap" aria-hidden="true"></span>
       <span class="chip-set">
-        <button type="button" class="chip" data-hood="Leucadia">Leucadia</button>
-        <button type="button" class="chip" data-hood="Downtown">Downtown</button>
-        <button type="button" class="chip" data-hood="Cardiff">Cardiff</button>
+        <button type="button" class="chip" data-hood="Leucadia">leucadia</button>
+        <button type="button" class="chip" data-hood="Downtown">downtown</button>
+        <button type="button" class="chip" data-hood="Cardiff">cardiff</button>
       </span>
     </div>
     <div class="rule-label"><span>View</span></div>
     <div class="pages-row">
       <div class="pages" role="tablist" aria-label="View">
-        <button type="button" class="page-btn on" data-page="search">List</button>
-        <button type="button" class="page-btn" data-page="sheet">Spreadsheet</button>
-        <button type="button" class="page-btn" data-page="map">Map</button>
+        <button type="button" class="page-btn on" data-page="search">list</button>
+        <button type="button" class="page-btn" data-page="sheet">spreadsheet</button>
+        <button type="button" class="page-btn" data-page="map">map</button>
       </div>
     </div>
     <section class="page on" id="page-search">
       <div class="rule-label"><span>Cards</span></div>
       <div class="list-block">
         <div class="list-toolbar" aria-label="Sort results">
-          <button type="button" class="sort-btn on" data-sort="distance">Distance</button>
-          <button type="button" class="sort-btn" data-sort="az">Name</button>
-          <button type="button" class="sort-btn" data-sort="region">Neighborhood</button>
+          <button type="button" class="sort-btn on" data-sort="distance">distance</button>
+          <button type="button" class="sort-btn" data-sort="az">name</button>
+          <button type="button" class="sort-btn" data-sort="region">neighborhood</button>
         </div>
         <div class="grid" id="grid"></div>
       </div>
@@ -2471,7 +2480,7 @@
         div.className = "group";
         div.dataset.group = groupName;
         div.innerHTML =
-          "<h3>" + escapeHtml(groupName) + "</h3><ul>" +
+          "<h3>" + escapeHtml(groupName.toLowerCase()) + "</h3><ul>" +
           entries.map(([trait]) => {
             const n = countForTrait(groupName, trait);
             const checked = selectedTraits(groupName).indexOf(trait) !== -1 ? " checked" : "";
@@ -2527,8 +2536,8 @@
           return `<div class="item"${tip}>${escapeHtml(i.name)}</div>`;
         };
         const cols = [];
-        if (drinks.length) cols.push(`<div class="menu drinks"><h3>Drinks</h3>${drinks.map(row).join("")}</div>`);
-        if (foods.length && state.hood !== "drinks") cols.push(`<div class="menu food"><h3>Food</h3>${foods.map(row).join("")}</div>`);
+        if (drinks.length) cols.push(`<div class="menu drinks"><h3>drinks</h3>${drinks.map(row).join("")}</div>`);
+        if (foods.length && state.hood !== "drinks") cols.push(`<div class="menu food"><h3>food</h3>${foods.map(row).join("")}</div>`);
         const menusHtml = cols.length ? `<div class="menus">${cols.join("")}</div>` : "";
         const shopWhen = formatWhen(s.menu_updated_at || (s.menus[0] && s.menus[0].updated_at));
         const tipBits = [];
