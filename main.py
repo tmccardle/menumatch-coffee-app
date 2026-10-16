@@ -51,6 +51,21 @@ ROOT = Path(__file__).parent
 NO_STORE = {"Cache-Control": "no-store, max-age=0"}
 
 
+@app.get("/card-dots.png")
+def card_dots():
+    return FileResponse(ROOT / "card-dots.png")
+
+
+@app.get("/polka-dots.png")
+def polka_dots():
+    return FileResponse(ROOT / "polka-dots.png")
+
+
+@app.get("/tessellation.png")
+def tessellation():
+    return FileResponse(ROOT / "tessellation.png")
+
+
 @app.get("/encinitas.html")
 def encinitas_guide():
     return FileResponse(ROOT / "encinitas.html", headers=NO_STORE)
