@@ -332,8 +332,22 @@
         inset 0 -12px 24px rgba(255, 255, 255, 0.08),
         inset 0 0 0 1px rgba(255, 255, 255, 0.22),
         0 8px var(--card-shadow-blur, 18px) rgba(28, 25, 20, var(--card-shadow-opacity, 0.08));
+      backdrop-filter: blur(var(--card-blur, 16px)) saturate(var(--card-glass-sat, 140%));
+      -webkit-backdrop-filter: blur(var(--card-blur, 16px)) saturate(var(--card-glass-sat, 140%));
       position: relative;
       overflow: hidden;
+    }
+    .grid article:nth-child(4n + 1),
+    .grid article:nth-child(4n + 4) {
+      background:
+        linear-gradient(135deg, rgba(255, 255, 255, 0.48) 0%, rgba(255, 255, 255, 0.12) 36%, transparent 75%),
+        var(--card-a);
+    }
+    .grid article:nth-child(4n + 2),
+    .grid article:nth-child(4n + 3) {
+      background:
+        linear-gradient(135deg, rgba(255, 255, 255, 0.48) 0%, rgba(255, 255, 255, 0.12) 36%, transparent 75%),
+        var(--card-b);
     }
     article::before {
       content: "";
@@ -674,6 +688,16 @@
       .list-toolbar { padding: .12rem .45rem; }
       .sort-btn { padding: .06rem .28rem; font-size: .56rem; }
       .grid { gap: .5rem; padding: calc(.55rem + 2px) .45rem .45rem; }
+      .grid article:nth-child(odd) {
+        background:
+          linear-gradient(135deg, rgba(255, 255, 255, 0.48) 0%, rgba(255, 255, 255, 0.12) 36%, transparent 75%),
+          var(--card-a);
+      }
+      .grid article:nth-child(even) {
+        background:
+          linear-gradient(135deg, rgba(255, 255, 255, 0.48) 0%, rgba(255, 255, 255, 0.12) 36%, transparent 75%),
+          var(--card-b);
+      }
       .summary-bar button { padding: .15rem .4rem; font-size: .7rem; }
       .groups { grid-template-columns: 1fr 1fr; gap: .45rem; }
       article { padding: .7rem .75rem .75rem; gap: .28rem; border-radius: 12px; }
