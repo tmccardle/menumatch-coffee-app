@@ -701,7 +701,7 @@
             <span class="preset-name">Sunlit glass</span>
             <span class="preset-active-tag">ACTIVE</span>
           </div>
-          <div class="preset-desc">Faint yellow light in the glass. The default.</div>
+          <div class="preset-desc">Faint yellow light in the glass.</div>
           <div class="surface-pair">
             <span style="background:#fff8d6;"></span>
             <span style="background:#fff1ba;"></span>
@@ -745,7 +745,7 @@
             <span class="preset-name">Sea mist</span>
             <span class="preset-active-tag">ACTIVE</span>
           </div>
-          <div class="preset-desc">Sea glass, a step lighter.</div>
+          <div class="preset-desc">Sea glass, a step lighter. The default.</div>
           <div class="surface-pair">
             <span style="background:#dcf4ea;"></span>
             <span style="background:#c0e1d5;"></span>
@@ -1613,7 +1613,7 @@
         });
       }
       dispatchFullTheme(PRESETS["golden-hour"]);
-      applyCardSurface("sunlit");
+      applyCardSurface("sea-mist");
       updateDeviceLinks("golden-hour");
       showToast("Reset to Factory Defaults");
     });
@@ -1641,7 +1641,7 @@
     updateCssPreview();
     updateDeviceLinks(matchingPresetKey());
     highlightCardSurface(matchingSurfaceKey() || (() => {
-      try { return localStorage.getItem(CARD_SURFACE_KEY) || ""; } catch (_) { return ""; }
+      try { return localStorage.getItem(CARD_SURFACE_KEY) || "sea-mist"; } catch (_) { return "sea-mist"; }
     })());
     persistThemeToServer();
     fitPhonePreview();
